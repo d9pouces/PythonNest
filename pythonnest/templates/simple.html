@@ -1,0 +1,11 @@
+<html>
+<head><title>{% if package %}Links for {{ package.name }}{% else %}Package index{% endif %}</title>
+    <meta name="api-version" value="2"/>
+</head>
+<body>
+{% if package %}<h1>Links for {{ package.name }}</h1>{% endif %}
+{% for dl in downloads %}
+<a href="{{ dl.url }}" rel="download">{{ dl.filename }}</a><br/>
+{% endfor %}
+</body>
+</html>

@@ -38,6 +38,19 @@ index-url = {{ base_url }}simple</pre>
 index = {{ base_url }}simple</pre>
 
 
+        <h3>Setuptools</h3>
+        {% trans "Edit ~/.pypirc to include these lines" %}
+        <pre>[distutils]
+index-servers =
+    pythonnest
+
+[pythonnest]
+username: your-login
+password: your-password
+repository: {{ base_url }}setup
+</pre>
+
+
         <h3>Easyinstall</h3>
         {% trans "Edit ~/.pydistutils.cfg to include these lines" %}
 <pre>[easy_install]

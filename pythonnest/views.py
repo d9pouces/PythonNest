@@ -7,22 +7,16 @@ from json.encoder import JSONEncoder
 import datetime
 from django import forms
 from django.core.context_processors import csrf
-from django.core.urlresolvers import reverse
-from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, Http404, QueryDict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-import django.contrib.admin.widgets
-from pythonnest.models import Package, Release, ReleaseDownload
+from django.views.decorators.csrf import csrf_exempt
+from pythonnest.forms import RegisterForm
+from pythonnest.models import Package, Release, ReleaseDownload, PackageRole
 
 __author__ = "flanker"
-# __copyright__ = "Copyright 2013, 19pouces.net"
-# __credits__ = "flanker"
-# __maintainer__ = "flanker"
-# __email__ = "flanker@19pouces.net"
-
-#from pythonnest import models
 
 
 class JSONDatetime(JSONEncoder):
@@ -88,12 +82,81 @@ def simple(request, package_name=None, version=None):
         downloads = ReleaseDownload.objects.all()
     template_values = {'package': package, 'downloads': downloads}
     return render_to_response('simple.html', template_values, RequestContext(request))
-# def test(request, arg1, arg2):
-    #"""Test view, displaying and processing a form."""
-    #form = SampleForm()
-    #template_values = {'arg1': arg1, 'arg2': arg2, }
-    #template_values.update(csrf(request))  # prevents cross-domain requests
-    #return render_to_response('test.html', template_values, RequestContext(request))
 
 
-# easy_install
+@csrf_exempt
+def setup(request):
+    if request.method != 'POST':
+        raise PermissionDenied
+    ct_type = request.META.get('CONTENT_TYPE', '')
+    infos = [x.strip().partition('=') for x in ct_type.split(';')]
+    boundary, encoding = None, 'ascii'
+    for info in infos:
+        if info[0] == 'boundary':
+            boundary = info[2]
+        elif info[0] == 'charset':
+            encoding = info[2]
+    if boundary is None:
+        raise PermissionDenied
+    mid_boundary = ('\n--' + boundary + '\n').encode(encoding)
+    end_boundary = ('\n--' + boundary + '--\n').encode(encoding)
+    fields = request.body.split(mid_boundary)
+    values = QueryDict('', mutable=True, encoding=encoding)
+    files = {}
+    for part in fields:
+        lines = part.split(b'\n\n', 1)
+        if len(lines) != 2:
+            continue
+        infos = [x.strip().partition('=') for x in lines[0].decode(encoding).split(';')]
+        key, filename = None, None
+        for info in infos:
+            if info[0] == 'name':
+                key = info[2][1:-1]
+            elif info[0] == 'filename':
+                filename = info[2][1:-1]
+        if key is None:
+            continue
+        value = lines[1]
+        if value.endswith(end_boundary):
+            value = value[:-len(end_boundary)]
+        if filename is None:
+            values.setlistdefault(key, [])
+            values.appendlist(key, value)
+        else:
+            files[key] = filename, value
+    action = values.get(':action')
+    print(list(values.keys()))
+    print(list(files.keys()))
+    print(action)
+    if action == 'submit':
+        package, created = get_package(request, values.get('name', ''))
+        for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author',  'license', 'summary',
+                          'maintainer', 'maintainer_email', 'project_url'):
+            if values.get(attr_name):
+                setattr(package, attr_name, values.get(attr_name))
+        package.save()
+    elif action == 'file_upload':
+        package, created = get_package(request, values.get('name', ''))
+        for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author',  'license', 'summary',
+                          'maintainer', 'maintainer_email', 'project_url'):
+            if values.get(attr_name):
+                setattr(package, attr_name, values.get(attr_name))
+        package.save()
+    a = ['license', 'home_page', 'name', 'filetype', 'comment', 'author', 'pyversion', 'summary', 'version',
+         'protcol_version', ':action', 'metadata_version', 'md5_digest', 'download_url', 'platform', 'author_email',
+         'classifiers', 'content"; filename="pythonnest-0.2.tar.gz']
+
+    template_values = {}
+    return render_to_response('simple.html', template_values, RequestContext(request))
+
+
+def get_package(request, name):
+    if not name:
+        raise PermissionDenied
+    obj, created = Package.objects.get_or_create(name=name)
+    if not created:
+        if PackageRole.objects.filter(package=obj, user=request.user).count() == 0:
+            raise PermissionDenied
+    else:
+        PackageRole(package=obj, user=request.user, role=PackageRole.OWNER).save()
+    return obj, created

@@ -1,29 +1,6 @@
 PythonNest
 ==========
 
-
-pip
----
-
-~/.pip/pip.conf:
-
-[global]
-index-url = http://d.pypi.python.org/simple
+Pypi mirror, with export / import functionnalities based on Django 1.6.
 
 
-Buildout
---------
-
-~/.buildout/default.cfg
-
-[buildout]
-index = http://d.pypi.python.org/simple
-
-
-Easyinstall
------------
-
-~/.pydistutils.cfg
-
-[easy_install]
-index_url = http://d.pypi.python.org/simple

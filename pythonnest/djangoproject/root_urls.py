@@ -24,5 +24,6 @@ urlpatterns = patterns(  # pylint: disable=C0103
     url(r'^simple/(?P<package_name>[^/]+)/(?P<version>[^/]+)$', 'pythonnest.views.simple'),
     url(r'^simple/(?P<package_name>[^/]+)/$', 'pythonnest.views.simple'),
     url(r'^simple/$', 'pythonnest.views.simple'),
+    url(r'^setup/?$', 'pythonnest.views.setup'),
     url(r'^$', 'pythonnest.views.index'),
 )

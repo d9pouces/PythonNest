@@ -1,0 +1,61 @@
+{% extends "base.html" %}{% load staticfiles %}{% load url from future %}{% load i18n %}
+{% block body %}
+    <form method="POST" action="?">
+        {{ form.media }}
+        {% csrf_token %}
+        <ul class="form">
+            {{ form.as_ul }}
+            <li>
+                <input value="{% trans 'Send form' %}" type="submit"/>
+            </li>
+        </ul>
+    </form>
+    {% if has_results %}
+        <h3>{% trans "Search results" %}</h3>
+        <ul>
+        {% for result in results %}
+            <li>
+            <a href="">{{ result.name }}</a>
+            </li>
+            {% empty %}
+            <li>{% trans "No package matched your query." %}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h2>{% trans "Client configuration" %}</h2>
+
+
+        <h3>pip</h3>
+        {% trans "Edit ~/.pip/pip.conf to include these lines" %}
+        <pre>[global]
+index = {{ base_url }}pypi
+index-url = {{ base_url }}simple</pre>
+
+
+        <h3>buildout</h3>
+        {% trans "Edit ~/.buildout/default.cfg to include these lines" %}
+        <pre>[buildout]
+index = {{ base_url }}simple</pre>
+
+
+        <h3>Setuptools</h3>
+        {% trans "Edit ~/.pypirc to include these lines" %}
+        <pre>[distutils]
+index-servers =
+    pythonnest
+
+[pythonnest]
+username: your-login
+password: your-password
+repository: {{ base_url }}setup
+</pre>
+Run the following commands to use this repository:
+<pre>python setup.py bdist sdist upload -r http://localhost:8000/setup</pre>
+
+        <h3>Easyinstall</h3>
+        {% trans "Edit ~/.pydistutils.cfg to include these lines" %}
+<pre>[easy_install]
+index_url = {{ base_url }}simple</pre>
+
+    {% endif %}
+{% endblock %}

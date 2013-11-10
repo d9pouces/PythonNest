@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: pythonnest
+Version: 0.3
+Summary: Pypi emulator and cloning tool .
+Home-page: http://19pouces.net/PythonNest.html
+Author: flanker
+Author-email: flanker@19pouces.net
+License: CeCILL-B
+Description: PythonNest
+        ==========
+        
+        Pypi mirror, with export / import functionnalities based on Django 1.6.
+        
+        
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3

@@ -1,0 +1,4 @@
+setuptools>=0.7
+django
+South
+rpc4django

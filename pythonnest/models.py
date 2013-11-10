@@ -115,6 +115,9 @@ class PackageRole(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'), db_index=True)
     package = models.ForeignKey(Package, verbose_name=_('package'), db_index=True)
 
+    def __str__(self):
+        return '%s - %s' % (self.user.username, self.package.name)
+
 
 class Release(models.Model):
     package = models.ForeignKey(Package, db_index=True)

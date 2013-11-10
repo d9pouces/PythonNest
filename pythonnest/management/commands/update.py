@@ -15,7 +15,7 @@ from django.utils.translation import ugettext as _
 
 from pythonnest.colors import cyan, green, red
 from pythonnest.models import Synchronization, Package, ObjectCache, Release, Classifier, Dependence, ReleaseDownload,\
-    PackageType, release_download_path, PackageRole
+    PackageType, release_download_path, PackageRole, MEDIA_ROOT_LEN
 
 
 __author__ = "flanker"
@@ -42,9 +42,6 @@ class Command(BaseCommand):
         super(Command, self).__init__()
         self.user_cache = ObjectCache(lambda key_: User.objects.get_or_create(username=key_)[0])
         self.package_cache = ObjectCache(lambda key_: Package.objects.get_or_create(name=key_)[0])
-        self.media_root_length = len(settings.MEDIA_ROOT)
-        if settings.MEDIA_ROOT[-1:] != '/':
-            self.media_root_length += 1
         self.client = None
 
     def connect(self, url):
@@ -101,8 +98,8 @@ class Command(BaseCommand):
                         while data:
                             out_fd.write(data)
                             data = in_fd.read(4096)
-                download.file = path[self.media_root_length:]
-                download.url = settings.MEDIA_URL + path[self.media_root_length:]
+                download.file = path[MEDIA_ROOT_LEN:]
+                download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
             except URLError:
                 print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
                 continue

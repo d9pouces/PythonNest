@@ -7,7 +7,7 @@ from django.contrib import admin
 # from django.contrib import messages
 # from django.utils.translation import ugettext_lazy as _
 from pythonnest.models import PackageType, Package, Classifier, Dependence, ReleaseDownload, Release, \
-    Synchronization
+    Synchronization, PackageRole
 
 __author__ = "flanker"
 
@@ -31,6 +31,7 @@ __author__ = "flanker"
 #admin.site.register(SampleModel, SampleModelAdmin)
 admin.site.register(PackageType)
 admin.site.register(Package)
+admin.site.register(PackageRole)
 admin.site.register(Classifier)
 admin.site.register(Dependence)
 admin.site.register(ReleaseDownload)

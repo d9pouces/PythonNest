@@ -2,19 +2,22 @@
 """Here are defined Python functions of views.
 Views are binded to URLs in :mod:`.urls`.
 """
+import hashlib
 import json
 from json.encoder import JSONEncoder
 import datetime
+import os
 from django import forms
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404, QueryDict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from pythonnest.forms import RegisterForm
-from pythonnest.models import Package, Release, ReleaseDownload, PackageRole
+from pythonnest.djangoproject import settings
+from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, release_download_path, MEDIA_ROOT_LEN, PackageType
 
 __author__ = "flanker"
 
@@ -125,38 +128,62 @@ def setup(request):
         else:
             files[key] = filename, value
     action = values.get(':action')
-    print(list(values.keys()))
-    print(list(files.keys()))
-    print(action)
-    if action == 'submit':
-        package, created = get_package(request, values.get('name', ''))
-        for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author',  'license', 'summary',
+    if action in ('submit', 'file_upload'):
+        package_name = values.get('name', '')
+        version_name = values.get('version', '')
+        if not package_name or not version_name:
+            raise PermissionDenied
+        package, created = Package.objects.get_or_create(name=package_name)
+        if not created:
+            if PackageRole.objects.filter(package=package, user=request.user).count() == 0:
+                raise PermissionDenied
+        else:
+            PackageRole(package=package, user=request.user, role=PackageRole.OWNER).save()
+        for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author', 'license', 'summary',
                           'maintainer', 'maintainer_email', 'project_url'):
             if values.get(attr_name):
                 setattr(package, attr_name, values.get(attr_name))
         package.save()
-    elif action == 'file_upload':
-        package, created = get_package(request, values.get('name', ''))
-        for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author',  'license', 'summary',
-                          'maintainer', 'maintainer_email', 'project_url'):
+        release, created = Release.objects.get_or_create(package=package, version=version_name)
+        for attr_name in ('stable_version', 'description', 'platform', 'keywords', 'docs_url',):
             if values.get(attr_name):
                 setattr(package, attr_name, values.get(attr_name))
-        package.save()
-    a = ['license', 'home_page', 'name', 'filetype', 'comment', 'author', 'pyversion', 'summary', 'version',
-         'protcol_version', ':action', 'metadata_version', 'md5_digest', 'download_url', 'platform', 'author_email',
-         'classifiers', 'content"; filename="pythonnest-0.2.tar.gz']
+        release.classifiers.clear()
+        for classifier in values.getlist('classifiers', []):
+            release.classifiers.add(Classifier.get(classifier))
+        for attr_name in ('requires', 'requires_dist', 'provides', 'provides_dist', 'obsoletes', 'obsoletes_dist',
+                          'requires_external', 'requires_python'):
+            getattr(release, attr_name).clear()
+            for dep in values.getlist(attr_name, []):
+                getattr(release, attr_name.add(Dependence.get(dep)))
+        release.save()
+    if action == 'file_upload':
+        if 'content' not in files:
+            raise PermissionDenied
+        filename, content = files['content']
+        if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
+            raise PermissionDenied
+        md5 = hashlib.md5(content).hexdigest()
+        if md5 != values.get('md5_digest'):
+            raise PermissionDenied
+        download = ReleaseDownload(package=package, release=release)
+        path = settings.MEDIA_ROOT + '/' + release_download_path(download, filename)
+        path_dirname = os.path.dirname(path)
+        if not os.path.isdir(path_dirname):
+            os.makedirs(path_dirname)
+        with open(path, 'wb') as out_fd:
+            out_fd.write(content)
+        download.md5_digest = md5
+        download.size = len(content)
+        download.upload_time = datetime.datetime.utcnow().replace(tzinfo=utc)
+        download.filename = filename
+        download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
+        download.file = path[MEDIA_ROOT_LEN:]
+        download.package_type = PackageType.get(values.get('filetype', 'source'))
+        download.comment_text = values.get('comment', '')
+        download.python_version = values.get('pyversion')
+        download.save()
 
     template_values = {}
     return render_to_response('simple.html', template_values, RequestContext(request))
 
-
-def get_package(request, name):
-    if not name:
-        raise PermissionDenied
-    obj, created = Package.objects.get_or_create(name=name)
-    if not created:
-        if PackageRole.objects.filter(package=obj, user=request.user).count() == 0:
-            raise PermissionDenied
-    else:
-        PackageRole(package=obj, user=request.user, role=PackageRole.OWNER).save()
-    return obj, created

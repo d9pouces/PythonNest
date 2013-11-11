@@ -22,7 +22,7 @@ class Command(BaseCommand):
     args = ''
     help = 'Export the database'
     option_list = BaseCommand.option_list + (
-        make_option('--path', default='export', help='Export folder to export to'),
+        make_option('--path', default='export', help='Folder to export data to'),
         make_option('--serial', type=int, default=None, help='Start from this serial'),
         make_option('--tag', default='export', help='Tag identifying this export'),
     )
@@ -41,19 +41,20 @@ class Command(BaseCommand):
             print(cyan(_('Previous sync: serial %(syn)s') % {'syn': obj.last_serial}))
         packages = set()
         releases = set()
-        result = {}
+        result = {'data': {}}
         base_path = os.path.abspath(options['path'])
         last_serial = first_serial
-        for log in Log.objects.filter(id__gt=first_serial).order_by('id').select_related():
+        next_last_serial = -1
+        for log in Log.objects.filter(id__gte=first_serial).order_by('id').select_related():
             p_path = os.path.join(base_path, log.package.name)
             if log.package.id not in packages:
                 self.write_info(log.package.data(), p_path, 'package')
-                result[log.package.name] = {}
+                result['data'][log.package.name] = {}
                 packages.add(log.package.id)
             r_path = os.path.join(p_path, log.release.version)
             if log.release.id not in releases:
                 self.write_info(log.release.data(), r_path, 'release')
-                result[log.package.name][log.release.version] = []
+                result['data'][log.package.name][log.release.version] = []
                 releases.add(log.release.id)
             dst_path = os.path.join(r_path, log.download.filename)
             src_path = log.download.abspath
@@ -61,10 +62,12 @@ class Command(BaseCommand):
             self.write_info(log.download.data(), r_path, log.download.filename)
             print(yellow(_('Adding %(fn)s (%(pk)s %(vn)s)') % {'pk': log.package.name, 'fn': log.download.filename,
                                                                'vn': log.release.version, }))
-            result[log.package.name][log.release.version].append(log.download.filename)
+            result['data'][log.package.name][log.release.version].append(log.download.filename)
             last_serial = log.id
-        self.write_info(result, base_path, 'sync-%d-%d' % (first_serial + 1, last_serial))
-        Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)
+            next_last_serial = log.id + 1
+        result['meta'] = {'first_id': first_serial, 'last_id': last_serial}
+        self.write_info(result, base_path, 'sync')
+        Synchronization.objects.filter(id=obj.id).update(last_serial=next_last_serial)
 
     @staticmethod
     def write_info(data, dest_dir, prefix):

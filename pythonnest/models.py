@@ -198,7 +198,7 @@ class ReleaseDownload(models.Model):
     release = models.ForeignKey(Release, db_index=True)
     uid = models.CharField(_('UID'), db_index=True, max_length=40, blank=True, default='')
     url = models.CharField(_('URL'), db_index=True, max_length=255, blank=True, default='')
-    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True)
+    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True, default='UNKNOWN')
     filename = models.CharField(_('Filename'), db_index=True, max_length=255)
     file = models.FileField(_('File'), db_index=True, max_length=255, upload_to=release_download_path)
     size = models.IntegerField(_('Size'), db_index=True, blank=True, default=0)

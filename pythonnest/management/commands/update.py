@@ -118,12 +118,9 @@ class Command(BaseCommand):
                 continue
             if release_url.get('packagetype'):
                 download.package_type = PackageType.get(release_url.get('packagetype'))
-            else:
-                download.package_type = PackageType.get('UNKNOWN')
             if release_url.get('upload_time'):
-                upload_time = datetime.datetime.strptime(release_url['upload_time'].value, "%Y%m%dT%H:%M:%S") \
+                download.upload_time = datetime.datetime.strptime(release_url['upload_time'].value, "%Y%m%dT%H:%M:%S")\
                     .replace(tzinfo=utc)
-                download.upload_time = upload_time
             for attr_name in ('filename', 'size', 'downloads', 'has_sig', 'python_version',
                               'comment_text', 'md5_digest'):
                 if release_url.get(attr_name):

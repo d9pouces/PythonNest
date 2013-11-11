@@ -8,6 +8,7 @@ from json.encoder import JSONEncoder
 import datetime
 import os
 from django import forms
+from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404, QueryDict
@@ -16,7 +17,6 @@ from django.template import RequestContext
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from pythonnest.djangoproject import settings
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 from optparse import make_option
 import os
 import socket
@@ -15,7 +16,7 @@ from django.utils.translation import ugettext as _
 
 from pythonnest.colors import cyan, green, red
 from pythonnest.models import Synchronization, Package, ObjectCache, Release, Classifier, Dependence, ReleaseDownload,\
-    PackageType, release_download_path, PackageRole, MEDIA_ROOT_LEN
+    PackageType, PackageRole, ReleaseMiss
 
 
 __author__ = "flanker"
@@ -30,10 +31,8 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--url', default='http://pypi.python.org/pypi',
                     help='Server to sync. against (default: http://pypi.python.org/pypi)'),
-        make_option('--limit', type=int, default=None,
-                    help='Do not download more thant --limit archives'),
-        make_option('--serial', type=int, default=None,
-                    help='Start from this serial'),
+        make_option('--limit', type=int, default=None, help='Do not download more thant --limit archives'),
+        make_option('--serial', type=int, default=None, help='Start from this serial'),
         make_option('--init-all', action='store_true', default=False,
                     help='Force the download of all releases of all packages (very long initial sync!)'),
     )
@@ -86,25 +85,36 @@ class Command(BaseCommand):
             if c > 0 or not release_url.get('url') or not release_url.get('filename'):
                 continue
             print(green(_('Downloading %(url)s') % {'url': release_url['url']}))
-            download = ReleaseDownload(package=package, release=release)
+            filename = release_url['filename']
+            download = ReleaseDownload(package=package, release=release, filename=filename)
             try:
-                path = settings.MEDIA_ROOT + '/' + release_download_path(download, release_url['filename'])
+                path = download.abspath
                 with urllib.request.urlopen(release_url['url'], None, 5) as in_fd:
                     path_dirname = os.path.dirname(path)
+                    md5_check = hashlib.md5()
+                    size = 0
                     if not os.path.isdir(path_dirname):
                         os.makedirs(path_dirname)
                     with open(path, 'wb') as out_fd:
                         data = in_fd.read(4096)
                         while data:
                             out_fd.write(data)
+                            size += len(data)
+                            md5_check.update(data)
                             data = in_fd.read(4096)
-                download.file = path[MEDIA_ROOT_LEN:]
-                download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
+                if md5_check.hexdigest() != release_url.get('md5_digest'):
+                    os.remove(path)
+                    print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url': release_url['url']}))
+                    continue
+                download.file = download.relpath
+                download.url = settings.MEDIA_URL + download.relpath
             except URLError:
                 print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
+                ReleaseMiss.objects.get_or_create(release=release)
                 continue
             except socket.timeout:
-                print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
+                print(red(_('Error while downloading %(url)s [socket timeout]') % {'url': release_url['url']}))
+                ReleaseMiss.objects.get_or_create(release=release)
                 continue
             if release_url.get('packagetype'):
                 download.package_type = PackageType.get(release_url.get('packagetype'))
@@ -120,6 +130,7 @@ class Command(BaseCommand):
                     setattr(download, attr_name, release_url[attr_name])
             download.log()
             downloaded_files += 1
+        ReleaseMiss.objects.filter(release=release).delete()
         return downloaded_files
 
     def handle(self, *args, **options):

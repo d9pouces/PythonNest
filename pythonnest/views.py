@@ -17,7 +17,8 @@ from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from pythonnest.djangoproject import settings
-from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, release_download_path, MEDIA_ROOT_LEN, PackageType
+from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
+    PackageType
 
 __author__ = "flanker"
 
@@ -161,13 +162,14 @@ def setup(request):
         if 'content' not in files:
             raise PermissionDenied
         filename, content = files['content']
+        #noinspection PyUnboundLocalVariable
         if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
             raise PermissionDenied
         md5 = hashlib.md5(content).hexdigest()
         if md5 != values.get('md5_digest'):
             raise PermissionDenied
-        download = ReleaseDownload(package=package, release=release)
-        path = settings.MEDIA_ROOT + '/' + release_download_path(download, filename)
+        download = ReleaseDownload(package=package, release=release, filename=filename)
+        path = download.abspath
         path_dirname = os.path.dirname(path)
         if not os.path.isdir(path_dirname):
             os.makedirs(path_dirname)
@@ -176,14 +178,11 @@ def setup(request):
         download.md5_digest = md5
         download.size = len(content)
         download.upload_time = datetime.datetime.utcnow().replace(tzinfo=utc)
-        download.filename = filename
         download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
-        download.file = path[MEDIA_ROOT_LEN:]
+        download.file = download.relpath
         download.package_type = PackageType.get(values.get('filetype', 'source'))
         download.comment_text = values.get('comment', '')
         download.python_version = values.get('pyversion')
-        download.save()
-
+        download.log()
     template_values = {}
     return render_to_response('simple.html', template_values, RequestContext(request))
-

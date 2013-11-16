@@ -94,35 +94,47 @@ class Command(BaseCommand):
             print(green(_('Downloading %(url)s') % {'url': release_url['url']}))
             filename = release_url['filename']
             download = ReleaseDownload(package=package, release=release, filename=filename)
-            try:
-                path = download.abspath
-                with urllib.request.urlopen(release_url['url'], None, 5) as in_fd:
-                    path_dirname = os.path.dirname(path)
-                    md5_check = hashlib.md5()
-                    size = 0
-                    if not os.path.isdir(path_dirname):
-                        os.makedirs(path_dirname)
-                    with open(path, 'wb') as out_fd:
-                        data = in_fd.read(4096)
-                        while data:
-                            out_fd.write(data)
-                            size += len(data)
-                            md5_check.update(data)
+            no_timeout = 0
+            while no_timeout < self.retry:
+                try:
+                    path = download.abspath
+                    with urllib.request.urlopen(release_url['url'], None, 5) as in_fd:
+                        path_dirname = os.path.dirname(path)
+                        md5_check = hashlib.md5()
+                        size = 0
+                        if not os.path.isdir(path_dirname):
+                            os.makedirs(path_dirname)
+                        with open(path, 'wb') as out_fd:
                             data = in_fd.read(4096)
-                if md5_check.hexdigest() != release_url.get('md5_digest'):
-                    os.remove(path)
-                    print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url': release_url['url']}))
-                    continue
-                download.file = download.relpath
-                download.url = settings.MEDIA_URL + download.relpath
-            except URLError:
-                print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
-                ReleaseMiss.objects.get_or_create(release=release)
-                continue
-            except socket.timeout:
-                print(red(_('Error while downloading %(url)s [socket timeout]') % {'url': release_url['url']}))
-                ReleaseMiss.objects.get_or_create(release=release)
-                time.sleep(3)
+                            while data:
+                                out_fd.write(data)
+                                size += len(data)
+                                md5_check.update(data)
+                                data = in_fd.read(4096)
+                    if md5_check.hexdigest() != release_url.get('md5_digest'):
+                        os.remove(path)
+                        print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url': release_url['url']}))
+                        no_timeout += 1
+                        continue
+                    download.file = download.relpath
+                    download.url = settings.MEDIA_URL + download.relpath
+                    break
+                except URLError:
+                    print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
+                    ReleaseMiss.objects.get_or_create(release=release)
+                    no_timeout = self.retry
+                    break
+                except socket.gaierror:
+                    print(red(_('Error while downloading %(url)s [GAI error]') % {'url': release_url['url']}))
+                    ReleaseMiss.objects.get_or_create(release=release)
+                    time.sleep(2)
+                    no_timeout += 1
+                except socket.timeout:
+                    print(red(_('Error while downloading %(url)s [socket timeout]') % {'url': release_url['url']}))
+                    ReleaseMiss.objects.get_or_create(release=release)
+                    time.sleep(2)
+                    no_timeout += 1
+            if no_timeout >= self.retry:
                 continue
             if release_url.get('packagetype'):
                 download.package_type = PackageType.get(release_url.get('packagetype'))
@@ -176,6 +188,10 @@ class Command(BaseCommand):
                         print(red(_('Timeout with %(p)s-%(v)s [socket timeout]') % {'p': package_name, 'v': version}))
                         time.sleep(3)
                         no_timeout += 1
+                    except socket.gaierror:
+                        print(red(_('Gai error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
+                        time.sleep(2)
+                        no_timeout += 1
                     except xmlrpc.client.ProtocolError:
                         print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
                         time.sleep(2)
@@ -203,6 +219,10 @@ class Command(BaseCommand):
                     except socket.timeout:
                         print(red(_('Timeout with %(p)s-%(v)s [socket timeout]') % {'p': package_name, 'v': version}))
                         time.sleep(3)
+                        no_timeout += 1
+                    except socket.gaierror:
+                        print(red(_('Gai error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
+                        time.sleep(2)
                         no_timeout += 1
                     except xmlrpc.client.ProtocolError:
                         print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))

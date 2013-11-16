@@ -2,6 +2,7 @@
 """
 Define your custom context processors in this file.
 """
+from django.utils.translation import ugettext_lazy as _
 __author__ = "flanker"
 # __copyright__ = "Copyright 2013, 19pouces.net"
 # __credits__ = "flanker"
@@ -13,4 +14,4 @@ def context_user(request):
     """Add the current user to the context.
     User is taken from the current :class:`django.core.http.HttpRequest`
     and binded to `user`."""
-    return {'user': request.user, }
+    return {'user': request.user, 'title': _('PythonNest')}

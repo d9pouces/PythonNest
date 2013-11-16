@@ -1,0 +1,32 @@
+{% load staticfiles i18n %}
+<html>
+<head>
+    <title>{% block pagetitle %}{{ title }}{% endblock %}</title>
+    <meta name="author" content="flanker"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/root.css' %}"/>
+</head>
+<body>
+{% block blocktitle %}
+    <header>
+        {% block title %}
+            <h1>
+                <span id="title">{{ title }}</span>
+                <span id="search">
+                    <form action="{% url 'pythonnest.views.index' %}" method="GET">
+                        <input id="id_search" placeholder="{% trans 'Search' %}" maxlength="255" name="search"
+                               type="text"/>
+                    </form>
+                </span>
+            </h1>{% endblock %}</header>
+{% endblock %}
+{% block blockbody %}
+    <article>
+        {% block body %}
+
+        {% endblock %}
+    </article>
+{% endblock %}
+</body>
+</html>

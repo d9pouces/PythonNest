@@ -6,17 +6,21 @@ import hashlib
 import json
 from json.encoder import JSONEncoder
 import datetime
+import mimetypes
 import os
+import stat
 from django import forms
 from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse, Http404, QueryDict
+from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
+import re
+from django.views.static import was_modified_since
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType
 
@@ -67,7 +71,7 @@ def index(request):
             has_results = True
     else:
         form = SearchForm()
-    base_url = request.build_absolute_uri()
+    base_url = request.build_absolute_uri('/')
     template_values = {'form': form, 'results': results, 'has_results': has_results, 'base_url': base_url, }
     template_values.update(csrf(request))  # prevents cross-domain requests
     return render_to_response('index.html', template_values, RequestContext(request))
@@ -186,3 +190,52 @@ def setup(request):
         download.log()
     template_values = {}
     return render_to_response('simple.html', template_values, RequestContext(request))
+
+
+def static_serve(request, path, document_root=None):
+    if document_root is None:
+        document_root = settings.STATIC_ROOT
+    filename = os.path.abspath(os.path.join(document_root, path))
+    if not filename.startswith(document_root):
+        raise Http404
+    if settings.USE_XSENDFILE:
+        return xsendfile(request, filename)
+    return sendfile(request, filename)
+
+
+def xsendfile(request, filename):
+    response = HttpResponse()
+    response['X-Sendfile'] = filename.encode('utf-8')
+    return response
+
+
+range_re = re.compile(r'bytes=(\d+)-(\d+)')
+
+
+def sendfile(request, filename):
+    # Respect the If-Modified-Since header.
+    if not os.path.isfile(filename):
+        raise Http404
+    statobj = os.stat(filename)
+    if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
+                              statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
+        return HttpResponseNotModified()
+    content_type = mimetypes.guess_type(filename)[0]
+    range_ = request.META.get('HTTP_RANGE', '')
+    t = range_re.match(range_)
+    size = os.path.getsize(filename)
+    start = 0
+    end = size - 1
+    if t:
+        start, end = int(t.group(1)), int(t.group(2))
+    if end - start + 1 < size:
+        obj = open(filename, 'rb')
+        obj.seek(start)
+        response = HttpResponse(obj.read(end - start + 1), content_type=content_type, status=206)
+        response['Content-Range'] = 'bytes %d-%d/%d' % (start, end, size)
+    else:
+        obj = open(filename, 'rb')
+        return StreamingHttpResponse(obj, content_type=content_type)
+    response['Content-Length'] = end - start + 1
+    #response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
+    return response

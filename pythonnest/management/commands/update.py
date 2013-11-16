@@ -42,6 +42,7 @@ class Command(BaseCommand):
         self.user_cache = ObjectCache(lambda key_: User.objects.get_or_create(username=key_)[0])
         self.package_cache = ObjectCache(lambda key_: Package.objects.get_or_create(name=key_)[0])
         self.client = None
+        socket.setdefaulttimeout(10)
 
     def connect(self, url):
         self.client = xmlrpc.client.ServerProxy(url)
@@ -157,7 +158,13 @@ class Command(BaseCommand):
                 if version is None:
                     continue
                 print(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
-                counter += self.download_release(package_name, version)
+                no_timeout = True
+                while no_timeout:
+                    try:
+                        counter += self.download_release(package_name, version)
+                        no_timeout = False
+                    except socket.timeout:
+                        pass
         else:
             last_serial = self.client.changelog_last_serial()
             packages = self.client.list_packages()
@@ -166,12 +173,18 @@ class Command(BaseCommand):
                 if options['limit'] is not None and counter >= options['limit']:
                     break
                 print(cyan(_('Found %(pkg)s') % {'pkg': package_name}))
-                versions = self.client.package_releases(package_name)
-                versions = [x for x in versions if x]
-                if not versions:
-                    continue
-                version = versions[0]
-                print(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
-                counter += self.download_release(package_name, version)
+                no_timeout = True
+                while no_timeout:
+                    try:
+                        versions = self.client.package_releases(package_name)
+                        versions = [x for x in versions if x]
+                        if not versions:
+                            continue
+                        version = versions[0]
+                        print(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
+                        counter += self.download_release(package_name, version)
+                        no_timeout = False
+                    except socket.timeout:
+                        pass
 
         Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)

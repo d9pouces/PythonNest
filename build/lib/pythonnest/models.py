@@ -8,6 +8,7 @@ Documentation can be found at .
 
 """
 from heapq import heappop, heappush
+import os
 import uuid
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -106,6 +107,13 @@ class Package(models.Model):
     def __str__(self):
         return self.name
 
+    def data(self):
+        result = {}
+        for attr_name in ('name', 'author', 'author_email', 'maintainer', 'maintainer_email', 'home_page', 'license',
+                          'summary',  'download_url', 'project_url', ):
+            result[attr_name] = getattr(self, attr_name)
+        return result
+
 
 class PackageRole(models.Model):
     OWNER = 1
@@ -178,12 +186,19 @@ if settings.MEDIA_ROOT[-1:] != '/':
     MEDIA_ROOT_LEN += 1
 
 
+class ReleaseMiss(models.Model):
+    release = models.ForeignKey(Release, db_index=True)
+
+    def __str__(self):
+        return str(self.release)
+
+
 class ReleaseDownload(models.Model):
     package = models.ForeignKey(Package, db_index=True, null=True, blank=True)
     release = models.ForeignKey(Release, db_index=True)
     uid = models.CharField(_('UID'), db_index=True, max_length=40, blank=True, default='')
     url = models.CharField(_('URL'), db_index=True, max_length=255, blank=True, default='')
-    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True)
+    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True, default='UNKNOWN')
     filename = models.CharField(_('Filename'), db_index=True, max_length=255)
     file = models.FileField(_('File'), db_index=True, max_length=255, upload_to=release_download_path)
     size = models.IntegerField(_('Size'), db_index=True, blank=True, default=0)
@@ -213,13 +228,26 @@ class ReleaseDownload(models.Model):
     def __str__(self):
         return self.filename
 
-    def data(self):
+    @property
+    def abspath(self):
+        return os.path.join(settings.MEDIA_ROOT, release_download_path(self, self.filename))
+
+    @property
+    def relpath(self):
+        return self.abspath[MEDIA_ROOT_LEN:]
+
+    def absurl(self, request):
+        return request.build_absolute_uri(self.url)
+
+    def data(self, request=None):
         result = dict([(x, getattr(self, x)) for x in ('has_sig', 'upload_time', 'comment_text', 'python_version',
                                                        'url', 'md5_digest', 'downloads', 'filename', 'size', )])
         if self.package_type:
             result['packagetype'] = self.package_type.name
         else:
             result['packagetype'] = None
+        if request is not None:
+            result['url'] = self.absurl(request)
         return result
 
 

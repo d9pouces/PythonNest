@@ -8,6 +8,7 @@ from json.encoder import JSONEncoder
 import datetime
 import os
 from django import forms
+from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404, QueryDict
@@ -16,8 +17,8 @@ from django.template import RequestContext
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from pythonnest.djangoproject import settings
-from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, release_download_path, MEDIA_ROOT_LEN
+from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
+    PackageType
 
 __author__ = "flanker"
 
@@ -128,14 +129,9 @@ def setup(request):
         else:
             files[key] = filename, value
     action = values.get(':action')
-    print(list(values.keys()))
-    print(list(files.keys()))
-    print(action)
-    print(request.user.username)
     if action in ('submit', 'file_upload'):
         package_name = values.get('name', '')
         version_name = values.get('version', '')
-        print(package_name, version_name)
         if not package_name or not version_name:
             raise PermissionDenied
         package, created = Package.objects.get_or_create(name=package_name)
@@ -166,35 +162,27 @@ def setup(request):
         if 'content' not in files:
             raise PermissionDenied
         filename, content = files['content']
+        #noinspection PyUnboundLocalVariable
         if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
             raise PermissionDenied
-        download = ReleaseDownload(package=package, release=release)
-        path = settings.MEDIA_ROOT + '/' + release_download_path(download, filename)
+        md5 = hashlib.md5(content).hexdigest()
+        if md5 != values.get('md5_digest'):
+            raise PermissionDenied
+        download = ReleaseDownload(package=package, release=release, filename=filename)
+        path = download.abspath
         path_dirname = os.path.dirname(path)
         if not os.path.isdir(path_dirname):
             os.makedirs(path_dirname)
         with open(path, 'wb') as out_fd:
             out_fd.write(content)
-        md5 = hashlib.md5(content).hexdigest()
         download.md5_digest = md5
         download.size = len(content)
         download.upload_time = datetime.datetime.utcnow().replace(tzinfo=utc)
-        download.filename = filename
         download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
-        download.file = path[MEDIA_ROOT_LEN:]
-        #   package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True)
-        #   python_version = CharField(_('Python version'), db_index=True, max_length=255, blank=True, default='any')
-        #   comment_text = models.TextField(_('Comment'), blank=True, default='')
-
-        print(md5, values['md5_digest'])
-        for attr_name in ('stable_version', 'description', 'platform', 'keywords', 'docs_url',):
-            if values.get(attr_name):
-                setattr(download, attr_name, values.get(attr_name))
-        download.save()
-
-        for a in ['filetype', 'comment', 'pyversion', 'protcol_version', 'metadata_version', ]:
-            print(a, values.get(a))
-
+        download.file = download.relpath
+        download.package_type = PackageType.get(values.get('filetype', 'source'))
+        download.comment_text = values.get('comment', '')
+        download.python_version = values.get('pyversion')
+        download.log()
     template_values = {}
     return render_to_response('simple.html', template_values, RequestContext(request))
-

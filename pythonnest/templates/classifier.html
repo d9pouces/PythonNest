@@ -1,23 +1,24 @@
 {% extends "root.html" %}{% load staticfiles %}{% load url from future %}{% load i18n %}
 {% block body %}
-        <h2 class="body-header">{% trans "Search results" %}</h2>
-        <div class="body-content">
+    <h2 class="body-header">{% trans "Search results" %}</h2>
+    <div class="body-content">
         <div class="paginator">        {% if previous_page != None %}
-            <a href="{% url 'pythonnest.views.index' page=previous_page %}?search={{ pattern }}">
+            <a href="{% url 'pythonnest.views.show_classifier' classifier_id=classifier.id page=previous_page %}">
                 <span class="link">⇠</span>{% trans 'Previous page' %}</a>{% else %}<span class="nolink">⇠</span>
             {% trans 'Previous page' %}
         {% endif %}
         <span class="paginator-main">{% blocktrans with cc=page_index ct=page_count %} {{ cc }}/{{ ct }}{% endblocktrans %}</span>
             {% if next_page %}
-                <a href="{% url 'pythonnest.views.index' page=next_page %}?search={{ pattern }}">
+                <a href="{% url 'pythonnest.views.show_classifier' classifier_id=classifier.id page=next_page %}">
                 {% trans 'Next page' %} <span class="link">➡</span></a>{% else %}{% trans 'Next page' %} <span class="nolink">➡</span>
             {% endif %}
         </div>
         <ul>
-            {% for result in results %}
+            {% for result in releases %}
                 <li>
-                    <a href="{% url 'pythonnest.views.show_package' package_id=result.id %}"><span class="link">➠</span> {{ result.name }}</a>
-                {% if result.summary %}<span class="summary">{{ result.summary }}</span>{% endif %}
+                    <a href="{% url 'pythonnest.views.show_package' package_id=result.package.id release_id=result.id %}">
+                        <span class="link">➠</span> {{ result }}</a>
+                    {% if result.package.summary %}<span class="summary">{{ result.package.summary }}</span>{% endif %}
                 </li>
             {% empty %}
                 <li>{% trans "No package matched your query." %}</li>

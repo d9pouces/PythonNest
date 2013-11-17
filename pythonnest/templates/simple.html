@@ -5,7 +5,7 @@
 <body>
 {% if package %}<h1>Links for {{ package.name }}</h1>{% endif %}
 {% for dl in downloads %}
-<a href="{{ dl.globalurl }}" rel="download">{{ dl.filename }}</a><br/>
+<a href="{{ dl.globalurl }}#md5={{ dl.md5_digest }}" rel="download">{{ dl.filename }}</a><br/>
 {% endfor %}
 </body>
 </html>

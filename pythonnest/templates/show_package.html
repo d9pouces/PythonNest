@@ -45,7 +45,10 @@
                     <li>{% trans 'Docs: ' %}<a href="{{ release.docs_url }}"><span
                             class="link">➠</span> {{ release.docs_url }}</a></li>{% endif %}
 
-                {% if release.classifiers.all %}<li>{% trans 'Classifiers: ' %}{{ release.classifiers.all|join:', ' }}</li>{% endif %}
+                {% if release.classifiers.all %}<li>{% trans 'Classifiers: ' %}
+                {% for classifier in release.classifiers.all %}{% if not forloop.first %}, {% endif %}
+                    <a href="{% url 'pythonnest.views.show_classifier' classifier_id=classifier.id %}">{{ classifier.name }}</a>
+                {% endfor %}</li>{% endif %}
                 {% if release.requires.all %}<li>{% trans 'Requires: ' %}{{ release.requires.all|join:', ' }}</li>{% endif %}
                 {% if release.obsoletes.all %}<li>{% trans 'Obsoletes: ' %}{{ release.obsoletes.all|join:', ' }}</li>{% endif %}
                 {% if release.provides.all %}<li>{% trans 'Provides: ' %}{{ release.provides.all|join:', ' }}</li>{% endif %}

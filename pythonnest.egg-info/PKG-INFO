@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pythonnest
-Version: 0.4
+Version: 0.5
 Summary: Pypi emulator and cloning tool .
 Home-page: http://19pouces.net/PythonNest.html
 Author: flanker
@@ -13,6 +13,12 @@ Description: PythonNest
         
         
         
+        
+        [TODO]
+        - search function on the index page
+        - display a package
+        - rss feeds
+        - administration view (delete packages/versions/files)
 Platform: UNKNOWN
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3

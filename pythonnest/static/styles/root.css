@@ -65,6 +65,7 @@ div.body-content {
     border-top-style: none;
     margin: 0 0 30px;
     padding-top: 10px;
+    padding-bottom: 10px;
     background: #ffffff; /* Old browsers */
     background: -webkit-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* Chrome10+,Safari5.1+ */
     background: -o-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* Opera 11.10+ */
@@ -107,6 +108,11 @@ span.link {
     font-size: 20px;
 }
 
+span.nolink {
+    color: #888888;
+    font-size: 20px;
+}
+
 span.summary {
     color: #666666;
     font-size: 14px;
@@ -120,4 +126,19 @@ span.download {
 div.body-content li a, div.body-content li a {
     text-decoration: none;
     color: #555555;
+}
+
+div.paginator {
+    text-align: center;
+    color: #888888;
+    font-size: 14px;
+}
+span.paginator-main {
+    font-size: 16px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+div.paginator a, div.paginator a:visited {
+    color: #333333;
+    text-decoration: none;
 }

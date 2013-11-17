@@ -9,21 +9,24 @@ import datetime
 import mimetypes
 import os
 import stat
+import re
+import math
+
 from django import forms
 from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-import re
 from django.views.static import was_modified_since
+
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType
+
 
 __author__ = "flanker"
 
@@ -222,16 +225,26 @@ def sendfile(request, filename):
     return response
 
 
-def index(request):
+def index(request, page='0', size='20'):
     """Index view, displaying and processing a form."""
     search = SearchForm(request.GET)
     if search.is_valid():
         pattern = search.cleaned_data['search']
         if len(pattern) > 2:
-            packages = Package.objects.filter(name__icontains=pattern).select_related()
+            query = Package.objects.filter(name__icontains=pattern)
         else:
-            packages = Package.objects.filter(name__iexact=pattern).select_related()
-        template_values = {'results': packages.distinct().select_related(), 'title': _('PythonNest')}
+            query = Package.objects.filter(name__iexact=pattern)
+        page_int = int(page)
+        page_size = int(size)
+        packages = list(query.distinct().select_related()[page_int * page_size:(page_int + 1) * page_size])
+        total = query.count()
+        page_count = math.ceil(total / page_size)
+        page_index = page_int + 1
+        template_values = {'results': packages, 'title': _('PythonNest'),
+                           'page_count': page_count, 'page_index': page_index,
+                           'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': pattern,
+                           'next_page': None if page_index >= page_count else page_index,
+        }
         return render_to_response('search_result.html', template_values, RequestContext(request))
     base_url = request.build_absolute_uri('/')
     template_values = {'base_url': base_url, }
@@ -252,5 +265,22 @@ def show_package(request, package_id, release_id=None):
                        'package': package, 'roles': roles,
                        'is_editable': request.user in set([x.user for x in roles]),
                        'release': release, 'releases': releases, 'downloads': downloads,
-                       }
+    }
     return render_to_response('show_package.html', template_values, RequestContext(request))
+
+
+def show_classifier(request, classifier_id, page='0', size='20'):
+    classifier = get_object_or_404(Classifier, id=classifier_id)
+    page_int = int(page)
+    page_size = int(size)
+    releases = list(classifier.release_set.all().select_related('package')
+                    .order_by('-id')[page_int * page_size:(page_int + 1) * page_size])
+    total = classifier.release_set.all().count()
+    page_count = math.ceil(total / page_size)
+    page_index = page_int + 1
+    template_values = {'title': _('PythonNest - %(c)s') % {'c': classifier.name},
+                       'releases': releases, 'page_count': page_count, 'page_index': page_index,
+                       'previous_page': None if page_int <= 0 else page_int - 1, 'classifier': classifier,
+                       'next_page': None if page_index >= page_count else page_index,
+    }
+    return render_to_response('classifier.html', template_values, RequestContext(request))

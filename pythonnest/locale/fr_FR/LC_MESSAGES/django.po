@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 13:57+0100\n"
+"POT-Creation-Date: 2013-11-17 15:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,14 +194,19 @@ msgstr "timestamp"
 msgid "action"
 msgstr "action"
 
-#: views.py:234 djangoproject/context_processors.py:17
+#: views.py:243 djangoproject/context_processors.py:17
 msgid "PythonNest"
 msgstr "PythonNest"
 
-#: views.py:251
+#: views.py:264
 #, python-format
 msgid "PythonNest — %(p)s"
 msgstr "PythonNest — %(p)s"
+
+#: views.py:281
+#, python-format
+msgid "PythonNest - %(c)s"
+msgstr "PythonNest — %(c)s"
 
 #: djangoproject/templates/admin/base_site.html:4
 msgid "Administration"
@@ -345,40 +350,64 @@ msgstr "Accueil"
 msgid "Admin"
 msgstr "Admin"
 
+#: templates/classifier.html:3 templates/search_result.html:3
+msgid "Search results"
+msgstr "Résultats de la recherche"
+
+#: templates/classifier.html:7 templates/classifier.html.py:8
+#: templates/search_result.html:7 templates/search_result.html.py:8
+msgid "Previous page"
+msgstr "Page précédente"
+
+#: templates/classifier.html:10 templates/search_result.html:10
+#, python-format
+msgid " %(cc)s/%(ct)s"
+msgstr " %(cc)s/%(ct)s "
+
+#: templates/classifier.html:13 templates/search_result.html:13
+msgid "Next page"
+msgstr "Page suivante"
+
+#: templates/classifier.html:24 templates/search_result.html:23
+msgid "No package matched your query."
+msgstr "Aucun paquet ne correspond à vos critères"
+
 #: templates/index.html:3
 msgid "Client configuration"
 msgstr "Configuration des clients"
 
 #: templates/index.html:6
-msgid "Edit <span class=\"pre\">~/.pip/pip.conf</span> to include these lines"
-msgstr "Modifier <span class=\"pre\">~/.pip/pip.conf</span> pour ajouter ces lignes"
+msgid "Edit <span class=\"pre\">~/.pip/pip.conf</span> to include these lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.pip/pip.conf</span> pour ajouter ces lignes :"
 
 #: templates/index.html:12
 msgid ""
 "Edit <span class=\"pre\">~/.buildout/default.cfg</span> to include these "
-"lines"
-msgstr "Modifier <span class=\"pre\">~/.buildout/default.cfg</span> pour ajouter ces lignes"
+"lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.buildout/default.cfg</span> pour ajouter ces "
+"lignes :"
 
 #: templates/index.html:18
-msgid "Edit <span class=\"pre\">~/.pypirc</span> to include these lines"
-msgstr "Modifier <span class=\"pre\">~/.pypirc</span> pour ajouter ces lignes"
+msgid "Edit <span class=\"pre\">~/.pypirc</span> to include these lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.pypirc</span> pour ajouter ces lignes :"
+
+#: templates/index.html:28
+msgid "Run the following commands to use this repository:"
+msgstr "Utiliser la commande suivante pour utiliser ce miroir :"
 
 #: templates/index.html:33
 msgid ""
-"Edit <span class=\"pre\">~/.pydistutils.cfg</span> to include these lines"
-msgstr "Modifier <span class=\"pre\">~/.pydistutils.cfg</span> pour ajouter ces lignes"
+"Edit <span class=\"pre\">~/.pydistutils.cfg</span> to include these lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.pydistutils.cfg</span> pour ajouter ces "
+"lignes :"
 
 #: templates/root.html:18
 msgid "Search"
 msgstr "Recherche"
-
-#: templates/search_result.html:3
-msgid "Search results"
-msgstr "Résultats de la recherche"
-
-#: templates/search_result.html:12
-msgid "No package matched your query."
-msgstr "Aucun paquet ne correspond à vos critères"
 
 #: templates/show_package.html:7 templates/show_package.html.py:27
 msgid "Homepage: "
@@ -416,24 +445,24 @@ msgstr "Docs : "
 msgid "Classifiers: "
 msgstr "Classifieurs : "
 
-#: templates/show_package.html:49
+#: templates/show_package.html:52
 msgid "Requires: "
 msgstr "Paquets requis : "
 
-#: templates/show_package.html:50
+#: templates/show_package.html:53
 msgid "Obsoletes: "
 msgstr "Paquets obsolètes : "
 
-#: templates/show_package.html:51
+#: templates/show_package.html:54
 msgid "Provides: "
 msgstr "Paquets fournis : "
 
-#: templates/show_package.html:53
+#: templates/show_package.html:56
 #, python-format
 msgid "Download %(type)s: "
 msgstr "Archive %(type)s : "
 
-#: templates/show_package.html:55
+#: templates/show_package.html:58
 #, python-format
 msgid ""
 "\n"
@@ -446,21 +475,13 @@ msgstr ""
 "%(dt)s\n"
 "                    "
 
-#: templates/show_package.html:60
+#: templates/show_package.html:63
 msgid "No available download."
 msgstr "Aucun fichier n'est disponible"
 
-#: templates/show_package.html:66
+#: templates/show_package.html:69
 msgid "All available releases"
 msgstr "Versions disponibles"
-
-#: templates/test.html:5
-msgid "Col1"
-msgstr ""
-
-#: templates/test.html:6
-msgid "Col2"
-msgstr ""
 
 #: tests/test_translation.py:32
 msgid "test_string"

@@ -1,0 +1,16 @@
+{% extends "root.html" %}{% load staticfiles %}{% load url from future %}{% load i18n %}
+{% block body %}
+        <h2 class="body-header">{% trans "Search results" %}</h2>
+        <div class="body-content">
+        <ul>
+            {% for result in results %}
+                <li>
+                    <a href="{% url 'pythonnest.views.show_package' package_id=result.id %}"><span class="link">➠</span> {{ result.name }}</a>
+                {% if result.summary %}<span class="summary">{{ result.summary }}</span>{% endif %}
+                </li>
+            {% empty %}
+                <li>{% trans "No package matched your query." %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

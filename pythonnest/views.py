@@ -13,6 +13,7 @@ from django import forms
 from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -53,28 +54,8 @@ def version_json(request, package_name, version):
 
 
 class SearchForm(forms.Form):
-    """Sample form, with three fields."""
-    # pylint: disable=R0903
-    # pylint: disable=W0232
-    search = forms.CharField(label=_('Pattern'), max_length=200, min_length=3,
-                             widget=forms.widgets.TextInput(attrs={'placeholder': _('Please enter a word'), }))
-
-
-def index(request):
-    """Index view, displaying and processing a form."""
-    results = []
-    has_results = False
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():  # pylint: disable=E1101
-            results = Package.objects.filter(name__icontains=form.cleaned_data['search']).select_related()
-            has_results = True
-    else:
-        form = SearchForm()
-    base_url = request.build_absolute_uri('/')
-    template_values = {'form': form, 'results': results, 'has_results': has_results, 'base_url': base_url, }
-    template_values.update(csrf(request))  # prevents cross-domain requests
-    return render_to_response('index.html', template_values, RequestContext(request))
+    """Upload form"""
+    search = forms.CharField(max_length=255)
 
 
 def simple(request, package_name=None, version=None):
@@ -239,3 +220,37 @@ def sendfile(request, filename):
     response['Content-Length'] = end - start + 1
     #response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
     return response
+
+
+def index(request):
+    """Index view, displaying and processing a form."""
+    search = SearchForm(request.GET)
+    if search.is_valid():
+        pattern = search.cleaned_data['search']
+        if len(pattern) > 2:
+            packages = Package.objects.filter(name__icontains=pattern).select_related()
+        else:
+            packages = Package.objects.filter(name__iexact=pattern).select_related()
+        template_values = {'results': packages.distinct().select_related(), 'title': _('PythonNest')}
+        return render_to_response('search_result.html', template_values, RequestContext(request))
+    base_url = request.build_absolute_uri('/')
+    template_values = {'base_url': base_url, }
+    template_values.update(csrf(request))  # prevents cross-domain requests
+    return render_to_response('index.html', template_values, RequestContext(request))
+
+
+def show_package(request, package_id, release_id=None):
+    package = get_object_or_404(Package, id=package_id)
+    roles = PackageRole.objects.filter(package=package).select_related()
+    releases = list(Release.objects.filter(package=package).order_by('-id').select_related())
+    if release_id is None:
+        release = releases[0] if releases else None
+    else:
+        release = get_object_or_404(Release, id=release_id, package=package)
+    downloads = ReleaseDownload.objects.filter(release=release).order_by('filename')
+    template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
+                       'package': package, 'roles': roles,
+                       'is_editable': request.user in set([x.user for x in roles]),
+                       'release': release, 'releases': releases, 'downloads': downloads,
+                       }
+    return render_to_response('show_package.html', template_values, RequestContext(request))

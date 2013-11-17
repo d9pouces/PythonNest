@@ -1,0 +1,467 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-17 13:57+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:47
+msgid "Source"
+msgstr "Source"
+
+#: models.py:48
+msgid "Destination"
+msgstr "Destination"
+
+#: models.py:49
+msgid "Last synchronized serial"
+msgstr "Dernière synchronisation"
+
+#: models.py:50 models.py:63 models.py:103 models.py:153 models.py:211
+msgid "creation"
+msgstr "création"
+
+#: models.py:51 models.py:64 models.py:104 models.py:154 models.py:212
+msgid "modification"
+msgstr "modification"
+
+#: models.py:54
+msgid "Synchronization"
+msgstr "synchronisation"
+
+#: models.py:55
+msgid "Synchronizations"
+msgstr "synchronisations"
+
+#: models.py:58
+#, python-format
+msgid "%(s)s -> %(d)s"
+msgstr "%(s)s -> %(d)s"
+
+#: models.py:62
+msgid "Classifier"
+msgstr "classifieurs"
+
+#: models.py:93
+msgid "package name"
+msgstr "nom de paquet"
+
+#: models.py:94
+msgid "author"
+msgstr "auteur"
+
+#: models.py:95
+msgid "author email"
+msgstr "courriel de l'auteur"
+
+#: models.py:96 models.py:121
+msgid "maintainer"
+msgstr "mainteneur"
+
+#: models.py:97
+msgid "maintainer email"
+msgstr "courriel du mainteneur"
+
+#: models.py:98
+msgid "home page"
+msgstr "page d'accueil"
+
+#: models.py:99
+msgid "license"
+msgstr "licence"
+
+#: models.py:100
+msgid "summary"
+msgstr "résumé"
+
+#: models.py:101
+msgid "download url"
+msgstr "URL de téléchargement"
+
+#: models.py:102
+msgid "project url"
+msgstr "URL du projet"
+
+#: models.py:105
+msgid "restrict to this group"
+msgstr "restreindre à ce groupe"
+
+#: models.py:121
+msgid "role"
+msgstr "rôle"
+
+#: models.py:121
+msgid "owner"
+msgstr "propriétaire"
+
+#: models.py:123
+msgid "user"
+msgstr "utilisateur"
+
+#: models.py:124
+msgid "package"
+msgstr "paquet"
+
+#: models.py:132
+msgid "version name"
+msgstr "nom de version"
+
+#: models.py:133
+msgid "stable version name"
+msgstr "nom de version stable"
+
+#: models.py:135
+msgid "Description"
+msgstr "description"
+
+#: models.py:136
+msgid "platform"
+msgstr "platform"
+
+#: models.py:137
+msgid "keywords"
+msgstr "mots-clefs"
+
+#: models.py:152
+msgid "docs url"
+msgstr "URL de la documentation"
+
+#: models.py:155
+msgid "Is hidden"
+msgstr "est caché"
+
+#: models.py:199
+msgid "UID"
+msgstr "UID"
+
+#: models.py:200
+msgid "URL"
+msgstr "URL"
+
+#: models.py:202
+msgid "Filename"
+msgstr "nom de fichier"
+
+#: models.py:203
+msgid "File"
+msgstr "fichier"
+
+#: models.py:204
+msgid "Size"
+msgstr "taille"
+
+#: models.py:205
+msgid "MD5"
+msgstr "MD5"
+
+#: models.py:206
+msgid "Downloads"
+msgstr "téléchargements"
+
+#: models.py:207
+msgid "Has signature"
+msgstr "est signé"
+
+#: models.py:208
+msgid "Python version"
+msgstr "version de Python"
+
+#: models.py:209
+msgid "Comment"
+msgstr "commentaire"
+
+#: models.py:210
+msgid "Upload time"
+msgstr "date d'ajout"
+
+#: models.py:267
+msgid "timestamp"
+msgstr "timestamp"
+
+#: models.py:268
+msgid "action"
+msgstr "action"
+
+#: views.py:234 djangoproject/context_processors.py:17
+msgid "PythonNest"
+msgstr "PythonNest"
+
+#: views.py:251
+#, python-format
+msgid "PythonNest — %(p)s"
+msgstr "PythonNest — %(p)s"
+
+#: djangoproject/templates/admin/base_site.html:4
+msgid "Administration"
+msgstr "Administration"
+
+#: djangoproject/templates/admin/base_site.html:8
+msgid "Home"
+msgstr "Accueil"
+
+#: management/commands/export.py:35
+#, python-format
+msgid "Dumping from serial %(syn)s"
+msgstr "Copie depuis la synchronisation %(syn)s"
+
+#: management/commands/export.py:38
+msgid "No previous sync... Dumping all database"
+msgstr "Pas de synchronisation... Copie de la base complète"
+
+#: management/commands/export.py:41 management/commands/import.py:41
+#: management/commands/update.py:167
+#, python-format
+msgid "Previous sync: serial %(syn)s"
+msgstr "Synchronisation précédente : %(syn)s"
+
+#: management/commands/export.py:63
+#, python-format
+msgid "Adding %(fn)s (%(pk)s %(vn)s)"
+msgstr "Ajout de %(fn)s (%(pk)s %(vn)s)"
+
+#: management/commands/import.py:38
+msgid "No previous sync"
+msgstr "Pas de synchronisation précédente"
+
+#: management/commands/import.py:49 management/commands/import.py:55
+msgid "Invalid sync file"
+msgstr "Fichier invalide"
+
+#: management/commands/import.py:52
+msgid "Invalid md5 data"
+msgstr "Fichier corrompu (md5 incorrect)"
+
+#: management/commands/import.py:58
+#, python-format
+msgid "Missing synchronization between %(f)d and %(l)d"
+msgstr "Synchronisation entre %(f)d et %(l)d manquante"
+
+#: management/commands/import.py:90
+#, python-format
+msgid "Duplicate file: %(f)s"
+msgstr "Fichier dupliqué : %(f)s"
+
+#: management/commands/import.py:111
+#, python-format
+msgid "Corrupted file: %(f)s"
+msgstr "Fichier corrompu : %(f)s"
+
+#: management/commands/update.py:56
+#, python-format
+msgid "release data (%(p)s, %(v)s)"
+msgstr "données de version (%(p)s, %(v)s)"
+
+#: management/commands/update.py:64
+#, python-format
+msgid "package roles (%(p)s, %(v)s)"
+msgstr "rôles du paquet (%(p)s, %(v)s)"
+
+#: management/commands/update.py:87
+#, python-format
+msgid "release urls (%(p)s, %(v)s)"
+msgstr "URL des versions (%(p)s, %(v)s)"
+
+#: management/commands/update.py:94
+#, python-format
+msgid "Downloading %(url)s"
+msgstr "Téléchargement de %(url)s"
+
+#: management/commands/update.py:116
+#, python-format
+msgid "Error while downloading %(url)s [invalid md5 digest]"
+msgstr "Erreur en téléchargeant %(url)s [md5 invalide]"
+
+#: management/commands/update.py:123
+#, python-format
+msgid "Error while downloading %(url)s"
+msgstr "Erreur en téléchargeant %(url)s"
+
+#: management/commands/update.py:128
+#, python-format
+msgid "Error while downloading %(url)s [GAI error]"
+msgstr "Erreur en téléchargeant %(url)s [erreur GAI]"
+
+#: management/commands/update.py:133
+#, python-format
+msgid "Error while downloading %(url)s [socket timeout]"
+msgstr "Erreur en téléchargeant %(url)s [socket timeout]"
+
+#: management/commands/update.py:161
+#, python-format
+msgid "Download from serial %(syn)s"
+msgstr "Téléchargement depuis la synchronisation %(syn)s"
+
+#: management/commands/update.py:165
+msgid "No previous sync... Initializing database"
+msgstr "Aucune synchronisation précédente… Initialisation de la base"
+
+#: management/commands/update.py:181 management/commands/update.py:216
+#, python-format
+msgid "Found %(pkg)s-%(vsn)s"
+msgstr "Version %(pkg)s-%(vsn)s"
+
+#: management/commands/update.py:188 management/commands/update.py:220
+#, python-format
+msgid "Timeout with %(p)s-%(v)s [socket timeout]"
+msgstr "Timeout avec %(p)s-%(v)s [socket timeout]"
+
+#: management/commands/update.py:192 management/commands/update.py:224
+#, python-format
+msgid "Gai error with %(p)s-%(v)s"
+msgstr "Erreur GAI avec %(p)s-%(v)s"
+
+#: management/commands/update.py:196 management/commands/update.py:228
+#, python-format
+msgid "Protocol error with %(p)s-%(v)s"
+msgstr "Erreur de protocole avec %(p)s-%(v)s"
+
+#: management/commands/update.py:206
+#, python-format
+msgid "Found %(pkg)s"
+msgstr "Paquet %(pkg)s"
+
+#: management/commands/update.py:210
+#, python-format
+msgid "package releases (%(p)s)"
+msgstr "versions de paquet (%(p)s)"
+
+#: templates/base.html:32
+msgid "Index"
+msgstr "Accueil"
+
+#: templates/base.html:33 templates/base.html.py:34
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/index.html:3
+msgid "Client configuration"
+msgstr "Configuration des clients"
+
+#: templates/index.html:6
+msgid "Edit <span class=\"pre\">~/.pip/pip.conf</span> to include these lines"
+msgstr "Modifier <span class=\"pre\">~/.pip/pip.conf</span> pour ajouter ces lignes"
+
+#: templates/index.html:12
+msgid ""
+"Edit <span class=\"pre\">~/.buildout/default.cfg</span> to include these "
+"lines"
+msgstr "Modifier <span class=\"pre\">~/.buildout/default.cfg</span> pour ajouter ces lignes"
+
+#: templates/index.html:18
+msgid "Edit <span class=\"pre\">~/.pypirc</span> to include these lines"
+msgstr "Modifier <span class=\"pre\">~/.pypirc</span> pour ajouter ces lignes"
+
+#: templates/index.html:33
+msgid ""
+"Edit <span class=\"pre\">~/.pydistutils.cfg</span> to include these lines"
+msgstr "Modifier <span class=\"pre\">~/.pydistutils.cfg</span> pour ajouter ces lignes"
+
+#: templates/root.html:18
+msgid "Search"
+msgstr "Recherche"
+
+#: templates/search_result.html:3
+msgid "Search results"
+msgstr "Résultats de la recherche"
+
+#: templates/search_result.html:12
+msgid "No package matched your query."
+msgstr "Aucun paquet ne correspond à vos critères"
+
+#: templates/show_package.html:7 templates/show_package.html.py:27
+msgid "Homepage: "
+msgstr "Page d'accueil : "
+
+#: templates/show_package.html:10 templates/show_package.html.py:16
+msgid "Author: "
+msgstr "Auteur : "
+
+#: templates/show_package.html:22
+msgid "License: "
+msgstr "Licence : "
+
+#: templates/show_package.html:24
+msgid "Download URL: "
+msgstr "Lien direct : "
+
+#: templates/show_package.html:35
+msgid "Release: "
+msgstr "Version : "
+
+#: templates/show_package.html:41
+msgid "Platform: "
+msgstr "Plate-forme : "
+
+#: templates/show_package.html:43
+msgid "Keywords: "
+msgstr "Mots-clefs : "
+
+#: templates/show_package.html:45
+msgid "Docs: "
+msgstr "Docs : "
+
+#: templates/show_package.html:48
+msgid "Classifiers: "
+msgstr "Classifieurs : "
+
+#: templates/show_package.html:49
+msgid "Requires: "
+msgstr "Paquets requis : "
+
+#: templates/show_package.html:50
+msgid "Obsoletes: "
+msgstr "Paquets obsolètes : "
+
+#: templates/show_package.html:51
+msgid "Provides: "
+msgstr "Paquets fournis : "
+
+#: templates/show_package.html:53
+#, python-format
+msgid "Download %(type)s: "
+msgstr "Archive %(type)s : "
+
+#: templates/show_package.html:55
+#, python-format
+msgid ""
+"\n"
+"                        size: %(size)s, MD5 hash: %(md5)s, uploaded at "
+"%(dt)s\n"
+"                    "
+msgstr ""
+"\n"
+"                        taille : %(size)s, empreinte MD5: %(md5)s, ajouté le "
+"%(dt)s\n"
+"                    "
+
+#: templates/show_package.html:60
+msgid "No available download."
+msgstr "Aucun fichier n'est disponible"
+
+#: templates/show_package.html:66
+msgid "All available releases"
+msgstr "Versions disponibles"
+
+#: templates/test.html:5
+msgid "Col1"
+msgstr ""
+
+#: templates/test.html:6
+msgid "Col2"
+msgstr ""
+
+#: tests/test_translation.py:32
+msgid "test_string"
+msgstr ""

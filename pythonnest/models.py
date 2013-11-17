@@ -132,7 +132,7 @@ class Release(models.Model):
     version = models.CharField(_('version name'), db_index=True, blank=True, null=True, default='', max_length=255)
     stable_version = models.CharField(_('stable version name'), db_index=True, null=True, blank=True, default='',
                                       max_length=255)
-    description = models.TextField(_('Summary'), blank=True, default='', null=True)
+    description = models.TextField(_('Description'), blank=True, default='', null=True)
     platform = models.CharField(_('platform'), db_index=True, blank=True, null=True, default='UNKNOWN', max_length=25)
     keywords = models.CharField(_('keywords'), db_index=True, blank=True, null=True, default='', max_length=255)
     classifiers = models.ManyToManyField(Classifier, db_index=True, blank=True, null=True)
@@ -229,6 +229,10 @@ class ReleaseDownload(models.Model):
         return self.filename
 
     @property
+    def packagetype(self):
+        return 'archive' if not self.package_type else self.package_type
+
+    @property
     def abspath(self):
         return os.path.join(settings.MEDIA_ROOT, release_download_path(self, self.filename))
 
@@ -237,7 +241,10 @@ class ReleaseDownload(models.Model):
         return self.abspath[MEDIA_ROOT_LEN:]
 
     def absurl(self, request):
-        return request.build_absolute_uri(self.url)
+        return request.build_absolute_uri(settings.MEDIA_URL + release_download_path(self, self.filename))
+
+    def globalurl(self):
+        return settings.MEDIA_URL + release_download_path(self, self.filename)
 
     def data(self, request=None):
         result = dict([(x, getattr(self, x)) for x in ('has_sig', 'upload_time', 'comment_text', 'python_version',
@@ -248,6 +255,8 @@ class ReleaseDownload(models.Model):
             result['packagetype'] = None
         if request is not None:
             result['url'] = self.absurl(request)
+        else:
+            result['url'] = settings.MEDIA_URL + release_download_path(self, self.filename)
         return result
 
 

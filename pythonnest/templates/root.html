@@ -12,7 +12,7 @@
     <header>
         {% block title %}
             <h1>
-                <span id="title">{{ title }}</span>
+                <span id="title"><a href="{% url 'pythonnest.views.index' %}">{{ title }}</a></span>
                 <span id="search">
                     <form action="{% url 'pythonnest.views.index' %}" method="GET">
                         <input id="id_search" placeholder="{% trans 'Search' %}" maxlength="255" name="search"

@@ -1,0 +1,76 @@
+{% extends "root.html" %}{% load staticfiles %}{% load url from future %}{% load i18n %}
+{% block body %}
+    <h2 class="body-header">{% if package.summary %}{{ package.summary }}{% else %}{{ package.name }}{% endif %}</h2>
+    <div class="body-content">
+        <ul>
+            {% if package.home_page %}
+                <li>{% trans 'Homepage: ' %}<a href="{{ package.home_page }}"><span
+                        class="link">➠</span> {{ package.home_page }}</a></li>{% endif %}
+            {% if package.author %}
+                <li>{% trans 'Author: ' %}
+                    {% if package.author_email %}<a href="mailto:{{ package.author_email }}">{{ package.author }}
+                        </a>{% else %}
+                        {{ package.author }}{% endif %}
+                </li>{% endif %}
+            {% if package.maintainer %}
+                <li>{% trans 'Author: ' %}
+                    {% if package.maintainer_email %}<a href="mailto:{{ package.maintainer_email }}">
+                        {{ package.maintainer }}
+                        </a>{% else %}{{ package.maintainer }}{% endif %}
+                </li>{% endif %}
+            {% if package.license %}
+                <li>{% trans 'License: ' %}{{ package.license }}</li>{% endif %}
+            {% if package.download_url %}
+                <li>{% trans 'Download URL: ' %}<a href="{{ package.download_url }}"><span
+                        class="link">➠</span> {{ package.download_url }}</a></li>{% endif %}
+            {% if package.project_url %}
+                <li>{% trans 'Homepage: ' %}<a href="{{ package.project_url }}"><span
+                        class="link">➠</span> {{ package.project_url }}</a></li>{% endif %}
+            {% for role in roles %}
+                <li>{{ role.get_role_display|capfirst }}: {{ role.user }}</li>
+            {% endfor %}
+        </ul>
+
+        {% if release %}
+            <h3>{% trans 'Release: ' %}{{ release.version }}</h3>
+            {% if release.description %}
+                <p>{{ release.description }}</p>
+            {% endif %}
+            <ul>
+                {% if release.platform %}
+                    <li>{% trans 'Platform: ' %}{{ release.platform }}</li>{% endif %}
+                {% if release.keywords %}
+                    <li>{% trans 'Keywords: ' %}{{ release.keywords }}</li>{% endif %}
+                {% if release.docs_url %}
+                    <li>{% trans 'Docs: ' %}<a href="{{ release.docs_url }}"><span
+                            class="link">➠</span> {{ release.docs_url }}</a></li>{% endif %}
+
+                {% if release.classifiers.all %}<li>{% trans 'Classifiers: ' %}{{ release.classifiers.all|join:', ' }}</li>{% endif %}
+                {% if release.requires.all %}<li>{% trans 'Requires: ' %}{{ release.requires.all|join:', ' }}</li>{% endif %}
+                {% if release.obsoletes.all %}<li>{% trans 'Obsoletes: ' %}{{ release.obsoletes.all|join:', ' }}</li>{% endif %}
+                {% if release.provides.all %}<li>{% trans 'Provides: ' %}{{ release.provides.all|join:', ' }}</li>{% endif %}
+                {% for download in downloads %}
+                    <li>{% blocktrans with type=download.packagetype %}Download {{ type }}: {% endblocktrans %}
+                    <a href="{{ download.globalurl }}">{{ download.filename }}</a>
+                    <span class="download">{% blocktrans with size=download.size|filesizeformat md5=download.md5_digest dt=download.upload_time %}
+                        size: {{ size }}, MD5 hash: {{ md5 }}, uploaded at {{ dt }}
+                    {% endblocktrans %}</span>
+                    </li>
+                {% empty %}
+                    <li>{% trans 'No available download.' %}</li>
+                {% endfor %}
+            </ul>
+
+        {% endif %}
+        {% if releases %}
+            <h3>{% trans 'All available releases' %}</h3>
+            <ul>
+                {% for release in releases %}
+                    <li>
+                        <a href="{% url 'pythonnest.views.show_package' package_id=package.id release_id=release.id %}">{{ release }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

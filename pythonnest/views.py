@@ -247,7 +247,7 @@ def index(request, page='0', size='20'):
                            'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': pattern,
                            'next_page': None if page_index >= page_count else page_index, }
         return render_to_response('search_result.html', template_values, RequestContext(request))
-    base_url = request.build_absolute_uri('/')
+    base_url = settings.HOST
     template_values = {'base_url': base_url, }
     template_values.update(csrf(request))  # prevents cross-domain requests
     return render_to_response('index.html', template_values, RequestContext(request))

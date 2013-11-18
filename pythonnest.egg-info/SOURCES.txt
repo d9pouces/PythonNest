@@ -76,13 +76,13 @@ pythonnest/static/scripts/scripts.js
 pythonnest/static/styles/root.css
 pythonnest/static/styles/style.css
 pythonnest/templates/base.html
+pythonnest/templates/classifier.html
 pythonnest/templates/error.html
 pythonnest/templates/index.html
 pythonnest/templates/root.html
 pythonnest/templates/search_result.html
 pythonnest/templates/show_package.html
 pythonnest/templates/simple.html
-pythonnest/templates/test.html
 pythonnest/templates/deployment/apache.conf
 pythonnest/templates/deployment/nginx.conf
 pythonnest/tests/__init__.py

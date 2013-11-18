@@ -26,13 +26,23 @@ password: your-password
 repository: {{ base_url }}setup
 </pre>
             <p>{% trans 'Run the following commands to use this repository:' %}</p>
-            <pre>python setup.py bdist sdist upload -r http://localhost:8000/setup</pre>
+            <pre>python setup.py bdist sdist upload -r {{ base_url }}setup</pre>
 
             <h3>Easyinstall</h3>
-
             <p>{% trans 'Edit <span class="pre">~/.pydistutils.cfg</span> to include these lines:' %}</p>
 <pre>[easy_install]
 index_url = {{ base_url }}simple</pre>
 
+            <h3>VirtualEnvs</h3>
+            <p>{% trans 'To easily use virtual environments, adapt and run these lines:' %}</p>
+<pre>sudo pip install pip --upgrade
+sudo pip install virtualenvwrapper
+echo "source /usr/local/bin/virtualenvwrapper.sh" &gt;&gt; ~/.bashrc
+source /usr/local/bin/virtualenvwrapper.sh
+# {% trans 'create virtual env' %}
+mkvirtualenv test
+# {% trans 'use virtual env' %}
+workon test
+</pre>
         </div>
 {% endblock %}

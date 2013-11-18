@@ -79,6 +79,9 @@ h3 {
     margin: 10px 0 0 0;
     padding-left: 30px;
     color: #fffff0;
+    background: #2d2e2d;
+    background: -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%);
+    background: -o-linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%);
     background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C */
 }
 

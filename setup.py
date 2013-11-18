@@ -22,7 +22,7 @@ entry_points = {"console_scripts": ["pythonnest-manage = pythonnest.djangoprojec
 
 version_filename = os.path.join(os.path.dirname(__file__), 'VERSION')
 with codecs.open(version_filename, 'r', encoding='utf-8') as fd:
-    version = fd.read()
+    version = fd.read().strip()
 
 setup(
     name='pythonnest',

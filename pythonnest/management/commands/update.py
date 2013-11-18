@@ -113,7 +113,8 @@ class Command(BaseCommand):
                                 data = in_fd.read(4096)
                     if md5_check.hexdigest() != release_url.get('md5_digest'):
                         os.remove(path)
-                        print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url': release_url['url']}))
+                        print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url':
+                                                                                               release_url['url']}))
                         no_timeout += 1
                         continue
                     download.file = download.relpath

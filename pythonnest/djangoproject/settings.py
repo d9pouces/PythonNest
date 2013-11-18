@@ -1,85 +1,70 @@
 # -*- coding: utf-8 -*-
 """ Django settings for pythonnest project. """
+import configparser
 from os.path import join, dirname, abspath
+from urllib.parse import urlparse
+
 __author__ = "flanker"
 
-# define a root path for misc. Django data (SQLite database, static files, ...)
-LOCAL_PATH = abspath(join(dirname(dirname(dirname(__file__))), 'django_data'))
 
+__parser = configparser.ConfigParser()
+__config_path_comp = abspath(__file__).split('/')
+__config_files = [join(__file__, '..', '..', 'pythonnest.ini')]
+if 'lib' in __config_path_comp:
+    __config_files.append('/'.join(__config_path_comp[0:__config_path_comp.index('lib')] + ['etc', 'pythonnest.ini']))
+__parser.read(__config_files)
 
-DEBUG = True
+ROOT_PATH = __parser.get('pythonnest', 'ROOT_PATH', fallback=None)
+if not ROOT_PATH:
+    ROOT_PATH = abspath(join(dirname(dirname(dirname(__file__))), 'django_data'))
+HOST = __parser.get('pythonnest', 'HOST', fallback='http://localhost:8000/')
+DEBUG = __parser.getboolean('pythonnest', 'DEBUG', fallback=True)
+TIME_ZONE = __parser.get('pythonnest', 'TIME_ZONE', fallback='Europe/Paris')
+LANGUAGE_CODE = __parser.get('pythonnest', 'LANGUAGE_CODE', fallback='fr-fr')
+USE_XSENDFILE = __parser.getboolean('pythonnest', 'USE_XSENDFILE', fallback=False)
+DATABASE_ENGINE = __parser.get('pythonnest', 'DATABASE_ENGINE', fallback='django.db.backends.sqlite3')
+DATABASE_NAME = __parser.get('pythonnest', 'DATABASE_NAME', fallback=None)
+if not DATABASE_NAME:
+    DATABASE_NAME = join(ROOT_PATH, 'database.sqlite3')
+DATABASE_USER = __parser.get('pythonnest', 'DATABASE_USER', fallback='')
+DATABASE_PASSWORD = __parser.get('pythonnest', 'DATABASE_PASSWORD', fallback='')
+DATABASE_HOST = __parser.get('pythonnest', 'DATABASE_HOST', fallback='')
+DATABASE_PORT = __parser.get('pythonnest', 'DATABASE_PORT', fallback='')
+
+ADMIN_EMAIL = __parser.get('pythonnest', 'ADMIN_EMAIL', fallback='admin@example.com')
+
+ADMINS = ((ADMIN_EMAIL, ADMIN_EMAIL), )
+
+__components = urlparse(HOST)
 TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    ("flanker", "flanker@19pouces.net"),
-)
-
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': join(LOCAL_PATH, 'database.sqlite3'),   # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',  # Set to empty string for default.
-    }
-}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = [__components.hostname]
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Europe/Paris'
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'fr-fr'
+DATABASES = {
+    'default': {
+        'ENGINE': DATABASE_ENGINE,  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': DATABASE_NAME,   # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': DATABASE_PORT,  # Set to empty string for default.
+    }
+}
 
 SITE_ID = 1
-
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
 USE_I18N = True
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale.
 USE_L10N = True
-
-# If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/var/www/example.com/media/"
-MEDIA_ROOT = join(LOCAL_PATH, 'media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = 'http://localhost:8000/media/'
-
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/var/www/example.com/static/"
-STATIC_ROOT = join(LOCAL_PATH, 'static')
-
-# URL prefix for static files.
-# Example: "http://example.com/static/", "http://static.example.com/"
+MEDIA_ROOT = join(ROOT_PATH, 'media')
+MEDIA_URL = HOST + 'media/'
+STATIC_ROOT = join(ROOT_PATH, 'static')
 STATIC_URL = '/static/'
-
-# Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+STATICFILES_DIRS = ()
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -148,7 +133,6 @@ INSTALLED_APPS = (
     'pythonnest.rpcapi',
 )
 
-USE_XSENDFILE = False
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

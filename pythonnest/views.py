@@ -243,8 +243,7 @@ def index(request, page='0', size='20'):
         template_values = {'results': packages, 'title': _('PythonNest'),
                            'page_count': page_count, 'page_index': page_index,
                            'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': pattern,
-                           'next_page': None if page_index >= page_count else page_index,
-        }
+                           'next_page': None if page_index >= page_count else page_index, }
         return render_to_response('search_result.html', template_values, RequestContext(request))
     base_url = request.build_absolute_uri('/')
     template_values = {'base_url': base_url, }
@@ -264,8 +263,7 @@ def show_package(request, package_id, release_id=None):
     template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
                        'package': package, 'roles': roles,
                        'is_editable': request.user in set([x.user for x in roles]),
-                       'release': release, 'releases': releases, 'downloads': downloads,
-    }
+                       'release': release, 'releases': releases, 'downloads': downloads, }
     return render_to_response('show_package.html', template_values, RequestContext(request))
 
 
@@ -281,6 +279,5 @@ def show_classifier(request, classifier_id, page='0', size='20'):
     template_values = {'title': _('PythonNest - %(c)s') % {'c': classifier.name},
                        'releases': releases, 'page_count': page_count, 'page_index': page_index,
                        'previous_page': None if page_int <= 0 else page_int - 1, 'classifier': classifier,
-                       'next_page': None if page_index >= page_count else page_index,
-    }
+                       'next_page': None if page_index >= page_count else page_index, }
     return render_to_response('classifier.html', template_values, RequestContext(request))

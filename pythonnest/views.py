@@ -14,6 +14,7 @@ import math
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
@@ -79,7 +80,7 @@ def simple(request, package_name=None, version=None):
 @csrf_exempt
 def setup(request):
     if request.method != 'POST':
-        raise PermissionDenied
+        raise PermissionDenied(_('Only POST request are allowed'))
     ct_type = request.META.get('CONTENT_TYPE', '')
     infos = [x.strip().partition('=') for x in ct_type.split(';')]
     boundary, encoding = None, 'ascii'
@@ -89,7 +90,8 @@ def setup(request):
         elif info[0] == 'charset':
             encoding = info[2]
     if boundary is None:
-        raise PermissionDenied
+        raise PermissionDenied(_('Invalid POST form'))
+    # parse the POST query by hand
     mid_boundary = ('\n--' + boundary + '\n').encode(encoding)
     end_boundary = ('\n--' + boundary + '--\n').encode(encoding)
     fields = request.body.split(mid_boundary)
@@ -116,18 +118,14 @@ def setup(request):
             values.appendlist(key, value)
         else:
             files[key] = filename, value
+    # the POST data are parsed, let's go
     action = values.get(':action')
     if action in ('submit', 'file_upload'):
         package_name = values.get('name', '')
         version_name = values.get('version', '')
         if not package_name or not version_name:
-            raise PermissionDenied
-        package, created = Package.objects.get_or_create(name=package_name)
-        if not created:
-            if PackageRole.objects.filter(package=package, user=request.user).count() == 0:
-                raise PermissionDenied
-        else:
-            PackageRole(package=package, user=request.user, role=PackageRole.OWNER).save()
+            raise PermissionDenied(_('No package name provided'))
+        package, package_created = Package.objects.get_or_create(name=package_name)
         for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author', 'license', 'summary',
                           'maintainer', 'maintainer_email', 'project_url'):
             if values.get(attr_name):
@@ -146,32 +144,36 @@ def setup(request):
             for dep in values.getlist(attr_name, []):
                 getattr(release, attr_name.add(Dependence.get(dep)))
         release.save()
-    if action == 'file_upload':
-        if 'content' not in files:
-            raise PermissionDenied
-        filename, content = files['content']
-        #noinspection PyUnboundLocalVariable
-        if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
-            raise PermissionDenied
-        md5 = hashlib.md5(content).hexdigest()
-        if md5 != values.get('md5_digest'):
-            raise PermissionDenied
-        download = ReleaseDownload(package=package, release=release, filename=filename)
-        path = download.abspath
-        path_dirname = os.path.dirname(path)
-        if not os.path.isdir(path_dirname):
-            os.makedirs(path_dirname)
-        with open(path, 'wb') as out_fd:
-            out_fd.write(content)
-        download.md5_digest = md5
-        download.size = len(content)
-        download.upload_time = datetime.datetime.utcnow().replace(tzinfo=utc)
-        download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
-        download.file = download.relpath
-        download.package_type = PackageType.get(values.get('filetype', 'source'))
-        download.comment_text = values.get('comment', '')
-        download.python_version = values.get('pyversion')
-        download.log()
+        if action == 'file_upload':
+            if request.user.is_anonymous():
+                return HttpResponse('', status=401)
+            if package_created:
+                PackageRole(package=package, user=request.user, role=PackageRole.OWNER).save()
+            if 'content' not in files:
+                raise PermissionDenied
+            filename, content = files['content']
+            #noinspection PyUnboundLocalVariable
+            if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
+                raise PermissionDenied
+            md5 = hashlib.md5(content).hexdigest()
+            if md5 != values.get('md5_digest'):
+                raise PermissionDenied
+            download = ReleaseDownload(package=package, release=release, filename=filename)
+            path = download.abspath
+            path_dirname = os.path.dirname(path)
+            if not os.path.isdir(path_dirname):
+                os.makedirs(path_dirname)
+            with open(path, 'wb') as out_fd:
+                out_fd.write(content)
+            download.md5_digest = md5
+            download.size = len(content)
+            download.upload_time = datetime.datetime.utcnow().replace(tzinfo=utc)
+            download.url = settings.MEDIA_URL + path[MEDIA_ROOT_LEN:]
+            download.file = download.relpath
+            download.package_type = PackageType.get(values.get('filetype', 'source'))
+            download.comment_text = values.get('comment', '')
+            download.python_version = values.get('pyversion')
+            download.log()
     template_values = {}
     return render_to_response('simple.html', template_values, RequestContext(request))
 

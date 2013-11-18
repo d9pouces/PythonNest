@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 15:39+0100\n"
+"POT-Creation-Date: 2013-11-18 22:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,11 +194,23 @@ msgstr "timestamp"
 msgid "action"
 msgstr "action"
 
-#: views.py:243 djangoproject/context_processors.py:17
+#: views.py:83
+msgid "Only POST request are allowed"
+msgstr "Seules les requêtes POST sont autorisées"
+
+#: views.py:93
+msgid "Invalid POST form"
+msgstr "Formulaire POST invalide"
+
+#: views.py:127
+msgid "No package name provided"
+msgstr "Aucun nom de paquet n'est fourni"
+
+#: views.py:245 djangoproject/context_processors.py:17
 msgid "PythonNest"
 msgstr "PythonNest"
 
-#: views.py:264
+#: views.py:265
 #, python-format
 msgid "PythonNest — %(p)s"
 msgstr "PythonNest — %(p)s"
@@ -226,7 +238,7 @@ msgid "No previous sync... Dumping all database"
 msgstr "Pas de synchronisation... Copie de la base complète"
 
 #: management/commands/export.py:41 management/commands/import.py:41
-#: management/commands/update.py:167
+#: management/commands/update.py:168
 #, python-format
 msgid "Previous sync: serial %(syn)s"
 msgstr "Synchronisation précédente : %(syn)s"
@@ -288,56 +300,56 @@ msgstr "Téléchargement de %(url)s"
 msgid "Error while downloading %(url)s [invalid md5 digest]"
 msgstr "Erreur en téléchargeant %(url)s [md5 invalide]"
 
-#: management/commands/update.py:123
+#: management/commands/update.py:124
 #, python-format
 msgid "Error while downloading %(url)s"
 msgstr "Erreur en téléchargeant %(url)s"
 
-#: management/commands/update.py:128
+#: management/commands/update.py:129
 #, python-format
 msgid "Error while downloading %(url)s [GAI error]"
 msgstr "Erreur en téléchargeant %(url)s [erreur GAI]"
 
-#: management/commands/update.py:133
+#: management/commands/update.py:134
 #, python-format
 msgid "Error while downloading %(url)s [socket timeout]"
 msgstr "Erreur en téléchargeant %(url)s [socket timeout]"
 
-#: management/commands/update.py:161
+#: management/commands/update.py:162
 #, python-format
 msgid "Download from serial %(syn)s"
 msgstr "Téléchargement depuis la synchronisation %(syn)s"
 
-#: management/commands/update.py:165
+#: management/commands/update.py:166
 msgid "No previous sync... Initializing database"
 msgstr "Aucune synchronisation précédente… Initialisation de la base"
 
-#: management/commands/update.py:181 management/commands/update.py:216
+#: management/commands/update.py:182 management/commands/update.py:217
 #, python-format
 msgid "Found %(pkg)s-%(vsn)s"
 msgstr "Version %(pkg)s-%(vsn)s"
 
-#: management/commands/update.py:188 management/commands/update.py:220
+#: management/commands/update.py:189 management/commands/update.py:221
 #, python-format
 msgid "Timeout with %(p)s-%(v)s [socket timeout]"
 msgstr "Timeout avec %(p)s-%(v)s [socket timeout]"
 
-#: management/commands/update.py:192 management/commands/update.py:224
+#: management/commands/update.py:193 management/commands/update.py:225
 #, python-format
 msgid "Gai error with %(p)s-%(v)s"
 msgstr "Erreur GAI avec %(p)s-%(v)s"
 
-#: management/commands/update.py:196 management/commands/update.py:228
+#: management/commands/update.py:197 management/commands/update.py:229
 #, python-format
 msgid "Protocol error with %(p)s-%(v)s"
 msgstr "Erreur de protocole avec %(p)s-%(v)s"
 
-#: management/commands/update.py:206
+#: management/commands/update.py:207
 #, python-format
 msgid "Found %(pkg)s"
 msgstr "Paquet %(pkg)s"
 
-#: management/commands/update.py:210
+#: management/commands/update.py:211
 #, python-format
 msgid "package releases (%(p)s)"
 msgstr "versions de paquet (%(p)s)"
@@ -398,12 +410,24 @@ msgstr ""
 msgid "Run the following commands to use this repository:"
 msgstr "Utiliser la commande suivante pour utiliser ce miroir :"
 
-#: templates/index.html:33
+#: templates/index.html:32
 msgid ""
 "Edit <span class=\"pre\">~/.pydistutils.cfg</span> to include these lines:"
 msgstr ""
 "Modifier <span class=\"pre\">~/.pydistutils.cfg</span> pour ajouter ces "
 "lignes :"
+
+#: templates/index.html:37
+msgid "To easily use virtual environments, adapt and run these lines:"
+msgstr "Pour utiliser facilement les environnements virtuels, adaptez les lignes suivantes :"
+
+#: templates/index.html:42
+msgid "create virtual env"
+msgstr "créer un environnement virtuel"
+
+#: templates/index.html:44
+msgid "use virtual env"
+msgstr "utiliser un environnement virtuel"
 
 #: templates/root.html:18
 msgid "Search"

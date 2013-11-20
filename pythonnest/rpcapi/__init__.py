@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rpc4django import rpcmethod
 from pythonnest.models import Package, ReleaseDownload, Release, Log, PackageRole
+from pythonnest.rpcapi.utils import prepare_query
 
 __author__ = 'flanker'
 
@@ -100,38 +101,15 @@ def changelog_since_serial(since_serial):
 @rpcmethod(signature=[dict, str])
 def search(spec, operator='and'):
     """Search the package database using the indicated search spec. """
-    query = Release.objects.all().select_related()
-    kwargs = {}
+    sub_query = None
     for key in ('name', 'home_page', 'license', 'summary', 'download_url', 'author', 'author_email', 'maintainer',
                 'maintainer_email'):
         if key not in spec:
             continue
-        if isinstance(spec[key], list):
-            if len(spec[key]) == 1:
-                kwargs['package__' + key + '__icontains'] = spec[key][0]
-            else:
-                kwargs['package__' + key + '__in'] = spec[key]
-        elif isinstance(spec[key], str):
-            kwargs['package__' + key + '__icontains'] = spec[key]
-
+        sub_query = prepare_query(sub_query, 'package__', key, spec[key], global_and=(operator == 'and'))
     for key in ('version', 'description', 'keywords', 'platform'):
         if key not in spec:
             continue
-        if isinstance(spec[key], list):
-            if len(spec[key]) == 1:
-                kwargs[key + '__icontains'] = spec[key][0]
-            else:
-                kwargs[key + '__in'] = spec[key]
-        elif isinstance(spec[key], str):
-            kwargs[key + '__icontains'] = spec[key]
-    if operator == 'and':
-        query = query.filter(**kwargs)
-    else:
-        subfilter = None
-        for key, value in kwargs.items():
-            if subfilter is None:
-                subfilter = Q(**{key: value})
-            else:
-                subfilter |= Q(**{key: value})
-        query = query.filter(subfilter)
+        sub_query = prepare_query(sub_query, '', key, spec[key], global_and=(operator == 'and'))
+    query = Release.objects.filter(sub_query).select_related()
     return [{'name': ans.name, 'version': ans.version, 'summary': ans.summary, '_pypi_ordering': 0} for ans in query]

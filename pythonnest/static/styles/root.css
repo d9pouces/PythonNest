@@ -125,6 +125,9 @@ span.download {
     font-size: 14px;
     color: #666666;
 }
+ul.downloads {
+    margin-top: 10px;
+}
 
 div.body-content li a, div.body-content li a {
     text-decoration: none;

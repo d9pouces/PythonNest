@@ -52,9 +52,11 @@
                 {% if release.requires.all %}<li>{% trans 'Requires: ' %}{{ release.requires.all|join:', ' }}</li>{% endif %}
                 {% if release.obsoletes.all %}<li>{% trans 'Obsoletes: ' %}{{ release.obsoletes.all|join:', ' }}</li>{% endif %}
                 {% if release.provides.all %}<li>{% trans 'Provides: ' %}{{ release.provides.all|join:', ' }}</li>{% endif %}
+            </ul>
+            <ul class="downloads">
                 {% for download in downloads %}
                     <li>{% blocktrans with type=download.packagetype %}Download {{ type }}: {% endblocktrans %}
-                    <a href="{{ download.globalurl }}">{{ download.filename }}</a>
+                    <a href="{{ download.globalurl }}"><span class="link">➠</span> {{ download.filename }}</a>
                     <span class="download">{% blocktrans with size=download.size|filesizeformat md5=download.md5_digest dt=download.upload_time %}
                         size: {{ size }}, MD5 hash: {{ md5 }}, uploaded at {{ dt }}
                     {% endblocktrans %}</span>

@@ -2,6 +2,7 @@
 """Here are defined Python functions of views.
 Views are binded to URLs in :mod:`.urls`.
 """
+from distutils.version import LooseVersion
 import hashlib
 import json
 from json.encoder import JSONEncoder
@@ -27,6 +28,7 @@ from django.views.static import was_modified_since
 
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType
+from pythonnest.rpcapi.utils import prepare_query
 
 
 __author__ = "flanker"
@@ -231,20 +233,21 @@ def index(request, page='0', size='20'):
     """Index view, displaying and processing a form."""
     search = SearchForm(request.GET)
     if search.is_valid():
-        pattern = search.cleaned_data['search']
-        if len(pattern) > 2:
-            query = Package.objects.filter(name__icontains=pattern)
-        else:
-            query = Package.objects.filter(name__iexact=pattern)
+        orig_pattern = search.cleaned_data['search']
+        patterns = orig_pattern.split()
+        sub_query = None
+        for pattern in patterns:
+            sub_query = prepare_query(sub_query, '', 'name', pattern, global_and=True)
+        query = Package.objects.filter(sub_query).distinct()
         page_int = int(page)
         page_size = int(size)
-        packages = list(query.distinct().select_related()[page_int * page_size:(page_int + 1) * page_size])
+        packages = list(query.select_related()[page_int * page_size:(page_int + 1) * page_size])
         total = query.count()
         page_count = math.ceil(total / page_size)
         page_index = page_int + 1
         template_values = {'results': packages, 'title': _('PythonNest'),
                            'page_count': page_count, 'page_index': page_index,
-                           'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': pattern,
+                           'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': orig_pattern,
                            'next_page': None if page_index >= page_count else page_index, }
         return render_to_response('search_result.html', template_values, RequestContext(request))
     base_url = settings.HOST
@@ -257,10 +260,12 @@ def show_package(request, package_id, release_id=None):
     package = get_object_or_404(Package, id=package_id)
     roles = PackageRole.objects.filter(package=package).select_related()
     releases = list(Release.objects.filter(package=package).order_by('-id').select_related())
-    if release_id is None:
-        release = releases[0] if releases else None
-    else:
+    release = None
+    releases = sorted(releases, key=lambda x: LooseVersion(x), reverse=True)
+    if release_id is not None:
         release = get_object_or_404(Release, id=release_id, package=package)
+    elif releases:
+        release = releases[0]
     downloads = ReleaseDownload.objects.filter(release=release).order_by('filename')
     template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
                        'package': package, 'roles': roles,

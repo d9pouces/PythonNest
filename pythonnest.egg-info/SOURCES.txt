@@ -62,8 +62,10 @@ pythonnest/management/commands/__pycache__/import.cpython-33.pyc
 pythonnest/management/commands/__pycache__/update.cpython-33.pyc
 pythonnest/rpcapi/__init__.py
 pythonnest/rpcapi/models.py
+pythonnest/rpcapi/utils.py
 pythonnest/rpcapi/__pycache__/__init__.cpython-33.pyc
 pythonnest/rpcapi/__pycache__/models.cpython-33.pyc
+pythonnest/rpcapi/__pycache__/utils.cpython-33.pyc
 pythonnest/static/.DS_Store
 pythonnest/static/README
 pythonnest/static/images/.DS_Store

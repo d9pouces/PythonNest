@@ -261,7 +261,7 @@ def show_package(request, package_id, release_id=None):
     roles = PackageRole.objects.filter(package=package).select_related()
     releases = list(Release.objects.filter(package=package).order_by('-id').select_related())
     release = None
-    releases = sorted(releases, key=lambda x: LooseVersion(x), reverse=True)
+    releases = sorted(releases, key=lambda x: LooseVersion(str(x.version)), reverse=True)
     if release_id is not None:
         release = get_object_or_404(Release, id=release_id, package=package)
     elif releases:

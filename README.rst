@@ -62,7 +62,8 @@ Its content is quite limited::
 Virtual environment
 ===================
 
-To create a functionnal virtual env
+To create a functionnal virtual env and launch the service::
+
   mkvirtualenv -p `which python3.3` pythonnest
   workon pythonnest
   pip install gunicorn pythonnest

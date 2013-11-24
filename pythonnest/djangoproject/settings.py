@@ -9,10 +9,11 @@ __author__ = "flanker"
 
 __parser = configparser.ConfigParser()
 __config_path_comp = abspath(__file__).split('/')
-__config_files = [join(__file__, '..', '..', 'pythonnest.ini')]
+CONFIG_FILES = [join(__file__, '..', '..', 'pythonnest.ini')]
 if 'lib' in __config_path_comp:
-    __config_files.append('/'.join(__config_path_comp[0:__config_path_comp.index('lib')] + ['etc', 'pythonnest.ini']))
-__parser.read(__config_files)
+    __conf_path = '/'.join(__config_path_comp[0:__config_path_comp.index('lib')] + ['etc', 'pythonnest.ini'])
+    CONFIG_FILES.append(abspath(__conf_path))
+__parser.read(CONFIG_FILES)
 
 ROOT_PATH = __parser.get('pythonnest', 'ROOT_PATH', fallback=None)
 if not ROOT_PATH:

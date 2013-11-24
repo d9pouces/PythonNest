@@ -32,7 +32,7 @@ setup(
     author="flanker",
     author_email="flanker@19pouces.net",
     license="CeCILL-B",
-    url="http://19pouces.net/PythonNest.html",
+    url="http://www.19pouces.net/projects.html",
     entry_points=entry_points,
     packages=find_packages(),
     include_package_data=True,
@@ -40,9 +40,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=0.7', 'django', 'South', 'rpc4django', ],
-    setup_requires=[ 'setuptools>=0.7',  'django',  'South', ],
-    classifiers=['Programming Language :: Python',
-                 'Programming Language :: Python :: 3',
-                 ]
+    install_requires=['setuptools>=0.7', 'Django==1.5', 'South', 'rpc4django', ],
+    setup_requires=['setuptools>=0.7',  'Django',  'South', ],
+    classifiers=['Programming Language :: Python :: 3', ]
 )

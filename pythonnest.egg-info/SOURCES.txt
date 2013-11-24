@@ -6,6 +6,7 @@ ez_setup.py
 setup.py
 pythonnest/.DS_Store
 pythonnest/__init__.py
+pythonnest/__init__.pyc
 pythonnest/admin.py
 pythonnest/api.py
 pythonnest/colors.py
@@ -28,11 +29,14 @@ pythonnest/__pycache__/urls.cpython-33.pyc
 pythonnest/__pycache__/views.cpython-33.pyc
 pythonnest/djangoproject/.DS_Store
 pythonnest/djangoproject/__init__.py
+pythonnest/djangoproject/__init__.pyc
 pythonnest/djangoproject/context_processors.py
 pythonnest/djangoproject/manage.py
+pythonnest/djangoproject/manage.pyc
 pythonnest/djangoproject/middleware.py
 pythonnest/djangoproject/root_urls.py
 pythonnest/djangoproject/settings.py
+pythonnest/djangoproject/settings.pyc
 pythonnest/djangoproject/wsgi.py
 pythonnest/djangoproject/__pycache__/__init__.cpython-33.pyc
 pythonnest/djangoproject/__pycache__/context_processors.cpython-33.pyc
@@ -52,11 +56,13 @@ pythonnest/locale/xx_XX/LC_MESSAGES/pythonnest.po
 pythonnest/management/__init__.py
 pythonnest/management/__pycache__/__init__.cpython-33.pyc
 pythonnest/management/commands/__init__.py
+pythonnest/management/commands/config.py
 pythonnest/management/commands/deployment.py
 pythonnest/management/commands/export.py
 pythonnest/management/commands/import.py
 pythonnest/management/commands/update.py
 pythonnest/management/commands/__pycache__/__init__.cpython-33.pyc
+pythonnest/management/commands/__pycache__/config.cpython-33.pyc
 pythonnest/management/commands/__pycache__/export.cpython-33.pyc
 pythonnest/management/commands/__pycache__/import.cpython-33.pyc
 pythonnest/management/commands/__pycache__/update.cpython-33.pyc

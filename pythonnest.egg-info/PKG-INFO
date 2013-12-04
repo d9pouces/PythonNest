@@ -47,7 +47,9 @@ Description: PythonNest
         more precisely of the location of the `pythonnest.djangoproject.settings` package.
         
         If the location is `/foo/bar/lib/baz/pythonnest/djangoproject/settings.py`, the configuration file is expected at
-        `/foo/bar/etc/pythonnest.ini`. Its content is quite limited::
+        `/foo/bar/etc/pythonnest.ini`. Use `pythonnest-manage config` to display its exact location.
+        
+        Its content is quite limited::
         
             [pythonnest]
             ROOT_PATH = /var/data/pythonnest  ; root path for all data files (static files like CSS, and python packages)
@@ -65,6 +67,17 @@ Description: PythonNest
             DATABASE_PORT =
         
         
+        Virtual environment
+        ===================
+        
+        To create a functionnal virtual env and launch the service::
+        
+          mkvirtualenv -p `which python3.3` pythonnest
+          workon pythonnest
+          pip install gunicorn pythonnest
+          pythonnest-manage syncdb
+          pythonnest-manage collectstatic
+          gunicorn -b 0.0.0.0:8080 -D pythonnest.djangoproject.wsgi:application
         
         
         [TODO]

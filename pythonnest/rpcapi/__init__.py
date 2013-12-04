@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rpc4django import rpcmethod
 from pythonnest.models import Package, ReleaseDownload, Release, Log, PackageRole

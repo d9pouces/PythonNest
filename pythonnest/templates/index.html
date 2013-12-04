@@ -6,8 +6,8 @@
             <p>{% trans 'Edit <span class="pre">~/.pip/pip.conf</span> to include these lines:' %}</p>
         <pre>[global]
 index = {{ base_url }}pypi
-index-url = {{ base_url }}simple</pre>
-
+index-url = {{ base_url }}simple{% if use_ssl %}
+cert = &lt;path to your CA&gt;{% endif %}</pre>
             <h3>Buildout</h3>
 <p>{% trans 'Edit <span class="pre">~/.buildout/default.cfg</span> to include these lines:' %}</p>
         <pre>[buildout]
@@ -25,7 +25,9 @@ username: your-login
 password: your-password
 repository: {{ base_url }}setup
 </pre>
-            <p>{% trans 'Run the following commands to use this repository:' %}</p>
+            <p>{% trans 'Run the following command to register a package to this repository:' %}</p>
+            <pre>python setup.py register -r {{ base_url }}setup</pre>
+            <p>{% trans 'Run the following command to upload to this repository:' %}</p>
             <pre>python setup.py bdist sdist upload -r {{ base_url }}setup</pre>
 
             <h3>Easyinstall</h3>

@@ -15,14 +15,13 @@ import math
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.timezone import utc
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
 
@@ -66,9 +65,9 @@ class SearchForm(forms.Form):
 
 def simple(request, package_name=None, version=None):
     if package_name is not None:
-        package = get_object_or_404(Package, name=package_name)
+        package = get_object_or_404(Package, name__iexact=package_name)
         if version is not None:
-            version = get_object_or_404(Release, package=package, version=version)
+            version = get_object_or_404(Release, package=package, version__iexact=version)
             downloads = ReleaseDownload.objects.filter(version=version)
         else:
             downloads = ReleaseDownload.objects.filter(package=package)
@@ -127,9 +126,16 @@ def setup(request):
         version_name = values.get('version', '')
         if not package_name or not version_name:
             raise PermissionDenied(_('No package name provided'))
+        if request.user.is_anonymous():
+            return HttpResponse(ugettext('You must be authenticated'), status=401)
         package, package_created = Package.objects.get_or_create(name=package_name)
+        if package_created:
+            PackageRole(package=package, user=request.user, role=PackageRole.OWNER).save()
+        elif not request.user.is_superuser:
+            if PackageRole.objects.filter(package=package, user=request.user).count() == 0:
+                return HttpResponse(ugettext('You are not allowed to update this package'), status=401)
         for attr_name in ('name', 'home_page', 'author_email', 'download_url', 'author', 'license', 'summary',
-                          'maintainer', 'maintainer_email', 'project_url'):
+                          'maintainer', 'maintainer_email', 'project_url', ):
             if values.get(attr_name):
                 setattr(package, attr_name, values.get(attr_name))
         package.save()
@@ -144,13 +150,10 @@ def setup(request):
                           'requires_external', 'requires_python'):
             getattr(release, attr_name).clear()
             for dep in values.getlist(attr_name, []):
-                getattr(release, attr_name.add(Dependence.get(dep)))
+                getattr(release, attr_name).add(Dependence.get(dep))
         release.save()
+
         if action == 'file_upload':
-            if request.user.is_anonymous():
-                return HttpResponse('', status=401)
-            if package_created:
-                PackageRole(package=package, user=request.user, role=PackageRole.OWNER).save()
             if 'content' not in files:
                 raise PermissionDenied
             filename, content = files['content']
@@ -251,7 +254,8 @@ def index(request, page='0', size='20'):
                            'next_page': None if page_index >= page_count else page_index, }
         return render_to_response('search_result.html', template_values, RequestContext(request))
     base_url = settings.HOST
-    template_values = {'base_url': base_url, }
+    use_ssl = base_url.startswith('https://')
+    template_values = {'base_url': base_url, 'use_ssl': use_ssl, }
     template_values.update(csrf(request))  # prevents cross-domain requests
     return render_to_response('index.html', template_values, RequestContext(request))
 
@@ -267,6 +271,7 @@ def show_package(request, package_id, release_id=None):
     elif releases:
         release = releases[0]
     downloads = ReleaseDownload.objects.filter(release=release).order_by('filename')
+
     template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
                        'package': package, 'roles': roles,
                        'is_editable': request.user in set([x.user for x in roles]),

@@ -3,10 +3,11 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from ajax_select import urls as ajax_select_urls
+from urllib.parse import urlparse
+
 __author__ = "flanker"
 admin.autodiscover()
-
-from urllib.parse import urlparse
 
 MEDIA_PATH = urlparse(settings.MEDIA_URL).path[1:]
 
@@ -24,6 +25,7 @@ urlpatterns = patterns(  # pylint: disable=C0103
     url(r'^pypi/(?P<package_name>[^/]+)/(?P<version>[^/]+)/json$', 'pythonnest.views.version_json'),
     url(r'^pypi/?$', 'rpc4django.views.serve_rpc_request'),
     url(r'^pythonnest/', include('pythonnest.urls')),
+    (r'^admin/lookups/', include(ajax_select_urls)),
     url(r'^simple/(?P<package_name>[^/]+)/(?P<version>[^/]+)$', 'pythonnest.views.simple'),
     url(r'^simple/(?P<package_name>[^/]+)/$', 'pythonnest.views.simple'),
     url(r'^simple/$', 'pythonnest.views.simple'),

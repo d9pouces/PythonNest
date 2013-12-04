@@ -120,10 +120,6 @@ TEMPLATE_DIRS = (
     abspath(join(dirname(__file__), 'templates')),
 )
 
-AJAX_LOOKUP_CHANNELS = {
-    'person': {'model': 'django.contrib.auth.models.User', 'search_field': 'username'},
-}
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',

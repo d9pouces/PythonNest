@@ -15,10 +15,13 @@ import math
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
+from django.forms import ModelForm
 from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -262,7 +265,7 @@ def index(request, page='0', size='20'):
 
 def show_package(request, package_id, release_id=None):
     package = get_object_or_404(Package, id=package_id)
-    roles = PackageRole.objects.filter(package=package).select_related()
+    roles = PackageRole.objects.filter(package=package).order_by('role').select_related()
     releases = list(Release.objects.filter(package=package).order_by('-id').select_related())
     release = None
     releases = sorted(releases, key=lambda x: LooseVersion(str(x.version)), reverse=True)
@@ -270,13 +273,41 @@ def show_package(request, package_id, release_id=None):
         release = get_object_or_404(Release, id=release_id, package=package)
     elif releases:
         release = releases[0]
-    downloads = ReleaseDownload.objects.filter(release=release).order_by('filename')
 
+    class RoleForm(forms.Form):
+        username = forms.CharField(max_length=255, label=_('Username'))
+        role = forms.ChoiceField(required=False, widget=forms.Select(), choices=PackageRole.ROLES, label=_('Role'))
+
+    downloads = ReleaseDownload.objects.filter(release=release).order_by('filename')
+    is_admin = package.is_admin(request.user)
+    add_user_form = None
+    if is_admin:
+        if request.method == 'POST':
+            add_user_form = RoleForm(request.POST)
+            if add_user_form.is_valid():
+                username = add_user_form.cleaned_data['username']
+                role = add_user_form.cleaned_data['role']
+                user = User.objects.get_or_create(username=username)[0]
+                PackageRole.objects.get_or_create(package=package, user=user, role=int(role))
+                return redirect('pythonnest.views.show_package', package_id=package_id)
+        else:
+            add_user_form = RoleForm()
     template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
-                       'package': package, 'roles': roles,
+                       'package': package, 'roles': roles, 'is_admin': is_admin, 'add_user_form': add_user_form,
                        'is_editable': request.user in set([x.user for x in roles]),
                        'release': release, 'releases': releases, 'downloads': downloads, }
+    template_values.update(csrf(request))
     return render_to_response('show_package.html', template_values, RequestContext(request))
+
+
+@login_required
+def delete_role(request, role_id):
+    role = get_object_or_404(PackageRole, id=role_id)
+    package = role.package
+    if not package.is_admin(request.user):
+        raise PermissionDenied
+    role.delete()
+    return redirect('pythonnest.views.show_package', package_id=package.id)
 
 
 def show_classifier(request, classifier_id, page='0', size='20'):

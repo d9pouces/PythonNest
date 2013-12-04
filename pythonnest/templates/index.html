@@ -8,11 +8,6 @@
 index = {{ base_url }}pypi
 index-url = {{ base_url }}simple{% if use_ssl %}
 cert = &lt;path to your CA&gt;{% endif %}</pre>
-            <h3>Buildout</h3>
-<p>{% trans 'Edit <span class="pre">~/.buildout/default.cfg</span> to include these lines:' %}</p>
-        <pre>[buildout]
-index = {{ base_url }}simple</pre>
-
             <h3>Setuptools</h3>
 
             <p>{% trans 'Edit <span class="pre">~/.pypirc</span> to include these lines:' %}</p>
@@ -46,5 +41,10 @@ mkvirtualenv test
 # {% trans 'use virtual env' %}
 workon test
 </pre>
+            <h3>Buildout</h3>
+<p>{% trans 'Edit <span class="pre">~/.buildout/default.cfg</span> to include these lines:' %}</p>
+        <pre>[buildout]
+index = {{ base_url }}simple</pre>
+
         </div>
 {% endblock %}

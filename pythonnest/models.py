@@ -114,12 +114,26 @@ class Package(models.Model):
             result[attr_name] = getattr(self, attr_name)
         return result
 
+    def is_admin(self, user):
+        if user.is_anonymous():
+            return False
+        if user.is_superuser:
+            return True
+        return PackageRole.objects.filter(package=self, user=user, role=PackageRole.OWNER).count() > 1
+
+    def is_maintainer(self, user):
+        if user.is_anonymous():
+            return False
+        if user.is_superuser:
+            return True
+        return PackageRole.objects.filter(package=self, user=user).count() > 1
+
 
 class PackageRole(models.Model):
     OWNER = 1
     MAINTAINER = 2
-    role = models.IntegerField(_('role'), db_index=True, choices=((OWNER, _('owner')), (MAINTAINER, _('maintainer'))),
-                               default=OWNER)
+    ROLES = ((OWNER, _('owner')), (MAINTAINER, _('maintainer')))
+    role = models.IntegerField(_('role'), db_index=True, choices=ROLES, default=OWNER)
     user = models.ForeignKey(User, verbose_name=_('user'), db_index=True)
     package = models.ForeignKey(Package, verbose_name=_('package'), db_index=True)
 

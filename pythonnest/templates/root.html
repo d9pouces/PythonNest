@@ -13,6 +13,20 @@
         {% block title %}
             <h1>
                 <span id="title"><a href="{% url 'pythonnest.views.index' %}">{{ title }}</a></span>
+
+                {% if user.is_anonymous %}
+                    <span class="user login">
+                    <a href="{% url 'django.contrib.auth.views.login' %}" class="link"
+                       title="{% trans 'Login' %}">⎆</a>
+{#                    <a href="{% url 'django.contrib.auth.views.login' %}" class="link"#}
+{#                       title="{% trans 'Login' %}">✍</a>#}
+                </span>
+                    {% else %}<span class="user logged">{% trans 'Connected as: ' %}{{ user }}</span>
+                    <span class="user logout">
+                    <a href="{% url 'django.contrib.auth.views.logout' %}" class="link"
+                       title="{% trans 'Logout' %}">✖</a>
+                </span>
+                {% endif %}
                 <span id="search">
                     <form action="{% url 'pythonnest.views.index' %}" method="GET">
                         <input id="id_search" placeholder="{% trans 'Search' %}" maxlength="255" name="search"
@@ -27,6 +41,11 @@
 
         {% endblock %}
     </article>
+{% endblock %}
+{% block blockfooter %}
+    <footer>
+        {% trans '©2014 flanker.' %}
+    </footer>
 {% endblock %}
 </body>
 </html>

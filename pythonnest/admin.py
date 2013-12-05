@@ -29,11 +29,4 @@ __author__ = "flanker"
 #search_fields = ['family_name', 'first_name', ]
 #actions = [remove_first_name, ]
 #admin.site.register(SampleModel, SampleModelAdmin)
-admin.site.register(PackageType)
-admin.site.register(Package)
-admin.site.register(PackageRole)
-admin.site.register(Classifier)
-admin.site.register(Dependence)
-admin.site.register(ReleaseDownload)
-admin.site.register(Release)
-admin.site.register(Synchronization)
+

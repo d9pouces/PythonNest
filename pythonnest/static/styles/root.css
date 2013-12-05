@@ -25,6 +25,34 @@ h1 a, h1 a:visited {
 
 #search {
     float: right;
+    margin-right: 20px;
+}
+
+span.login a.link {
+    color: #55aa55;
+    font-size: 50px;
+}
+span.login {
+    top: -15px;
+    left: 160px;
+}
+span.user {
+    font-weight: lighter;
+    position: absolute;
+}
+
+span.logout a.link {
+    color: #aa5555;
+}
+span.logout {
+    font-size: 25px;
+    top: 6px;
+    left: 160px;
+}
+span.logged {
+    top: 15px;
+    font-size: 12px;
+    left: 190px;
 }
 
 #search form {
@@ -101,7 +129,10 @@ span.pre {
     font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 14px;
 }
-
+blockquote {
+    font-style: italic;
+    color: #666666;
+}
 div.body-content ul {
     list-style-type: none;
 }
@@ -147,4 +178,14 @@ span.paginator-main {
 div.paginator a, div.paginator a:visited {
     color: #333333;
     text-decoration: none;
+}
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: #7d7e7d;
 }

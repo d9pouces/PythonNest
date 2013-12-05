@@ -292,7 +292,7 @@ def show_package(request, package_id, release_id=None):
                 return redirect('pythonnest.views.show_package', package_id=package_id)
         else:
             add_user_form = RoleForm()
-    template_values = {'title': _('PythonNest — %(p)s') % {'p': package.name},
+    template_values = {'title': _('PythonNest'),
                        'package': package, 'roles': roles, 'is_admin': is_admin, 'add_user_form': add_user_form,
                        'is_editable': request.user in set([x.user for x in roles]),
                        'release': release, 'releases': releases, 'downloads': downloads, }

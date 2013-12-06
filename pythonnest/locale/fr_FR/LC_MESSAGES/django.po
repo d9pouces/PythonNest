@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-05 19:46+0100\n"
+"POT-Creation-Date: 2013-12-07 00:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,59 +194,46 @@ msgstr "timestamp"
 msgid "action"
 msgstr "action"
 
-#: views.py:87
+#: views.py:95
 msgid "Only POST request are allowed"
 msgstr "Seules les requêtes POST sont autorisées"
 
-#: views.py:97
+#: views.py:105
 msgid "Invalid POST form"
 msgstr "Formulaire POST invalide"
 
-#: views.py:131
+#: views.py:139
 msgid "No package name provided"
 msgstr "Aucun nom de paquet n'est fourni"
 
-#: views.py:133
+#: views.py:141
 msgid "You must be authenticated"
-msgstr ""
+msgstr "Vous devez être authentifiés pour continuer"
 
-#: views.py:139
+#: views.py:147
 msgid "You are not allowed to update this package"
-msgstr ""
+msgstr "Vous n'êtes pas autorisés à modifier ce paquet."
 
-#: views.py:254 djangoproject/context_processors.py:17
+#: views.py:265 views.py:306 djangoproject/context_processors.py:17
 msgid "PythonNest"
 msgstr "PythonNest"
 
-#: views.py:278
+#: views.py:289
 msgid "Username"
 msgstr "Utilisateur"
 
-#: views.py:279
+#: views.py:290
 msgid "Role"
 msgstr "Rôle"
 
-#: views.py:295
-#, python-format
-msgid "PythonNest — %(p)s"
-msgstr "PythonNest — %(p)s"
-
-#: views.py:322
+#: views.py:357
 #, python-format
 msgid "PythonNest - %(c)s"
 msgstr "PythonNest — %(c)s"
 
-#: djangoproject/templates/admin/base_site.html:4
-msgid "Administration"
-msgstr "Administration"
-
-#: djangoproject/templates/admin/base_site.html:8
-msgid "Home"
-msgstr "Accueil"
-
 #: management/commands/config.py:11
 msgid "display the location of the main configuration file"
-msgstr ""
+msgstr "affiche l'emplacement du fichier de configuration."
 
 #: management/commands/export.py:35
 #, python-format
@@ -404,6 +391,14 @@ msgstr "Page suivante"
 msgid "No package matched your query."
 msgstr "Aucun paquet ne correspond à vos critères"
 
+#: templates/create_user.html:3 templates/root.html:21
+msgid "Create your account"
+msgstr "Créer votre compte"
+
+#: templates/create_user.html:10
+msgid "Create"
+msgstr "S'enregistrer"
+
 #: templates/index.html:3
 msgid "Client configuration"
 msgstr "Configuration des clients"
@@ -455,72 +450,109 @@ msgstr ""
 "Modifier <span class=\"pre\">~/.buildout/default.cfg</span> pour ajouter ces "
 "lignes :"
 
-#: templates/root.html:18
+#: templates/login.html:3 templates/login.html.py:10 templates/root.html:20
+msgid "Login"
+msgstr "Connexion"
+
+#: templates/password_change.html:3 templates/root.html:28
+msgid "Change your password"
+msgstr "Modifier votre mot de passe"
+
+#: templates/password_change.html:10
+msgid "Update!"
+msgstr "Mettre à jour !"
+
+#: templates/root.html:23
+msgid "Connected as: "
+msgstr "Connecté en tant que : "
+
+#: templates/root.html:26
+msgid "Logout"
+msgstr "Se déconnecter"
+
+#: templates/root.html:33
 msgid "Search"
 msgstr "Recherche"
 
-#: templates/show_package.html:7 templates/show_package.html.py:27
+#: templates/root.html:48
+msgid "©2014 flanker."
+msgstr "©2014, flanker"
+
+#: templates/search_result.html:25
+#, fuzzy, python-format
+msgid ""
+"You should to search “<a href=\"%(url)s?search=%(pattern)s\">%(pattern)s</"
+"a>” to find more packages."
+msgstr ""
+"Essayez de chercher « <a href=\"%(url)s?search=%(pattern)s\">%(pattern)s</a> "
+"» pour obtenir davantage de résultats."
+
+#: templates/show_package.html:10 templates/show_package.html.py:30
 msgid "Homepage: "
 msgstr "Page d'accueil : "
 
-#: templates/show_package.html:10
+#: templates/show_package.html:13
 msgid "Author: "
 msgstr "Auteur : "
 
-#: templates/show_package.html:16
+#: templates/show_package.html:19
 msgid "Maintainer: "
 msgstr "Mainteneur"
 
-#: templates/show_package.html:22
+#: templates/show_package.html:25
 msgid "License: "
 msgstr "Licence : "
 
-#: templates/show_package.html:24
+#: templates/show_package.html:27
 msgid "Download URL: "
 msgstr "Lien direct : "
 
-#: templates/show_package.html:36
+#: templates/show_package.html:35 templates/show_package.html.py:80
+msgid "Are you sure?"
+msgstr "Êtes-vous sûrs ?"
+
+#: templates/show_package.html:41
 msgid "Add user"
 msgstr "Nouvel utilisateur"
 
-#: templates/show_package.html:42
+#: templates/show_package.html:48
 msgid "Release: "
 msgstr "Version : "
 
-#: templates/show_package.html:48
+#: templates/show_package.html:54
 msgid "Platform: "
 msgstr "Plate-forme : "
 
-#: templates/show_package.html:50
+#: templates/show_package.html:56
 msgid "Keywords: "
 msgstr "Mots-clefs : "
 
-#: templates/show_package.html:52
+#: templates/show_package.html:58
 msgid "Docs: "
 msgstr "Docs : "
 
-#: templates/show_package.html:55
+#: templates/show_package.html:62
 msgid "Classifiers: "
 msgstr "Classifieurs : "
 
-#: templates/show_package.html:59
+#: templates/show_package.html:67
 msgid "Requires: "
 msgstr "Paquets requis : "
 
-#: templates/show_package.html:60
+#: templates/show_package.html:69
 msgid "Obsoletes: "
 msgstr "Paquets obsolètes : "
 
-#: templates/show_package.html:61
+#: templates/show_package.html:71
 msgid "Provides: "
 msgstr "Paquets fournis : "
 
-#: templates/show_package.html:65
+#: templates/show_package.html:75
 #, python-format
 msgid "Download %(type)s: "
 msgstr "Archive %(type)s : "
 
-#: templates/show_package.html:67
+#: templates/show_package.html:77
 #, python-format
 msgid ""
 "\n"
@@ -533,14 +565,23 @@ msgstr ""
 "%(dt)s\n"
 "                    "
 
-#: templates/show_package.html:72
+#: templates/show_package.html:84
 msgid "No available download."
 msgstr "Aucun fichier n'est disponible"
 
-#: templates/show_package.html:78
+#: templates/show_package.html:90
 msgid "All available releases"
 msgstr "Versions disponibles"
 
-#: tests/test_translation.py:32
+#: tests/test_translation.py:28
 msgid "test_string"
-msgstr ""
+msgstr "test_string"
+
+#~ msgid "PythonNest — %(p)s"
+#~ msgstr "PythonNest — %(p)s"
+
+#~ msgid "Administration"
+#~ msgstr "Administration"
+
+#~ msgid "Home"
+#~ msgstr "Accueil"

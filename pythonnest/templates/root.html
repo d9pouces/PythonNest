@@ -18,13 +18,14 @@
                     <span class="user login">
                     <a href="{% url 'django.contrib.auth.views.login' %}" class="link"
                        title="{% trans 'Login' %}">⎆</a>
-{#                    <a href="{% url 'django.contrib.auth.views.login' %}" class="link"#}
-{#                       title="{% trans 'Login' %}">✍</a>#}
+                    <a href="{% url 'pythonnest.views.create_user' %}" class="link" title="{% trans 'Create your account' %}">✍</a>
                 </span>
                     {% else %}<span class="user logged">{% trans 'Connected as: ' %}{{ user }}</span>
                     <span class="user logout">
                     <a href="{% url 'django.contrib.auth.views.logout' %}" class="link"
                        title="{% trans 'Logout' %}">✖</a>
+                    <a href="{% url 'django.contrib.auth.views.password_change' %}" class="link"
+                       title="{% trans 'Change your password' %}">✍</a>
                 </span>
                 {% endif %}
                 <span id="search">

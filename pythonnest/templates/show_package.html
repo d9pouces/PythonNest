@@ -32,7 +32,7 @@
             {% for role in roles %}
                 <li>{{ role.get_role_display|capfirst }}: {{ role.user }}
                     {% if is_admin %}<a href="{% url 'pythonnest.views.delete_role' role_id=role.id %}"><span
-                            class="link">✗</span></a>
+                            onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
                     {% endif %}</li>
             {% endfor %}
             {% if add_user_form %}
@@ -76,7 +76,9 @@
                         <a href="{{ download.globalurl }}"><span class="link">➠</span> {{ download.filename }}</a>
                     <span class="download">{% blocktrans with size=download.size|filesizeformat md5=download.md5_digest dt=download.upload_time %}
                         size: {{ size }}, MD5 hash: {{ md5 }}, uploaded at {{ dt }}
-                    {% endblocktrans %}</span>
+                    {% endblocktrans %}{% if is_admin %}<a href="{% url 'pythonnest.views.delete_download' download_id=download.id %}"><span
+                            onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
+                    {% endif %}</span>
                     </li>
                 {% empty %}
                     <li>{% trans 'No available download.' %}</li>

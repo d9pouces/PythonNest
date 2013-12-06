@@ -15,17 +15,25 @@ import math
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.sites.models import get_current_site
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
-from django.forms import ModelForm
-from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified, \
+    HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404, redirect, resolve_url
 from django.template import RequestContext
+from django.template.response import TemplateResponse
+from django.utils.http import is_safe_url
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.static import was_modified_since
 
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
@@ -95,7 +103,7 @@ def setup(request):
             encoding = info[2]
     if boundary is None:
         raise PermissionDenied(_('Invalid POST form'))
-    # parse the POST query by hand
+        # parse the POST query by hand
     mid_boundary = ('\n--' + boundary + '\n').encode(encoding)
     end_boundary = ('\n--' + boundary + '--\n').encode(encoding)
     fields = request.body.split(mid_boundary)
@@ -122,7 +130,7 @@ def setup(request):
             values.appendlist(key, value)
         else:
             files[key] = filename, value
-    # the POST data are parsed, let's go
+        # the POST data are parsed, let's go
     action = values.get(':action')
     if action in ('submit', 'file_upload'):
         package_name = values.get('name', '')
@@ -240,6 +248,9 @@ def index(request, page='0', size='20'):
     search = SearchForm(request.GET)
     if search.is_valid():
         orig_pattern = search.cleaned_data['search']
+        alt_pattern = None if orig_pattern.find('*') > -1 else ('*%s*' % orig_pattern)
+        alt_url = reverse('pythonnest.views.index')
+
         patterns = orig_pattern.split()
         sub_query = None
         for pattern in patterns:
@@ -251,8 +262,8 @@ def index(request, page='0', size='20'):
         total = query.count()
         page_count = math.ceil(total / page_size)
         page_index = page_int + 1
-        template_values = {'results': packages, 'title': _('PythonNest'),
-                           'page_count': page_count, 'page_index': page_index,
+        template_values = {'results': packages, 'title': _('PythonNest'), 'alt_pattern': alt_pattern,
+                           'page_count': page_count, 'page_index': page_index, 'alt_url': alt_url,
                            'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': orig_pattern,
                            'next_page': None if page_index >= page_count else page_index, }
         return render_to_response('search_result.html', template_values, RequestContext(request))
@@ -301,6 +312,30 @@ def show_package(request, package_id, release_id=None):
 
 
 @login_required
+def delete_download(request, download_id):
+    download = get_object_or_404(ReleaseDownload, id=download_id)
+    package = download.package
+    release = download.release
+    if PackageRole.objects.filter(package=package, role=PackageRole.OWNER, user=request.user).count() == 0 and \
+            not request.user.is_superuser:
+        raise PermissionDenied
+    abspath = download.abspath
+    download.delete()
+    if os.path.isfile(abspath):
+        os.remove(abspath)
+    if ReleaseDownload.objects.filter(release=release).count() == 0:
+        release.delete()
+        response = HttpResponseRedirect(reverse('pythonnest.views.show_package', kwargs={'package_id': package.id}))
+    else:
+        response = HttpResponseRedirect(reverse('pythonnest.views.show_package',
+                                                kwargs={'package_id': package.id, 'release_id': release.id}))
+    if Release.objects.filter(package=package).count() == 0:
+        package.delete()
+        response = HttpResponseRedirect(reverse('pythonnest.views.index'))
+    return response
+
+
+@login_required
 def delete_role(request, role_id):
     role = get_object_or_404(PackageRole, id=role_id)
     package = role.package
@@ -324,3 +359,40 @@ def show_classifier(request, classifier_id, page='0', size='20'):
                        'previous_page': None if page_int <= 0 else page_int - 1, 'classifier': classifier,
                        'next_page': None if page_index >= page_count else page_index, }
     return render_to_response('classifier.html', template_values, RequestContext(request))
+
+
+@sensitive_post_parameters()
+@never_cache
+def create_user(request, template_name='create_user.html',
+                redirect_field_name=REDIRECT_FIELD_NAME,
+                user_creation_form=UserCreationForm,
+                current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+
+    if request.method == "POST":
+        form = user_creation_form(data=request.POST)
+        if form.is_valid():
+            # Ensure the user-originating redirection url is safe.
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+
+            form.save(commit=True)
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+            return HttpResponseRedirect(redirect_to)
+    else:
+        form = user_creation_form()
+    request.session.set_test_cookie()
+    current_site = get_current_site(request)
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+    return TemplateResponse(request, template_name, context, current_app=current_app)

@@ -10,6 +10,7 @@ urlpatterns = patterns(  # pylint: disable=C0103
     url(r'^show_package/(?P<package_id>\d+)/(?P<release_id>\d+)/$', 'pythonnest.views.show_package'),
     url(r'^show_package/(?P<package_id>\d+)/$', 'pythonnest.views.show_package'),
     url(r'^delete_role/(?P<role_id>\d+)/$', 'pythonnest.views.delete_role'),
+    url(r'^delete_download/(?P<download_id>\d+)/$', 'pythonnest.views.delete_download'),
     url(r'^show_classifier/(?P<classifier_id>\d+)/$', 'pythonnest.views.show_classifier'),
     url(r'^show_classifier/(?P<classifier_id>\d+)/(?P<page>\d+)/$', 'pythonnest.views.show_classifier'),
 )

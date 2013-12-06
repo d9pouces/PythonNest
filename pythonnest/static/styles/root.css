@@ -32,10 +32,12 @@ span.login a.link {
     color: #55aa55;
     font-size: 50px;
 }
+
 span.login {
     top: -15px;
     left: 160px;
 }
+
 span.user {
     font-weight: lighter;
     position: absolute;
@@ -44,15 +46,17 @@ span.user {
 span.logout a.link {
     color: #aa5555;
 }
+
 span.logout {
     font-size: 25px;
     top: 6px;
     left: 160px;
 }
+
 span.logged {
     top: 15px;
     font-size: 12px;
-    left: 190px;
+    left: 210px;
 }
 
 #search form {
@@ -99,6 +103,7 @@ div.body-content {
     background: -o-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* Opera 11.10+ */
     background: linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%); /* W3C */
 }
+
 div.body-content p {
     padding: 10px;
 }
@@ -108,9 +113,9 @@ h3 {
     padding-left: 30px;
     color: #fffff0;
     background: #2d2e2d;
-    background: -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%);
-    background: -o-linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%);
-    background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C */
+    background: -webkit-linear-gradient(top, #7d7e7d 0%, #0e0e0e 100%);
+    background: -o-linear-gradient(to bottom, #7d7e7d 0%, #0e0e0e 100%);
+    background: linear-gradient(to bottom, #7d7e7d 0%, #0e0e0e 100%); /* W3C */
 }
 
 pre {
@@ -129,10 +134,12 @@ span.pre {
     font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 14px;
 }
+
 blockquote {
     font-style: italic;
     color: #666666;
 }
+
 div.body-content ul {
     list-style-type: none;
 }
@@ -156,6 +163,7 @@ span.download {
     font-size: 14px;
     color: #666666;
 }
+
 ul.downloads {
     margin-top: 10px;
 }
@@ -170,16 +178,17 @@ div.paginator {
     color: #888888;
     font-size: 14px;
 }
+
 span.paginator-main {
     font-size: 16px;
     margin-left: 20px;
     margin-right: 20px;
 }
+
 div.paginator a, div.paginator a:visited {
     color: #333333;
     text-decoration: none;
 }
-
 
 footer {
     position: fixed;
@@ -188,4 +197,39 @@ footer {
     text-align: center;
     font-size: 12px;
     color: #7d7e7d;
+}
+
+span.helptext {
+    font-size: 13px;
+    color: #7d7e7d;
+    display: block;
+    padding-left: 30px;
+}
+
+form li input[type="submit"] {
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid #888888;
+    color: #fffff0;
+    padding: 4px 40px 4px 40px;
+    background: #606c88; /* Old browsers */
+    background: -webkit-linear-gradient(top, #606c88 0%, #3f4c6b 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #606c88 0%, #3f4c6b 100%); /* Opera 11.10+ */
+    background: linear-gradient(to bottom, #606c88 0%, #3f4c6b 100%); /* W3C */
+    text-align: center;
+    margin-left: 150px;
+}
+ul.errorlist li {
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid #888888;
+    color: #fffff0;
+    padding: 4px 40px 4px 40px;
+    background: #993333; /* Old browsers */
+    background: -webkit-linear-gradient(top, #aa4444 0%, #993333 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #aa4444 0%, #993333 100%); /* Opera 11.10+ */
+    background: linear-gradient(to bottom, #aa4444 0%, #993333 100%); /* W3C */
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }

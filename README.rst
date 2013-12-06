@@ -71,7 +71,3 @@ To create a functionnal virtual env and launch the service::
   pythonnest-manage collectstatic
   gunicorn -b 0.0.0.0:8080 -D pythonnest.djangoproject.wsgi:application
 
-
-[TODO]
-- rss feeds
-- administration view (delete packages/versions/files)

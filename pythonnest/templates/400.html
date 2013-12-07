@@ -1,0 +1,7 @@
+{% extends "root.html" %}{% load i18n %}
+{% block body %}
+    <h2 class="body-header">{% trans "Error 400: bad request" %}</h2>
+    <div class="body-content">
+    {% trans 'The request you sent seems to be malformed.' %}
+    </div>
+{% endblock %}

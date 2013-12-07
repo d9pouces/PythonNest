@@ -1,0 +1,7 @@
+{% extends "root.html" %}{% load i18n %}
+{% block body %}
+    <h2 class="body-header">{% trans "Error 404: page not found" %}</h2>
+    <div class="body-content">
+    {% trans 'We were unable to find the page you requested.' %}
+    </div>
+{% endblock %}

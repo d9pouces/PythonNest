@@ -1,0 +1,7 @@
+{% extends "root.html" %}{% load i18n %}
+{% block body %}
+    <h2 class="body-header">{% trans "Error 403: Forbidden" %}</h2>
+    <div class="body-content">
+    {% trans 'You are not allowed to access this page.' %}
+    </div>
+{% endblock %}

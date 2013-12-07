@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-07 00:14+0100\n"
+"POT-Creation-Date: 2013-12-07 12:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -245,7 +245,7 @@ msgid "No previous sync... Dumping all database"
 msgstr "Pas de synchronisation... Copie de la base complète"
 
 #: management/commands/export.py:41 management/commands/import.py:41
-#: management/commands/update.py:168
+#: management/commands/update.py:209
 #, python-format
 msgid "Previous sync: serial %(syn)s"
 msgstr "Synchronisation précédente : %(syn)s"
@@ -282,84 +282,127 @@ msgstr "Fichier dupliqué : %(f)s"
 msgid "Corrupted file: %(f)s"
 msgstr "Fichier corrompu : %(f)s"
 
-#: management/commands/update.py:56
+#: management/commands/update.py:97
 #, python-format
 msgid "release data (%(p)s, %(v)s)"
 msgstr "données de version (%(p)s, %(v)s)"
 
-#: management/commands/update.py:64
+#: management/commands/update.py:105
 #, python-format
 msgid "package roles (%(p)s, %(v)s)"
 msgstr "rôles du paquet (%(p)s, %(v)s)"
 
-#: management/commands/update.py:87
+#: management/commands/update.py:128
 #, python-format
 msgid "release urls (%(p)s, %(v)s)"
 msgstr "URL des versions (%(p)s, %(v)s)"
 
-#: management/commands/update.py:94
+#: management/commands/update.py:135
 #, python-format
 msgid "Downloading %(url)s"
 msgstr "Téléchargement de %(url)s"
 
-#: management/commands/update.py:116
+#: management/commands/update.py:157
 #, python-format
 msgid "Error while downloading %(url)s [invalid md5 digest]"
 msgstr "Erreur en téléchargeant %(url)s [md5 invalide]"
 
-#: management/commands/update.py:124
+#: management/commands/update.py:165
 #, python-format
 msgid "Error while downloading %(url)s"
 msgstr "Erreur en téléchargeant %(url)s"
 
-#: management/commands/update.py:129
+#: management/commands/update.py:170
 #, python-format
 msgid "Error while downloading %(url)s [GAI error]"
 msgstr "Erreur en téléchargeant %(url)s [erreur GAI]"
 
-#: management/commands/update.py:134
+#: management/commands/update.py:175
 #, python-format
 msgid "Error while downloading %(url)s [socket timeout]"
 msgstr "Erreur en téléchargeant %(url)s [socket timeout]"
 
-#: management/commands/update.py:162
+#: management/commands/update.py:203
 #, python-format
 msgid "Download from serial %(syn)s"
 msgstr "Téléchargement depuis la synchronisation %(syn)s"
 
-#: management/commands/update.py:166
+#: management/commands/update.py:207
 msgid "No previous sync... Initializing database"
 msgstr "Aucune synchronisation précédente… Initialisation de la base"
 
-#: management/commands/update.py:182 management/commands/update.py:217
+#: management/commands/update.py:223 management/commands/update.py:258
 #, python-format
 msgid "Found %(pkg)s-%(vsn)s"
 msgstr "Version %(pkg)s-%(vsn)s"
 
-#: management/commands/update.py:189 management/commands/update.py:221
+#: management/commands/update.py:230 management/commands/update.py:262
 #, python-format
 msgid "Timeout with %(p)s-%(v)s [socket timeout]"
 msgstr "Timeout avec %(p)s-%(v)s [socket timeout]"
 
-#: management/commands/update.py:193 management/commands/update.py:225
+#: management/commands/update.py:234 management/commands/update.py:266
 #, python-format
 msgid "Gai error with %(p)s-%(v)s"
 msgstr "Erreur GAI avec %(p)s-%(v)s"
 
-#: management/commands/update.py:197 management/commands/update.py:229
+#: management/commands/update.py:238 management/commands/update.py:270
 #, python-format
 msgid "Protocol error with %(p)s-%(v)s"
 msgstr "Erreur de protocole avec %(p)s-%(v)s"
 
-#: management/commands/update.py:207
+#: management/commands/update.py:248
 #, python-format
 msgid "Found %(pkg)s"
 msgstr "Paquet %(pkg)s"
 
-#: management/commands/update.py:211
+#: management/commands/update.py:252
 #, python-format
 msgid "package releases (%(p)s)"
 msgstr "versions de paquet (%(p)s)"
+
+#: templates/400.html:3
+msgid "Error 400: bad request"
+msgstr "Erreur 400 : requête incorrecte"
+
+#: templates/400.html:5
+msgid "The request you sent seems to be malformed."
+msgstr "La requête envoyée semble être incorrecte"
+
+#: templates/401.html:3
+msgid "Error 401: authentication required"
+msgstr "Erreur 401 : authentification requise."
+
+#: templates/401.html:5
+msgid "You must be logged in to access this page."
+msgstr "Vous devez être authentifiés pour accéder à cette page."
+
+#: templates/403.html:3
+msgid "Error 403: Forbidden"
+msgstr "Erreur 403 : page interdite"
+
+#: templates/403.html:5
+msgid "You are not allowed to access this page."
+msgstr "Vous n'êtes pas autorisés à accéder à cette page."
+
+#: templates/404.html:3
+msgid "Error 404: page not found"
+msgstr "Erreur 404 : page non trouvée"
+
+#: templates/404.html:5
+msgid "We were unable to find the page you requested."
+msgstr "La page demandée n'existe pas."
+
+#: templates/500.html:17
+msgid "Something terrible happened"
+msgstr "Quelque chose de terrible est arrivé"
+
+#: templates/500.html:20
+msgid ""
+"An error on the server was encountered during the processing of your request."
+msgstr ""
+"Une erreur a été rencontrée sur le serveur durant le traitement de votre "
+"demande."
 
 #: templates/base.html:32
 msgid "Index"
@@ -479,10 +522,10 @@ msgid "©2014 flanker."
 msgstr "©2014, flanker"
 
 #: templates/search_result.html:25
-#, fuzzy, python-format
+#, python-format
 msgid ""
-"You should to search “<a href=\"%(url)s?search=%(pattern)s\">%(pattern)s</"
-"a>” to find more packages."
+"You should search “<a href=\"%(url)s?search=%(pattern)s\">%(pattern)s</a>” "
+"to find more packages."
 msgstr ""
 "Essayez de chercher « <a href=\"%(url)s?search=%(pattern)s\">%(pattern)s</a> "
 "» pour obtenir davantage de résultats."
@@ -576,6 +619,10 @@ msgstr "Versions disponibles"
 #: tests/test_translation.py:28
 msgid "test_string"
 msgstr "test_string"
+
+#~ msgid "You should search %(pattern)s to find more packages."
+#~ msgstr ""
+#~ "Essayez de chercher %(pattern)s pour obtenir davantage de résultats."
 
 #~ msgid "PythonNest — %(p)s"
 #~ msgstr "PythonNest — %(p)s"

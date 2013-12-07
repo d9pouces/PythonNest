@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import gzip
 import hashlib
 from optparse import make_option
 import os
@@ -7,6 +8,7 @@ import time
 from urllib.error import URLError
 import urllib.request
 import xmlrpc.client
+import http.client
 import datetime
 
 from django.conf import settings
@@ -21,6 +23,45 @@ from pythonnest.models import Synchronization, Package, ObjectCache, Release, Cl
 
 
 __author__ = "flanker"
+
+
+class ProxiedTransport(xmlrpc.client.Transport):
+
+    def set_proxy(self, proxy):
+        #noinspection PyAttributeOutsideInit
+        self.proxy = proxy
+
+    def set_protocol(self, protocol='http'):
+        #noinspection PyAttributeOutsideInit
+        self.protocol = 'https' if protocol.startswith('https') else 'http'
+
+    def make_connection(self, host):
+        #noinspection PyAttributeOutsideInit
+        self.realhost = host
+        if self.proxy.startswith('https'):
+            chost, self._extra_headers, x509 = self.get_host_info(self.proxy)
+            connection = http.client.HTTPSConnection(chost, None, **(x509 or {}))
+        else:
+            connection = http.client.HTTPConnection(self.proxy)
+        return connection
+
+    def send_request(self, host, handler, request_body, debug):
+        connection = self.make_connection(host)
+        headers = self._extra_headers[:]
+        if debug:
+            connection.set_debuglevel(1)
+        proxied_handler = '%s://%s%s' % (self.protocol, self.realhost, handler)
+        if self.accept_gzip_encoding and gzip:
+            connection.putrequest("POST", proxied_handler, skip_accept_encoding=True)
+            headers.append(("Accept-Encoding", "gzip"))
+        else:
+            connection.putrequest("POST", proxied_handler)
+        connection.putheader('Host', self.realhost)
+        headers.append(("Content-Type", "text/xml"))
+        headers.append(("User-Agent", self.user_agent))
+        self.send_headers(connection, headers)
+        self.send_content(connection, request_body)
+        return connection
 
 
 class Command(BaseCommand):

@@ -22,7 +22,7 @@
             {% empty %}
                 <li>{% trans "No package matched your query." %}</li>
             {% endfor %}
-        {% if alt_pattern %}<li>{% blocktrans with pattern=alt_pattern url=alt_url %}You should to search “<a href="{{ url }}?search={{ pattern }}">{{ pattern }}</a>” to find more packages.{% endblocktrans %}</li>
+        {% if alt_pattern %}<li>{% blocktrans with pattern=alt_pattern url=alt_url %}You should search “<a href="{{ url }}?search={{ pattern }}">{{ pattern }}</a>” to find more packages.{% endblocktrans %}</li>
         {% endif %}
         </ul>
     </div>

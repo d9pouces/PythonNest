@@ -1,0 +1,7 @@
+{% extends "root.html" %}{% load i18n %}
+{% block body %}
+    <h2 class="body-header">{% trans "Error 401: authentication required" %}</h2>
+    <div class="body-content">
+    {% trans 'You must be logged in to access this page.' %}
+    </div>
+{% endblock %}

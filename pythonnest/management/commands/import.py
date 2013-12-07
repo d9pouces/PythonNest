@@ -111,7 +111,7 @@ class Command(BaseCommand):
                         print(red(_('Corrupted file: %(f)s') % {'f': filepath}))
                         stop = True
                         break
-                    download.save()
+                    download.log()
                 if stop:
                     break
             if stop:

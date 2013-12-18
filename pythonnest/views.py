@@ -78,8 +78,8 @@ def simple(request, package_name=None, version=None):
     if package_name is not None:
         package = get_object_or_404(Package, name__iexact=package_name)
         if version is not None:
-            version = get_object_or_404(Release, package=package, version__iexact=version)
-            downloads = ReleaseDownload.objects.filter(version=version)
+            release = get_object_or_404(Release, package=package, version__iexact=version)
+            downloads = ReleaseDownload.objects.filter(release=release)
         else:
             downloads = ReleaseDownload.objects.filter(package=package)
     else:

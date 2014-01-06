@@ -34,5 +34,4 @@ urlpatterns = patterns('',
                        url(r'^simple/(?P<package_name>[^/]+)/$', 'pythonnest.views.simple'),
                        url(r'^simple/$', 'pythonnest.views.simple'),
                        url(r'^setup/?$', 'pythonnest.views.setup'),
-                       url(r'^$', 'pythonnest.views.index'),
-)
+                       url(r'^$', 'pythonnest.views.index'), )

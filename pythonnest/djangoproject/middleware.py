@@ -4,8 +4,16 @@ Define your custom middlewares in this file.
 """
 import base64
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.middleware import RemoteUserMiddleware
 
 __author__ = "flanker"
+
+
+class DebugMiddleware(object):
+
+    @staticmethod
+    def process_request(request):
+        request.META['HTTP_REMOTE_USER'] = 'flan'
 
 
 class HttpBasicMiddleware(object):
@@ -22,3 +30,7 @@ class HttpBasicMiddleware(object):
                 user = authenticate(username=username, password=password)
                 if user is not None and user.is_active:
                     login(request, user)
+
+
+class HttpRemoteUserMiddleware(RemoteUserMiddleware):
+    header = 'HTTP_REMOTE_USER'

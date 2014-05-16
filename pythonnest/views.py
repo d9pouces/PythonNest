@@ -37,7 +37,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.static import was_modified_since
 
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
-    PackageType
+    PackageType, normalize_str
 from pythonnest.rpcapi.utils import prepare_query
 
 
@@ -52,7 +52,7 @@ class JSONDatetime(JSONEncoder):
 
 
 def package_json(request, package_name):
-    package = get_object_or_404(Package, name=package_name)
+    package = get_object_or_404(Package, normalized_name__iexact=normalize_str(package_name))
     releases = list(Release.objects.filter(package=package).order_by('-id')[0:1])
     if not releases:
         raise Http404
@@ -63,7 +63,7 @@ def package_json(request, package_name):
 
 
 def version_json(request, package_name, version):
-    release = get_object_or_404(Release, package__name=package_name, version=version)
+    release = get_object_or_404(Release, package__normalized_name__iexact=normalize_str(package_name), version=version)
     result = {'info': release.data(), 'urls': [x.data() for x in ReleaseDownload.objects.filter(release=release)]}
     return HttpResponse(json.dumps(result, ensure_ascii=False, cls=JSONDatetime, indent=4),
                         content_type='application/json')
@@ -76,7 +76,7 @@ class SearchForm(forms.Form):
 
 def simple(request, package_name=None, version=None):
     if package_name is not None:
-        package = get_object_or_404(Package, name__iexact=package_name)
+        package = get_object_or_404(Package, normalized_name__iexact=normalize_str(package_name))
         if version is not None:
             release = get_object_or_404(Release, package=package, version__iexact=version)
             downloads = ReleaseDownload.objects.filter(release=release)

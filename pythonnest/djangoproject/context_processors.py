@@ -14,4 +14,5 @@ def context_user(request):
     """Add the current user to the context.
     User is taken from the current :class:`django.core.http.HttpRequest`
     and binded to `user`."""
-    return {'user': request.user, 'title': _('PythonNest')}
+    http_logon = request.META.get('REMOTE_USER') or request.META.get('HTTP_REMOTE_USER')
+    return {'user': request.user, 'title': _('PythonNest'), 'http_logon': bool(http_logon)}

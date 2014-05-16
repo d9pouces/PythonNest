@@ -33,44 +33,10 @@ You can also use pip ::
 We strongly advise to use virtualenv and gunicorn to run your server.
 
 
-Configuring
-===========
-
-
-PythonNest uses a small configuration file named `pythonnest.ini`. Its location depends on the location of the package,
-more precisely on the location of the `pythonnest.djangoproject.settings` file.
-
-If the location is `/foo/bar/lib/baz/pythonnest/djangoproject/settings.py`, then the configuration file is expected to
-be `/foo/bar/etc/pythonnest.ini`. Use `pythonnest-manage config` to display its exact location.
-
-Its content is quite limited::
-
-    [pythonnest]
-    ; root path for all data files (static files like CSS, and python packages)
-    ROOT_PATH = /var/data/pythonnest
-    ; full URI of your repository
-    HOST = http://localhost:8000/
-    DEBUG = True
-    ADMIN_EMAIL = admin@localhost
-    TIME_ZONE = Europe/Paris
-    LANGUAGE_CODE = fr-fr
-    ; if your mirror is behind a Apache with mod_xsendfile, use this option to increase perfs
-    USE_XSENDFILE = false
-    ; 'postgresql_psycopg2', mysql', 'sqlite3' or 'oracle'
-    DATABASE_ENGINE = django.db.backends.sqlite3
-    ; location of your sqlite db, or name of the sql database
-    DATABASE_NAME =
-    DATABASE_USER =
-    DATABASE_PASSWORD =
-    DATABASE_HOST =
-    DATABASE_PORT =
-
-The package `mysql` seems to be a bit broken with Python 3.3, or at least cannot be directely installed with `pip`.
-
 Virtual environment
 ===================
 
-To create a functionnal virtual env and launch the service through gunicorn (assuming mkvirtual is installed) ::
+To create a functionnal virtual env and launch the service through gunicorn (assuming mkvirtualenv is installed) ::
 
   VIRTUALENV=pythonnest
   mkvirtualenv -p `which python3.3` $VIRTUALENV
@@ -82,6 +48,47 @@ To create a functionnal virtual env and launch the service through gunicorn (ass
   pythonnest-manage collectstatic
   gunicorn -b 0.0.0.0:8080 -D pythonnest.djangoproject.wsgi:application
 
+
+If mkvirtualenv is not found, you have to search for virtualenvwrapper (thanks to apt-get, yum or pip).
+
+
+Configuring
+===========
+
+
+PythonNest uses a small configuration file named `pythonnest.ini`. Its location depends on the location of the package,
+more precisely on the location of the `pythonnest.djangoproject.settings` file.
+
+If the location is `/foo/bar/lib/baz/pythonnest/djangoproject/settings.py`, then the configuration file is expected to
+be `/foo/bar/etc/pythonnest.ini`. Anyway, you should use `pythonnest-manage config` to display its exact location.
+
+Its content is quite limited::
+
+    [pythonnest]
+    ; root path for all data files (static files like CSS, and python packages)
+    ROOT_PATH = /var/data/pythonnest
+    ; full URI of your repository, with trailing slash (https://pypi.python.org/)
+    HOST = http://localhost:8000/
+    ; activate error pages and deactive email reporting
+    DEBUG = True
+    ADMIN_EMAIL = admin@localhost
+    TIME_ZONE = Europe/Paris
+    LANGUAGE_CODE = fr-fr
+    ; if your mirror is behind a Apache with mod_xsendfile, use this option to increase perfs
+    USE_XSENDFILE = false
+    ; use if you want to use Apache/NGinx HTTP authentication (both HTTP_REMOTE_USER and REMOTE_USER HTTP are used)
+    USE_HTTP_AUTH = false
+    ; replace 'sqlite3' by 'postgresql_psycopg2', 'mysql', or 'oracle'
+    DATABASE_ENGINE = django.db.backends.sqlite3
+    ; location of your sqlite db, or name of the sql database
+    DATABASE_NAME =
+    ; only used with mysql,
+    DATABASE_USER =
+    DATABASE_PASSWORD =
+    DATABASE_HOST =
+    DATABASE_PORT =
+
+The package `mysql` seems to be a bit broken with Python 3.3, or at least cannot be directely installed with `pip`.
 
 Dumping an existing mirror
 ==========================

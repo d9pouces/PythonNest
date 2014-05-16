@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-07 12:17+0100\n"
+"POT-Creation-Date: 2014-05-16 20:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,180 +16,184 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:47
+#: models.py:53
 msgid "Source"
 msgstr "Source"
 
-#: models.py:48
+#: models.py:54
 msgid "Destination"
 msgstr "Destination"
 
-#: models.py:49
+#: models.py:55
 msgid "Last synchronized serial"
 msgstr "Dernière synchronisation"
 
-#: models.py:50 models.py:63 models.py:103 models.py:167 models.py:225
+#: models.py:56 models.py:69 models.py:110 models.py:178 models.py:236
 msgid "creation"
 msgstr "création"
 
-#: models.py:51 models.py:64 models.py:104 models.py:168 models.py:226
+#: models.py:57 models.py:70 models.py:111 models.py:179 models.py:237
 msgid "modification"
 msgstr "modification"
 
-#: models.py:54
+#: models.py:60
 msgid "Synchronization"
 msgstr "synchronisation"
 
-#: models.py:55
+#: models.py:61
 msgid "Synchronizations"
 msgstr "synchronisations"
 
-#: models.py:58
+#: models.py:64
 #, python-format
 msgid "%(s)s -> %(d)s"
 msgstr "%(s)s -> %(d)s"
 
-#: models.py:62
+#: models.py:68
 msgid "Classifier"
 msgstr "classifieurs"
 
-#: models.py:93
+#: models.py:99
 msgid "package name"
 msgstr "nom de paquet"
 
-#: models.py:94
+#: models.py:100
+msgid "normalized name"
+msgstr "nom normalisé"
+
+#: models.py:101
 msgid "author"
 msgstr "auteur"
 
-#: models.py:95
+#: models.py:102
 msgid "author email"
 msgstr "courriel de l'auteur"
 
-#: models.py:96 models.py:135
+#: models.py:103 models.py:146
 msgid "maintainer"
 msgstr "mainteneur"
 
-#: models.py:97
+#: models.py:104
 msgid "maintainer email"
 msgstr "courriel du mainteneur"
 
-#: models.py:98
+#: models.py:105
 msgid "home page"
 msgstr "page d'accueil"
 
-#: models.py:99
+#: models.py:106
 msgid "license"
 msgstr "licence"
 
-#: models.py:100
+#: models.py:107
 msgid "summary"
 msgstr "résumé"
 
-#: models.py:101
+#: models.py:108
 msgid "download url"
 msgstr "URL de téléchargement"
 
-#: models.py:102
+#: models.py:109
 msgid "project url"
 msgstr "URL du projet"
 
-#: models.py:105
+#: models.py:112
 msgid "restrict to this group"
 msgstr "restreindre à ce groupe"
 
-#: models.py:135
+#: models.py:146
 msgid "owner"
 msgstr "propriétaire"
 
-#: models.py:136
+#: models.py:147
 msgid "role"
 msgstr "rôle"
 
-#: models.py:137
+#: models.py:148
 msgid "user"
 msgstr "utilisateur"
 
-#: models.py:138
+#: models.py:149
 msgid "package"
 msgstr "paquet"
 
-#: models.py:146
+#: models.py:157
 msgid "version name"
 msgstr "nom de version"
 
-#: models.py:147
+#: models.py:158
 msgid "stable version name"
 msgstr "nom de version stable"
 
-#: models.py:149
+#: models.py:160
 msgid "Description"
 msgstr "description"
 
-#: models.py:150
+#: models.py:161
 msgid "platform"
 msgstr "platform"
 
-#: models.py:151
+#: models.py:162
 msgid "keywords"
 msgstr "mots-clefs"
 
-#: models.py:166
+#: models.py:177
 msgid "docs url"
 msgstr "URL de la documentation"
 
-#: models.py:169
+#: models.py:180
 msgid "Is hidden"
 msgstr "est caché"
 
-#: models.py:213
+#: models.py:224
 msgid "UID"
 msgstr "UID"
 
-#: models.py:214
+#: models.py:225
 msgid "URL"
 msgstr "URL"
 
-#: models.py:216
+#: models.py:227
 msgid "Filename"
 msgstr "nom de fichier"
 
-#: models.py:217
+#: models.py:228
 msgid "File"
 msgstr "fichier"
 
-#: models.py:218
+#: models.py:229
 msgid "Size"
 msgstr "taille"
 
-#: models.py:219
+#: models.py:230
 msgid "MD5"
 msgstr "MD5"
 
-#: models.py:220
+#: models.py:231
 msgid "Downloads"
 msgstr "téléchargements"
 
-#: models.py:221
+#: models.py:232
 msgid "Has signature"
 msgstr "est signé"
 
-#: models.py:222
+#: models.py:233
 msgid "Python version"
 msgstr "version de Python"
 
-#: models.py:223
+#: models.py:234
 msgid "Comment"
 msgstr "commentaire"
 
-#: models.py:224
+#: models.py:235
 msgid "Upload time"
 msgstr "date d'ajout"
 
-#: models.py:281
+#: models.py:292
 msgid "timestamp"
 msgstr "timestamp"
 
-#: models.py:282
+#: models.py:293
 msgid "action"
 msgstr "action"
 
@@ -214,7 +217,7 @@ msgstr "Vous devez être authentifiés pour continuer"
 msgid "You are not allowed to update this package"
 msgstr "Vous n'êtes pas autorisés à modifier ce paquet."
 
-#: views.py:265 views.py:306 djangoproject/context_processors.py:17
+#: views.py:265 views.py:306 djangoproject/context_processors.py:18
 msgid "PythonNest"
 msgstr "PythonNest"
 
@@ -446,46 +449,52 @@ msgstr "S'enregistrer"
 msgid "Client configuration"
 msgstr "Configuration des clients"
 
-#: templates/index.html:6
-msgid "Edit <span class=\"pre\">~/.pip/pip.conf</span> to include these lines:"
-msgstr ""
-"Modifier <span class=\"pre\">~/.pip/pip.conf</span> pour ajouter ces lignes :"
-
-#: templates/index.html:13
-msgid "Edit <span class=\"pre\">~/.pypirc</span> to include these lines:"
-msgstr ""
-"Modifier <span class=\"pre\">~/.pypirc</span> pour ajouter ces lignes :"
-
-#: templates/index.html:23
-msgid "Run the following command to register a package to this repository:"
-msgstr "Utiliser la commande suivante pour enregistrer le paquet :"
-
-#: templates/index.html:25
-msgid "Run the following command to upload to this repository:"
-msgstr "Utiliser la commande suivante pour ajouter une archive à ce miroir :"
-
-#: templates/index.html:29
+#: templates/index.html:7
 msgid ""
 "Edit <span class=\"pre\">~/.pydistutils.cfg</span> to include these lines:"
 msgstr ""
 "Modifier <span class=\"pre\">~/.pydistutils.cfg</span> pour ajouter ces "
 "lignes :"
 
-#: templates/index.html:34
+#: templates/index.html:10
+msgid ""
+"You probably have to add your root certificate to the first existing file "
+"among:"
+msgstr "Vous aurez probablement à ajouter votre certificat racine au premier fichier existant parmi :"
+
+#: templates/index.html:21
+msgid "Edit <span class=\"pre\">~/.pip/pip.conf</span> to include these lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.pip/pip.conf</span> pour ajouter ces lignes :"
+
+#: templates/index.html:28
+msgid "Edit <span class=\"pre\">~/.pypirc</span> to include these lines:"
+msgstr ""
+"Modifier <span class=\"pre\">~/.pypirc</span> pour ajouter ces lignes :"
+
+#: templates/index.html:38
+msgid "Run the following command to register a package to this repository:"
+msgstr "Utiliser la commande suivante pour enregistrer le paquet :"
+
+#: templates/index.html:40
+msgid "Run the following command to upload to this repository:"
+msgstr "Utiliser la commande suivante pour ajouter une archive à ce miroir :"
+
+#: templates/index.html:44
 msgid "To easily use virtual environments, adapt and run these lines:"
 msgstr ""
 "Pour utiliser facilement les environnements virtuels, adaptez les lignes "
 "suivantes :"
 
-#: templates/index.html:39
+#: templates/index.html:49
 msgid "create virtual env"
 msgstr "créer un environnement virtuel"
 
-#: templates/index.html:41
+#: templates/index.html:51
 msgid "use virtual env"
 msgstr "utiliser un environnement virtuel"
 
-#: templates/index.html:45
+#: templates/index.html:55
 msgid ""
 "Edit <span class=\"pre\">~/.buildout/default.cfg</span> to include these "
 "lines:"
@@ -497,7 +506,7 @@ msgstr ""
 msgid "Login"
 msgstr "Connexion"
 
-#: templates/password_change.html:3 templates/root.html:28
+#: templates/password_change.html:3 templates/root.html:29
 msgid "Change your password"
 msgstr "Modifier votre mot de passe"
 
@@ -509,15 +518,15 @@ msgstr "Mettre à jour !"
 msgid "Connected as: "
 msgstr "Connecté en tant que : "
 
-#: templates/root.html:26
+#: templates/root.html:27
 msgid "Logout"
 msgstr "Se déconnecter"
 
-#: templates/root.html:33
+#: templates/root.html:34
 msgid "Search"
 msgstr "Recherche"
 
-#: templates/root.html:48
+#: templates/root.html:49
 msgid "©2014 flanker."
 msgstr "©2014, flanker"
 

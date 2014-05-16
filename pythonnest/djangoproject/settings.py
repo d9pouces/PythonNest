@@ -6,7 +6,6 @@ from urllib.parse import urlparse
 
 __author__ = "flanker"
 
-
 __parser = configparser.ConfigParser()
 __config_path_comp = abspath(__file__).split('/')
 CONFIG_FILES = [join(__file__, '..', '..', 'pythonnest.ini')]
@@ -31,7 +30,7 @@ DATABASE_USER = __parser.get('pythonnest', 'DATABASE_USER', fallback='')
 DATABASE_PASSWORD = __parser.get('pythonnest', 'DATABASE_PASSWORD', fallback='')
 DATABASE_HOST = __parser.get('pythonnest', 'DATABASE_HOST', fallback='')
 DATABASE_PORT = __parser.get('pythonnest', 'DATABASE_PORT', fallback='')
-
+USE_HTTP_AUTH = __parser.getboolean('pythonnest', 'HTTP_AUTH', fallback=False)
 ADMIN_EMAIL = __parser.get('pythonnest', 'ADMIN_EMAIL', fallback='admin@example.com')
 
 ADMINS = ((ADMIN_EMAIL, ADMIN_EMAIL), )
@@ -44,11 +43,10 @@ MANAGERS = ADMINS
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [__components.hostname]
 
-
 DATABASES = {
     'default': {
         'ENGINE': DATABASE_ENGINE,  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': DATABASE_NAME,   # Or path to database file if using sqlite3.
+        'NAME': DATABASE_NAME,  # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': DATABASE_USER,
         'PASSWORD': DATABASE_PASSWORD,
@@ -85,16 +83,22 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
+    # 'pythonnest.djangoproject.middleware.DebugMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', ]
+if USE_HTTP_AUTH:
+    MIDDLEWARE_CLASSES += [
+        'django.contrib.auth.middleware.RemoteUserMiddleware',
+        'pythonnest.djangoproject.middleware.HttpRemoteUserMiddleware', ]
+MIDDLEWARE_CLASSES += [
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
+    'pythonnest.djangoproject.middleware.HttpRemoteUserMiddleware',
     'pythonnest.djangoproject.middleware.HttpBasicMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
-
+    'django.middleware.clickjacking.XFrameOptionsMiddleware', ]
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.RemoteUserBackend',
                            'django.contrib.auth.backends.ModelBackend', ]
@@ -109,7 +113,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'pythonnest.djangoproject.context_processors.context_user',
 )
-
 
 ROOT_URLCONF = 'pythonnest.djangoproject.root_urls'
 
@@ -132,6 +135,7 @@ INSTALLED_APPS = (
     'rpc4django',
     'pythonnest',
     'pythonnest.rpcapi',
+    'south',
 )
 
 

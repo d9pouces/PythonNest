@@ -2,6 +2,21 @@
 {% block body %}
         <h2 class="body-header">{% trans "Client configuration" %}</h2>
         <div class="body-content">
+
+            <h3>Easyinstall</h3>
+            <p>{% trans 'Edit <span class="pre">~/.pydistutils.cfg</span> to include these lines:' %}</p>
+<pre>[easy_install]
+index_url = {{ base_url }}simple</pre>
+{% if use_ssl %}<p>{% trans 'You probably have to add your root certificate to the first existing file among:' %}</p>
+<ul class="">
+<li>/etc/pki/tls/certs/ca-bundle.crt</li>
+<li>/etc/ssl/certs/ca-certificates.crt</li>
+<li>/usr/share/ssl/certs/ca-bundle.crt</li>
+<li>/usr/local/share/certs/ca-root.crt</li>
+<li>/etc/ssl/cert.pem</li>
+<li>/System/Library/OpenSSL/certs/cert.pem</li>
+</ul>
+{% endif %}
             <h3>Pip</h3>
             <p>{% trans 'Edit <span class="pre">~/.pip/pip.conf</span> to include these lines:' %}</p>
         <pre>[global]
@@ -24,11 +39,6 @@ repository: {{ base_url }}setup
             <pre>python setup.py register -r {{ base_url }}setup</pre>
             <p>{% trans 'Run the following command to upload to this repository:' %}</p>
             <pre>python setup.py bdist sdist upload -r {{ base_url }}setup</pre>
-
-            <h3>Easyinstall</h3>
-            <p>{% trans 'Edit <span class="pre">~/.pydistutils.cfg</span> to include these lines:' %}</p>
-<pre>[easy_install]
-index_url = {{ base_url }}simple</pre>
 
             <h3>VirtualEnvs</h3>
             <p>{% trans 'To easily use virtual environments, adapt and run these lines:' %}</p>

@@ -15,8 +15,14 @@ from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
 import time
+import unicodedata
 
 __author__ = "flanker"
+
+
+def normalize_str(s):
+    s = s.replace('_', '-')
+    return unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('ASCII').lower()
 
 
 class ObjectCache(object):
@@ -91,6 +97,7 @@ class PackageType(CachedName):
 
 class Package(models.Model):
     name = models.CharField(_('package name'), db_index=True, blank=True, default='', max_length=255)
+    normalized_name = models.CharField(_('normalized name'), db_index=True, blank=True, default='', max_length=255)
     author = models.CharField(_('author'), db_index=True, blank=True, null=True, max_length=255)
     author_email = models.CharField(_('author email'), db_index=True, blank=True, null=True, max_length=255)
     maintainer = models.CharField(_('maintainer'), db_index=True, blank=True, null=True, max_length=255)
@@ -106,6 +113,10 @@ class Package(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.normalized_name = normalize_str(self.name)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def data(self):
         result = {}

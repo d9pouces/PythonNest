@@ -64,6 +64,10 @@ pythonnest/management/commands/__pycache__/config.cpython-33.pyc
 pythonnest/management/commands/__pycache__/export.cpython-33.pyc
 pythonnest/management/commands/__pycache__/import.cpython-33.pyc
 pythonnest/management/commands/__pycache__/update.cpython-33.pyc
+pythonnest/migrations/0001_initial.py
+pythonnest/migrations/__init__.py
+pythonnest/migrations/__pycache__/0001_initial.cpython-33.pyc
+pythonnest/migrations/__pycache__/__init__.cpython-33.pyc
 pythonnest/rpcapi/__init__.py
 pythonnest/rpcapi/models.py
 pythonnest/rpcapi/utils.py

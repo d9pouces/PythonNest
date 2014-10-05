@@ -10,6 +10,7 @@ __parser = configparser.ConfigParser()
 __config_path_comp = abspath(__file__).split('/')
 CONFIG_FILES = [join(__file__, '..', '..', 'pythonnest.ini')]
 if 'lib' in __config_path_comp:
+    # noinspection PyTypeChecker
     __conf_path = '/'.join(__config_path_comp[0:__config_path_comp.index('lib')] + ['etc', 'pythonnest.ini'])
     CONFIG_FILES.append(abspath(__conf_path))
 __parser.read(CONFIG_FILES)
@@ -32,6 +33,7 @@ DATABASE_HOST = __parser.get('pythonnest', 'DATABASE_HOST', fallback='')
 DATABASE_PORT = __parser.get('pythonnest', 'DATABASE_PORT', fallback='')
 USE_HTTP_AUTH = __parser.getboolean('pythonnest', 'HTTP_AUTH', fallback=False)
 ADMIN_EMAIL = __parser.get('pythonnest', 'ADMIN_EMAIL', fallback='admin@example.com')
+READ_ONLY = __parser.get('pythonnest', 'READ_ONLY', fallback=True)
 
 ADMINS = ((ADMIN_EMAIL, ADMIN_EMAIL), )
 
@@ -122,7 +124,7 @@ WSGI_APPLICATION = 'pythonnest.djangoproject.wsgi.application'
 TEMPLATE_DIRS = (
     abspath(join(dirname(__file__), 'templates')),
 )
-
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -135,7 +137,6 @@ INSTALLED_APPS = (
     'rpc4django',
     'pythonnest',
     'pythonnest.rpcapi',
-    'south',
 )
 
 

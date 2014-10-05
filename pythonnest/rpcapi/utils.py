@@ -1,10 +1,12 @@
 from django.db.models import Q
+from pythonnest.models import normalize_str
 
 __author__ = 'flanker'
 
 
 def prepare_query(previous_query, prefix, key, value, global_and=True):
     kwargs = {}
+    value = normalize_str(value)
     if (isinstance(value, list) or isinstance(value, tuple)) and len(value) > 1:
         kwargs = {prefix + key + '__in': value}
     elif isinstance(value, list) or isinstance(value, tuple):

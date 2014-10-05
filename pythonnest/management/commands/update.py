@@ -77,6 +77,7 @@ class Command(BaseCommand):
         make_option('--serial', type=int, default=None, help='Start from this serial'),
         make_option('--retry', type=int, default=5, help='Max retry count (default 5)'),
         make_option('--timeout', type=int, default=10, help='Timeout for network operations (default 10s)'),
+        make_option('--nocontinue', action='store_true', default=False, help='Stop after error'),
         make_option('--init-all', action='store_true', default=False,
                     help='Force the download of all releases of all packages (very long initial sync!)'),
     )
@@ -87,6 +88,7 @@ class Command(BaseCommand):
         self.package_cache = ObjectCache(lambda key_: Package.objects.get_or_create(name=key_)[0])
         self.client = None
         self.retry = 5
+        self.error_list = []
 
     def connect(self, url):
         self.client = xmlrpc.client.ServerProxy(url)
@@ -238,6 +240,8 @@ class Command(BaseCommand):
                         print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
                         time.sleep(2)
                         no_timeout += 1
+                if no_timeout >= self.retry:
+                    self.error_list.append((package_name, version))
         else:
             last_serial = self.client.changelog_last_serial()
             packages = self.client.list_packages()
@@ -247,6 +251,7 @@ class Command(BaseCommand):
                     break
                 print(cyan(_('Found %(pkg)s') % {'pkg': package_name}))
                 no_timeout = 0
+                version = ''
                 while no_timeout < self.retry:
                     try:
                         print(yellow(_('package releases (%(p)s)') % {'p': package_name}))
@@ -270,5 +275,6 @@ class Command(BaseCommand):
                         print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
                         time.sleep(2)
                         no_timeout += 1
-
+                if no_timeout >= self.retry:
+                    self.error_list.append((package_name, version))
         Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)

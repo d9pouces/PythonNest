@@ -3,6 +3,8 @@
 Define your custom context processors in this file.
 """
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+
 __author__ = "flanker"
 # __copyright__ = "Copyright 2013, 19pouces.net"
 # __credits__ = "flanker"
@@ -15,4 +17,5 @@ def context_user(request):
     User is taken from the current :class:`django.core.http.HttpRequest`
     and binded to `user`."""
     http_logon = request.META.get('REMOTE_USER') or request.META.get('HTTP_REMOTE_USER')
-    return {'user': request.user, 'title': _('PythonNest'), 'http_logon': bool(http_logon)}
+    return {'user': request.user, 'title': _('PythonNest'), 'http_logon': bool(http_logon),
+            'read_only': settings.READ_ONLY}

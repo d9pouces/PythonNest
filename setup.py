@@ -40,7 +40,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=0.7', 'Django==1.5', 'South', 'rpc4django', 'django-ajax-selects', 'rpc4django', ],
-    setup_requires=['setuptools>=0.7',  'Django',  'South', ],
+    install_requires=['setuptools>=0.7', 'Django>=1.7', 'rpc4django', 'django-ajax-selects', 'rpc4django', ],
+    setup_requires=['setuptools>=0.7',  'Django>=1.7', ],
     classifiers=['Programming Language :: Python :: 3', ]
 )

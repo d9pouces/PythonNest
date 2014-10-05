@@ -1,6 +1,5 @@
 setuptools>=0.7
-Django==1.5
-South
+Django>=1.7
 rpc4django
 django-ajax-selects
 rpc4django

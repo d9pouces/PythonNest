@@ -254,7 +254,7 @@ def index(request, page='0', size='20'):
         patterns = orig_pattern.split()
         sub_query = None
         for pattern in patterns:
-            sub_query = prepare_query(sub_query, '', 'name', pattern, global_and=True)
+            sub_query = prepare_query(sub_query, '', 'normalized_name', pattern, global_and=True)
         query = Package.objects.filter(sub_query).distinct()
         page_int = int(page)
         page_size = int(size)

@@ -276,7 +276,7 @@ class Command(BaseCommand):
                     continue
                 versions = [x for x in versions if x]
                 if not versions:
-                    break
+                    continue
                 version = versions[0]
                 self.stdout.write(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
                 counter += self.download_release(package_name, version)

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pythonnest
-Version: 0.7.11
+Version: 0.8.2
 Summary: Pypi emulator and cloning tool .
 Home-page: http://www.19pouces.net/projects.html
 Author: flanker
@@ -18,9 +18,8 @@ Description: PythonNest
         Python 3.3+ is required, with the following packages:
         
           * setuptools >= 0.7
-          * django >= 1.5
-          * South >= 0.8
-          * rpc4django (warning! you must install django 1.5 until rpc4django is patched to support django 1.6)
+          * django >= 1.7
+          * rpc4django >=0.3
         
         
         From the source::

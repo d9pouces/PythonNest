@@ -1,5 +1,5 @@
 setuptools>=0.7
 Django>=1.7
-rpc4django
+rpc4django>=0.3.0
 django-ajax-selects
 rpc4django

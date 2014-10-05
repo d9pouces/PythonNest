@@ -2,7 +2,6 @@ LICENSE
 MANIFEST.in
 README.rst
 VERSION
-ez_setup.py
 setup.py
 pythonnest/.DS_Store
 pythonnest/__init__.py
@@ -61,11 +60,12 @@ pythonnest/management/commands/import.py
 pythonnest/management/commands/update.py
 pythonnest/management/commands/__pycache__/__init__.cpython-33.pyc
 pythonnest/management/commands/__pycache__/config.cpython-33.pyc
+pythonnest/management/commands/__pycache__/deployment.cpython-33.pyc
 pythonnest/management/commands/__pycache__/export.cpython-33.pyc
 pythonnest/management/commands/__pycache__/import.cpython-33.pyc
 pythonnest/management/commands/__pycache__/update.cpython-33.pyc
 pythonnest/migrations/0001_initial.py
-pythonnest/migrations/0002_auto__add_field_package_normalized_name.py
+pythonnest/migrations/0002_auto_20141005_2218.py
 pythonnest/migrations/__init__.py
 pythonnest/migrations/__pycache__/0001_initial.cpython-33.pyc
 pythonnest/migrations/__pycache__/__init__.cpython-33.pyc

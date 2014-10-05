@@ -21,7 +21,8 @@ index_url = {{ base_url }}simple</pre>
             <p>{% trans 'Edit <span class="pre">~/.pip/pip.conf</span> to include these lines:' %}</p>
         <pre>[global]
 index = {{ base_url }}pypi
-index-url = {{ base_url }}simple{% if use_ssl %}
+index-url = {{ base_url }}simple
+allow-all-external = true{% if use_ssl %}
 cert = &lt;path to your CA&gt;{% endif %}</pre>
             {% if not read_only %}<h3>Setuptools</h3>
 

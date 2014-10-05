@@ -2,8 +2,6 @@
 import codecs
 import os.path
 import sys
-import ez_setup
-ez_setup.use_setuptools()
 from setuptools import setup, find_packages
 __author__ = "flanker"
 
@@ -40,7 +38,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=0.7', 'Django>=1.7', 'rpc4django', 'django-ajax-selects', 'rpc4django', ],
+    install_requires=['setuptools>=0.7', 'Django>=1.7', 'rpc4django>=0.3.0', 'django-ajax-selects', 'rpc4django', ],
     setup_requires=['setuptools>=0.7',  'Django>=1.7', ],
     classifiers=['Programming Language :: Python :: 3', ]
 )

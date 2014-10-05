@@ -17,26 +17,32 @@ from django.core.management.base import BaseCommand
 from django.utils.timezone import utc
 from django.utils.translation import ugettext as _
 
-from pythonnest.colors import cyan, green, red, yellow
-from pythonnest.models import Synchronization, Package, ObjectCache, Release, Classifier, Dependence, ReleaseDownload,\
+from pythonnest.colors import cyan, green, yellow
+from pythonnest.models import Synchronization, Package, ObjectCache, Release, Classifier, Dependence, ReleaseDownload, \
     PackageType, PackageRole, ReleaseMiss
 
+
+class DownloadException(Exception):
+    pass
+
+
+class MD5SumException(Exception):
+    pass
 
 __author__ = "flanker"
 
 
 class ProxiedTransport(xmlrpc.client.Transport):
-
     def set_proxy(self, proxy):
-        #noinspection PyAttributeOutsideInit
+        # noinspection PyAttributeOutsideInit
         self.proxy = proxy
 
     def set_protocol(self, protocol='http'):
-        #noinspection PyAttributeOutsideInit
+        # noinspection PyAttributeOutsideInit
         self.protocol = 'https' if protocol.startswith('https') else 'http'
 
     def make_connection(self, host):
-        #noinspection PyAttributeOutsideInit
+        # noinspection PyAttributeOutsideInit
         self.realhost = host
         if self.proxy.startswith('https'):
             chost, self._extra_headers, x509 = self.get_host_info(self.proxy)
@@ -78,8 +84,9 @@ class Command(BaseCommand):
         make_option('--retry', type=int, default=5, help='Max retry count (default 5)'),
         make_option('--timeout', type=int, default=10, help='Timeout for network operations (default 10s)'),
         make_option('--nocontinue', action='store_true', default=False, help='Stop after error'),
+        make_option('--package', action='store', default=None, help='Download all releases of a single package'),
         make_option('--init-all', action='store_true', default=False,
-                    help='Force the download of all releases of all packages (very long initial sync!)'),
+                    help='Download all releases of all packages (very long initial sync!)'),
     )
 
     def __init__(self):
@@ -93,23 +100,54 @@ class Command(BaseCommand):
     def connect(self, url):
         self.client = xmlrpc.client.ServerProxy(url)
 
+    def download_release_file(self, path, release_url):
+        md5_check = hashlib.md5()
+        with urllib.request.urlopen(release_url['url'], None, 5) as in_fd:
+            size = 0
+            with open(path, 'wb') as out_fd:
+                data = in_fd.read(40960)
+                while data:
+                    out_fd.write(data)
+                    size += len(data)
+                    md5_check.update(data)
+                    data = in_fd.read(40960)
+        if md5_check.hexdigest() != release_url.get('md5_digest'):
+            os.remove(path)
+            self.stderr.write((_('Error while downloading %(url)s [invalid md5 digest]') %
+                               {'url': release_url['url']}))
+            raise MD5SumException
+
     def download_release(self, package_name, version):
+        """ download all files attached to a given release of a given package
+        """
         downloaded_files = 0
         package = self.package_cache.get(package_name)
-        print(yellow(_('release data (%(p)s, %(v)s)') % {'p': package_name, 'v': version}))
-        release_data = self.client.release_data(package_name, version)
-        # update package object
-        for attr_name in ('home_page', 'license', 'summary', 'download_url', 'project_url',
-                          'author', 'author_email', 'maintainer', 'maintainer_email'):
-            if release_data.get(attr_name):
-                setattr(package, attr_name, release_data.get(attr_name))
-        package.save()
-        print(yellow(_('package roles (%(p)s, %(v)s)') % {'p': package_name, 'v': version}))
-        roles = self.client.package_roles(package_name)
-        PackageRole.objects.filter(package=package).delete()
-        for (role, username) in roles:
-            role_int = PackageRole.OWNER if role == 'Owner' else PackageRole.MAINTAINER
-            PackageRole(package=package, role=role_int, user=self.user_cache.get(username)).save()
+        values = {'p': package_name, 'v': version}
+        self.stdout.write(yellow(_('release data (%(p)s, %(v)s)') % values))
+        try:
+            release_data = self.try_download(self.client.release_data,
+                                             _('Unable to get release date of %(p)s-%(v)s') % values, package_name,
+                                             version)
+            update_kwargs = {}
+            # update package object with latest metadata
+            for attr_name in ('home_page', 'license', 'summary', 'download_url', 'project_url',
+                              'author', 'author_email', 'maintainer', 'maintainer_email'):
+                if release_data.get(attr_name):
+                    update_kwargs[attr_name] = release_data[attr_name]
+            if update_kwargs:
+                Package.objects.filter(id=package.id).update(**update_kwargs)
+            self.stdout.write(yellow(_('package roles (%(p)s, %(v)s)') % values))
+            roles = self.try_download(self.client.package_roles, _('Unable to get roles for %(p)s-%(v)s') % values,
+                                      package_name)
+            # roles of persons
+            PackageRole.objects.filter(package=package).delete()
+            package_roles = [PackageRole(package=package,
+                                         role=PackageRole.OWNER if role == 'Owner' else PackageRole.MAINTAINER,
+                                         user=self.user_cache.get(username)) for (role, username) in roles]
+            PackageRole.objects.bulk_create(package_roles)
+        except DownloadException:
+            self.error_list.append((package_name, version))
+            return 0
 
         # update release object
         release = Release.objects.get_or_create(package=package, version=version)[0]
@@ -126,64 +164,38 @@ class Command(BaseCommand):
                     getattr(release, attr_name).add(cls.get(key))
         release.save()
 
-        #update archives
-        print(yellow(_('release urls (%(p)s, %(v)s)') % {'p': package_name, 'v': version}))
-        release_urls = self.client.release_urls(package_name, version)
+        # update archives
+        self.stdout.write(yellow(_('release urls (%(p)s, %(v)s)') % values))
+        try:
+            release_urls = self.try_download(self.client.release_urls,
+                                             _('Unable to get release urls of %(p)s-%(v)s') % values,
+                                             package_name, version)
+        except DownloadException:
+            return 0
         for release_url in release_urls:
             md5_digest = release_url.get('md5_digest')
             c = ReleaseDownload.objects.filter(md5_digest=md5_digest, package=package, release=release).count()
             if c > 0 or not release_url.get('url') or not release_url.get('filename'):
                 continue
-            print(green(_('Downloading %(url)s') % {'url': release_url['url']}))
+            self.stdout.write(green(_('Downloading %(url)s') % {'url': release_url['url']}))
             filename = release_url['filename']
             download = ReleaseDownload(package=package, release=release, filename=filename)
-            no_timeout = 0
-            while no_timeout < self.retry:
-                try:
-                    path = download.abspath
-                    with urllib.request.urlopen(release_url['url'], None, 5) as in_fd:
-                        path_dirname = os.path.dirname(path)
-                        md5_check = hashlib.md5()
-                        size = 0
-                        if not os.path.isdir(path_dirname):
-                            os.makedirs(path_dirname)
-                        with open(path, 'wb') as out_fd:
-                            data = in_fd.read(4096)
-                            while data:
-                                out_fd.write(data)
-                                size += len(data)
-                                md5_check.update(data)
-                                data = in_fd.read(4096)
-                    if md5_check.hexdigest() != release_url.get('md5_digest'):
-                        os.remove(path)
-                        print(red(_('Error while downloading %(url)s [invalid md5 digest]') % {'url':
-                                                                                               release_url['url']}))
-                        no_timeout += 1
-                        continue
-                    download.file = download.relpath
-                    download.url = settings.MEDIA_URL + download.relpath
-                    break
-                except URLError:
-                    print(red(_('Error while downloading %(url)s') % {'url': release_url['url']}))
-                    ReleaseMiss.objects.get_or_create(release=release)
-                    no_timeout = self.retry
-                    break
-                except socket.gaierror:
-                    print(red(_('Error while downloading %(url)s [GAI error]') % {'url': release_url['url']}))
-                    ReleaseMiss.objects.get_or_create(release=release)
-                    time.sleep(2)
-                    no_timeout += 1
-                except socket.timeout:
-                    print(red(_('Error while downloading %(url)s [socket timeout]') % {'url': release_url['url']}))
-                    ReleaseMiss.objects.get_or_create(release=release)
-                    time.sleep(2)
-                    no_timeout += 1
-            if no_timeout >= self.retry:
+            path = download.abspath
+            path_dirname = os.path.dirname(path)
+            if not os.path.isdir(path_dirname):
+                os.makedirs(path_dirname)
+            try:
+                self.download_release_file(path, release_url)
+            except DownloadException:
+                ReleaseMiss.objects.get_or_create(release=release)
+                self.error_list.append((package_name, version))
                 continue
+            download.file = download.relpath
+            download.url = settings.MEDIA_URL + download.relpath
             if release_url.get('packagetype'):
                 download.package_type = PackageType.get(release_url.get('packagetype'))
             if release_url.get('upload_time'):
-                download.upload_time = datetime.datetime.strptime(release_url['upload_time'].value, "%Y%m%dT%H:%M:%S")\
+                download.upload_time = datetime.datetime.strptime(release_url['upload_time'].value, "%Y%m%dT%H:%M:%S") \
                     .replace(tzinfo=utc)
             for attr_name in ('filename', 'size', 'downloads', 'has_sig', 'python_version',
                               'comment_text', 'md5_digest'):
@@ -202,19 +214,38 @@ class Command(BaseCommand):
         if isinstance(options['serial'], int):
             first_serial = options['serial']
             init = False
-            print(cyan(_('Download from serial %(syn)s') % {'syn': first_serial}))
+            self.stdout.write(cyan(_('Download from serial %(syn)s') % {'syn': first_serial}))
         elif obj.last_serial is None or options['init_all']:
             first_serial = 0
             init = True
-            print(cyan(_('No previous sync... Initializing database')))
+            self.stdout.write(cyan(_('No previous sync... Initializing database')))
         else:
-            print(cyan(_('Previous sync: serial %(syn)s') % {'syn': obj.last_serial}))
+            self.stdout.write(cyan(_('Previous sync: serial %(syn)s') % {'syn': obj.last_serial}))
             first_serial = obj.last_serial
             init = False
         self.connect(options['url'])
-        if not init or options['init_all']:
+        last_serial = None
+
+        if options['package']:
+            # get all releases of the given package
+            package_name = options['package']
+            self.stdout.write(cyan(_('Downloading all versions of %(pkg)s') % {'pkg': package_name}))
+            try:
+                versions = self.try_download(self.client.package_releases,
+                                             _('Unable to get releases of %(pkg)s') % {'pkg': package_name},
+                                             package_name, True)
+            except DownloadException:
+                versions = []
+            for version in versions:
+                self.download_release(package_name, version)
+        elif not init or options['init_all']:
+            # get all releases from the given serial
             last_serial = first_serial
-            modified_packages = self.client.changelog_since_serial(first_serial + 1)
+            try:
+                modified_packages = self.try_download(self.client.changelog_since_serial,
+                                                      _('Unable to download changelog'), first_serial + 1)
+            except DownloadException:
+                modified_packages = []
             counter = 0
             for (package_name, version, timestamp, action, serial) in modified_packages:
                 last_serial = max(serial, last_serial)
@@ -222,59 +253,63 @@ class Command(BaseCommand):
                     break
                 if version is None:
                     continue
-                print(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
-                no_timeout = 0
-                while no_timeout < self.retry:
-                    try:
-                        counter += self.download_release(package_name, version)
-                        break
-                    except socket.timeout:
-                        print(red(_('Timeout with %(p)s-%(v)s [socket timeout]') % {'p': package_name, 'v': version}))
-                        time.sleep(3)
-                        no_timeout += 1
-                    except socket.gaierror:
-                        print(red(_('Gai error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
-                        time.sleep(2)
-                        no_timeout += 1
-                    except xmlrpc.client.ProtocolError:
-                        print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
-                        time.sleep(2)
-                        no_timeout += 1
-                if no_timeout >= self.retry:
-                    self.error_list.append((package_name, version))
+                self.stdout.write(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
+                counter += self.download_release(package_name, version)
         else:
-            last_serial = self.client.changelog_last_serial()
-            packages = self.client.list_packages()
+            # init: get the last version of all packages
+            try:
+                last_serial = self.try_download(self.client.changelog_last_serial, _('Unable to download changelog'))
+                packages = self.try_download(self.client.list_packages, _('Unable to list packages'))
+            except DownloadException:
+                return
             counter = 0
             for package_name in packages:
                 if options['limit'] is not None and counter >= options['limit']:
                     break
-                print(cyan(_('Found %(pkg)s') % {'pkg': package_name}))
-                no_timeout = 0
-                version = ''
-                while no_timeout < self.retry:
-                    try:
-                        print(yellow(_('package releases (%(p)s)') % {'p': package_name}))
-                        versions = self.client.package_releases(package_name)
-                        versions = [x for x in versions if x]
-                        if not versions:
-                            break
-                        version = versions[0]
-                        print(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
-                        counter += self.download_release(package_name, version)
-                        break
-                    except socket.timeout:
-                        print(red(_('Timeout with %(p)s-%(v)s [socket timeout]') % {'p': package_name, 'v': version}))
-                        time.sleep(3)
-                        no_timeout += 1
-                    except socket.gaierror:
-                        print(red(_('Gai error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
-                        time.sleep(2)
-                        no_timeout += 1
-                    except xmlrpc.client.ProtocolError:
-                        print(red(_('Protocol error with %(p)s-%(v)s') % {'p': package_name, 'v': version}))
-                        time.sleep(2)
-                        no_timeout += 1
-                if no_timeout >= self.retry:
-                    self.error_list.append((package_name, version))
-        Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)
+                self.stdout.write(cyan(_('Found %(pkg)s') % {'pkg': package_name}))
+                self.stdout.write(yellow(_('package releases (%(p)s)') % {'p': package_name}))
+                try:
+                    versions = self.try_download(self.client.package_releases,
+                                                 _('Unable to get releases of %(pkg)s') % {'pkg': package_name},
+                                                 package_name)
+                except DownloadException:
+                    continue
+                versions = [x for x in versions if x]
+                if not versions:
+                    break
+                version = versions[0]
+                self.stdout.write(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
+                counter += self.download_release(package_name, version)
+        if last_serial is not None:
+            Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)
+        for package_name, version in self.error_list:
+            self.stderr.write((_('Unable to download %(p)s-%(v)s') % {'p': package_name, 'v': version}))
+
+    def try_download(self, action, error_message, *args, **kwargs):
+        """ perform a network connection and retry several times if an error happens. All errors are displayed.
+        """
+        no_timeout = 0
+        while no_timeout < self.retry:
+            try:
+                return action(*args, **kwargs)
+            except URLError:
+                self.stderr.write(_('%(msg)s [URL error]') % {'msg': error_message})
+                time.sleep(3)
+                no_timeout += 1
+            except socket.timeout:
+                self.stderr.write(_('%(msg)s [socket timeout]') % {'msg': error_message})
+                time.sleep(3)
+                no_timeout += 1
+            except socket.gaierror:
+                self.stderr.write(_('%(msg)s [Gai error]') % {'msg': error_message})
+                time.sleep(2)
+                no_timeout += 1
+            except xmlrpc.client.ProtocolError:
+                self.stderr.write(_('%(msg)s [XMLRPC Protocol error]') % {'msg': error_message})
+                time.sleep(2)
+                no_timeout += 1
+            except MD5SumException:
+                self.stderr.write(_('%(msg)s [Invalid md5 sum]') % {'msg': error_message})
+                time.sleep(2)
+                no_timeout += 1
+        raise DownloadException

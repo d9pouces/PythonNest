@@ -85,6 +85,8 @@ class Command(BaseCommand):
         make_option('--timeout', type=int, default=10, help='Timeout for network operations (default 10s)'),
         make_option('--nocontinue', action='store_true', default=False, help='Stop after error'),
         make_option('--package', action='store', default=None, help='Download all releases of a single package'),
+        make_option('--latest', action='store_true', default=False,
+                    help='Download the latest release of all packages'),
         make_option('--init-all', action='store_true', default=False,
                     help='Download all releases of all packages (very long initial sync!)'),
     )
@@ -211,6 +213,7 @@ class Command(BaseCommand):
         obj = Synchronization.objects.get_or_create(source=options['url'], destination='localhost')[0]
         self.retry = options['retry']
         socket.setdefaulttimeout(options['timeout'])
+        download_limit = 0 if not options['limit'] else options['limit']
         if isinstance(options['serial'], int):
             first_serial = options['serial']
             init = False
@@ -238,7 +241,7 @@ class Command(BaseCommand):
                 versions = []
             for version in versions:
                 self.download_release(package_name, version)
-        elif not init or options['init_all']:
+        elif not options['latest'] and (not init or options['init_all']):
             # get all releases from the given serial
             last_serial = first_serial
             try:
@@ -249,7 +252,7 @@ class Command(BaseCommand):
             counter = 0
             for (package_name, version, timestamp, action, serial) in modified_packages:
                 last_serial = max(serial, last_serial)
-                if options['limit'] is not None and counter >= options['limit']:
+                if counter >= download_limit > 0:
                     break
                 if version is None:
                     continue
@@ -264,7 +267,7 @@ class Command(BaseCommand):
                 return
             counter = 0
             for package_name in packages:
-                if options['limit'] is not None and counter >= options['limit']:
+                if counter >= download_limit > 0:
                     break
                 self.stdout.write(cyan(_('Found %(pkg)s') % {'pkg': package_name}))
                 self.stdout.write(yellow(_('package releases (%(p)s)') % {'p': package_name}))
@@ -310,6 +313,10 @@ class Command(BaseCommand):
                 no_timeout += 1
             except MD5SumException:
                 self.stderr.write(_('%(msg)s [Invalid md5 sum]') % {'msg': error_message})
+                time.sleep(2)
+                no_timeout += 1
+            except Exception as e:
+                self.stderr.write(_('%(msg)s [Unexpected exception %(exc)s]') % {'msg': error_message, 'exc': e})
                 time.sleep(2)
                 no_timeout += 1
         raise DownloadException

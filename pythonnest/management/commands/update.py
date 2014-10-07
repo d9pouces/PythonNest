@@ -187,7 +187,8 @@ class Command(BaseCommand):
             if not os.path.isdir(path_dirname):
                 os.makedirs(path_dirname)
             try:
-                self.download_release_file(path, release_url)
+                self.try_download(self.download_release_file, _('Unable to download file %(url)s') % {'url': release_url},
+                                  path, release_url)
             except DownloadException:
                 ReleaseMiss.objects.get_or_create(release=release)
                 self.error_list.append((package_name, version))

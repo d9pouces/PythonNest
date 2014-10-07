@@ -43,11 +43,12 @@ from pythonnest.rpcapi.utils import prepare_query
 
 __author__ = "flanker"
 
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 class JSONDatetime(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime.datetime):
-            return o.strftime('%Y-%m-%dT%H:%M:%S')
+            return o.strftime(DATE_FORMAT)
         return super(JSONDatetime, self).default(o)
 
 

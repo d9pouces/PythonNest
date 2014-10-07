@@ -13,7 +13,8 @@ from django.utils.timezone import utc
 from django.utils.translation import ugettext as _
 
 from pythonnest.colors import cyan, red, yellow
-from pythonnest.models import Synchronization, Package, Release, Classifier, Dependence, ReleaseDownload
+from pythonnest.models import Synchronization, Package, Release, Classifier, Dependence, ReleaseDownload, PackageType
+from pythonnest.views import DATE_FORMAT
 
 
 __author__ = "flanker"
@@ -93,7 +94,7 @@ class Command(BaseCommand):
 
                     self.set_attr(('md5_digest', 'downloads', 'pack', 'has_sig', 'comment_text', 'python_version'),
                                   download_data, download)
-                    download.package_type = download_data.get('packagetype')
+                    download.package_type = PackageType.get(download_data.get('packagetype'))
                     dirname = os.path.dirname(download.abspath)
                     if not os.path.isdir(dirname):
                         os.makedirs(dirname)
@@ -102,8 +103,8 @@ class Command(BaseCommand):
                     download.url = settings.MEDIA_URL + download.relpath
                     download.size = os.path.getsize(filepath)
                     if download_data.get('upload_time'):
-                        download.upload_time = datetime.datetime.strptime(download_data['upload_time'].value,
-                                                                          "%Y%m%dT%H:%M:%S").replace(tzinfo=utc)
+                        download.upload_time = datetime.datetime.strptime(download_data['upload_time'], DATE_FORMAT)\
+                            .replace(tzinfo=utc)
                     with open(filepath, 'rb') as file_d:
                         md5 = hashlib.md5(file_d.read()).hexdigest()
                     download.md5_digest = md5

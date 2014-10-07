@@ -39,6 +39,6 @@ setup(
     ext_modules=[],
     cmdclass={},
     install_requires=['setuptools>=0.7', 'Django>=1.7', 'rpc4django>=0.3.0', 'django-ajax-selects', 'rpc4django', ],
-    setup_requires=['setuptools>=0.7',  'Django>=1.7', ],
+    setup_requires=['setuptools>=0.7', ],
     classifiers=['Programming Language :: Python :: 3', ]
 )

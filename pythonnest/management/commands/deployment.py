@@ -7,6 +7,7 @@ import os.path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
+
 __author__ = "flanker"
 
 
@@ -63,9 +64,10 @@ class Command(BaseCommand):
             if daemon_type == '1':
                 from pythonnest.djangoproject import wsgi
                 import pythonnest
+
                 context['wsgi_path'] = wsgi.__file__
                 context['python_path'] = os.path.dirname(os.path.dirname(pythonnest.__file__))
-#                   'virtual_env': virtual_env,
+            # 'virtual_env': virtual_env,
             else:
                 print('Default port for gunicorn is 8000')
                 context['gunicorn_port'] = 8000
@@ -80,8 +82,9 @@ class Command(BaseCommand):
                     daemon_type = None
             if daemon_type == '1':
                 try:
-                    #noinspection PyPackageRequirements,PyUnresolvedReferences
+                    # noinspection PyPackageRequirements,PyUnresolvedReferences
                     import flup
+
                     msg = 'Found flup at %s' % os.path.dirname(flup.__file__)
                     logging.debug(msg)
                 except ImportError:
@@ -93,8 +96,9 @@ class Command(BaseCommand):
                 context['gunicorn_port'] = 8000
                 print('Default port for gunicorn is %d' % context['gunicorn_port'])
                 try:
-                    #noinspection PyPackageRequirements,PyUnresolvedReferences
+                    # noinspection PyPackageRequirements,PyUnresolvedReferences
                     import gunicorn
+
                     msg = 'Found gunicorn at %s' % os.path.dirname(gunicorn.__file__)
                     logging.debug(msg)
                 except ImportError:

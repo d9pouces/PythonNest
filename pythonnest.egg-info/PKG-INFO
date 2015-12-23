@@ -1,10 +1,10 @@
 Metadata-Version: 1.1
 Name: pythonnest
-Version: 0.8.6
-Summary: Pypi emulator and cloning tool .
+Version: 0.0.0
+Summary: Pypi emulator and cloning tool.
 Home-page: http://www.19pouces.net/projects.html
-Author: flanker
-Author-email: flanker@19pouces.net
+Author: Matthieu Gallet
+Author-email: github@19pouces.net
 License: CeCILL-B
 Description: PythonNest
         ==========
@@ -138,4 +138,14 @@ Description: PythonNest
         
         The `tag` option allow to export data to/to import from different PythonNest instances.
 Platform: UNKNOWN
-Classifier: Programming Language :: Python :: 3
+Classifier: Development Status :: 5 - Stable
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: BSD
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Operating System :: Unix
+Classifier: License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3 :: Only

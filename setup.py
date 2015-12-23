@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import codecs
 import os.path
+import re
 import sys
 from setuptools import setup, find_packages
 __author__ = "flanker"
@@ -8,28 +9,29 @@ __author__ = "flanker"
 
 commands = filter(lambda x: x[0:1] != '-', sys.argv)
 
-readme = os.path.join(os.path.dirname(__file__), 'README.rst')
-if os.path.isfile(readme):
-    with codecs.open(readme, 'r', encoding='utf-8') as fd:
-        long_description = fd.read()
-else:
-    long_description = ''
 
-entry_points = {"console_scripts": ["pythonnest-manage = pythonnest.djangoproject.manage:main", ], }
+# avoid a from pythonnest import __version__ as version
+# (that compiles pythonnest.__init__ and is not compatible with bdist_deb)
+version = None
+for line in codecs.open(os.path.join('pythonnest', '__init__.py'), 'r', encoding='utf-8'):
+    matcher = re.match(r"""^__version__\s*=\s*['"](.*)['"]\s*$""", line)
+    version = version or matcher and matcher.group(1)
 
+# get README content from README.md file
+with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
+    long_description = fd.read()
 
-version_filename = os.path.join(os.path.dirname(__file__), 'VERSION')
-with codecs.open(version_filename, 'r', encoding='utf-8') as fd:
-    version = fd.read().strip()
+entry_points = {'console_scripts': ['pythonnest-manage = djangofloor.scripts:manage',
+                                    'pythonnest-gunicorn = djangofloor.scripts:gunicorn']}
 
 setup(
     name='pythonnest',
     version=version,
-    description='Pypi emulator and cloning tool .',
+    description='Pypi emulator and cloning tool.',
     long_description=long_description,
-    author="flanker",
-    author_email="flanker@19pouces.net",
-    license="CeCILL-B",
+    author='Matthieu Gallet',
+    author_email='github@19pouces.net',
+    license='CeCILL-B',
     url="http://www.19pouces.net/projects.html",
     entry_points=entry_points,
     packages=find_packages(),
@@ -38,7 +40,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=0.7', 'Django>=1.7', 'rpc4django>=0.3.0', 'django-ajax-selects', 'rpc4django', ],
-    setup_requires=['setuptools>=0.7', ],
-    classifiers=['Programming Language :: Python :: 3', ]
+    install_requires=['setuptools>=18', 'djangofloor>=0.17.0', 'rpc4django>=0.3.0', 'django-ajax-selects', ],
+    setup_requires=['setuptools>=18', ],
+    classifiers=['Development Status :: 5 - Stable', 'Operating System :: MacOS :: MacOS X', 'Operating System :: Microsoft :: Windows', 'Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux', 'Operating System :: Unix', 'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)', 'Programming Language :: Python :: 3.3', 'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5', 'Programming Language :: Python :: 3 :: Only'],
 )

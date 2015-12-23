@@ -211,7 +211,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # first: determine the type of server
-        obj = Synchronization.objects.get_or_create(source=options['url'], destination='localhost')[0]
+        sync_obj = Synchronization.objects.get_or_create(source=options['url'], destination='localhost')[0]
         self.retry = options['retry']
         socket.setdefaulttimeout(options['timeout'])
         download_limit = 0 if not options['limit'] else options['limit']
@@ -219,13 +219,13 @@ class Command(BaseCommand):
             first_serial = options['serial']
             init = False
             self.stdout.write(cyan(_('Download from serial %(syn)s') % {'syn': first_serial}))
-        elif obj.last_serial is None or options['init_all']:
+        elif sync_obj.last_serial is None or options['init_all']:
             first_serial = 0
             init = True
             self.stdout.write(cyan(_('No previous sync... Initializing database')))
         else:
-            self.stdout.write(cyan(_('Previous sync: serial %(syn)s') % {'syn': obj.last_serial}))
-            first_serial = obj.last_serial
+            self.stdout.write(cyan(_('Previous sync: serial %(syn)s') % {'syn': sync_obj.last_serial}))
+            first_serial = sync_obj.last_serial
             init = False
         self.connect(options['url'])
         last_serial = None
@@ -285,7 +285,7 @@ class Command(BaseCommand):
                 self.stdout.write(cyan(_('Found %(pkg)s-%(vsn)s') % {'pkg': package_name, 'vsn': version}))
                 counter += self.download_release(package_name, version)
         if last_serial is not None:
-            Synchronization.objects.filter(id=obj.id).update(last_serial=last_serial)
+            Synchronization.objects.filter(id=sync_obj.id).update(last_serial=last_serial)
         for package_name, version in self.error_list:
             self.stderr.write((_('Unable to download %(p)s-%(v)s') % {'p': package_name, 'v': version}))
 

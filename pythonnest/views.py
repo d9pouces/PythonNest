@@ -45,6 +45,7 @@ __author__ = "flanker"
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
+
 class JSONDatetime(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime.datetime):

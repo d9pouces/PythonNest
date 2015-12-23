@@ -1,3 +1,4 @@
 [console_scripts]
-pythonnest-manage = pythonnest.djangoproject.manage:main
+pythonnest-gunicorn = djangofloor.scripts:gunicorn
+pythonnest-manage = djangofloor.scripts:manage
 

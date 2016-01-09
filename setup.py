@@ -4,7 +4,7 @@ import os.path
 import re
 import sys
 from setuptools import setup, find_packages
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 
 commands = filter(lambda x: x[0:1] != '-', sys.argv)

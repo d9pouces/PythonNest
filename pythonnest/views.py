@@ -39,7 +39,7 @@ from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Cl
 from pythonnest.rpcapi.utils import prepare_query
 
 
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 

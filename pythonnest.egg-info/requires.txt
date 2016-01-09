@@ -1,4 +1,0 @@
-setuptools>=18
-djangofloor>=0.17.0
-rpc4django>=0.3.0
-django-ajax-selects

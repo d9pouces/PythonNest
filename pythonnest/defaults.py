@@ -3,14 +3,6 @@ __author__ = 'Matthieu Gallet'
 
 
 ########################################################################################################################
-# sessions
-########################################################################################################################
-SESSION_REDIS_PREFIX = 'session'
-SESSION_REDIS_HOST = '{REDIS_HOST}'
-SESSION_REDIS_PORT = '{REDIS_PORT}'
-SESSION_REDIS_DB = 10
-
-########################################################################################################################
 # caching
 ########################################################################################################################
 # CACHES = {
@@ -35,12 +27,17 @@ FLOOR_PROJECT_NAME = 'PythonNest'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ap6WerC2w8c6SGCPvFM5YDHdTXvBnzHcToS0J3r6LeetzReng6'
 READ_ONLY_MIRROR = True
-READ_ONLY_MIRROR_HELP = 'Allow people to create and upload packages'
+# READ_ONLY_MIRROR_HELP = 'Allow people to create and upload packages'
 FLOOR_TEMPLATE_CONTEXT_PROCESSORS = ['pythonnest.context_processors.context_user', ]
-
-
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+MIDDLEWARE_CLASSES = ['django.middleware.cache.UpdateCacheMiddleware',
+                      'django.middleware.common.CommonMiddleware',
+                      'debug_toolbar.middleware.DebugToolbarMiddleware',
+                      'django.contrib.sessions.middleware.SessionMiddleware',
+                      'django.middleware.csrf.CsrfViewMiddleware',
+                      'django.middleware.security.SecurityMiddleware',
+                      'django.contrib.auth.middleware.AuthenticationMiddleware',
+                      'django.contrib.messages.middleware.MessageMiddleware',
+                      'django.middleware.clickjacking.XFrameOptionsMiddleware',
+                      'djangofloor.middleware.IEMiddleware',
+                      'django.middleware.cache.FetchFromCacheMiddleware', ]
+LANGUAGE_CODE = 'fr-FR'

@@ -17,7 +17,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 import time
 import unicodedata
 
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 
 def normalize_str(s):

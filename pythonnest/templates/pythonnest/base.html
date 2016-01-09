@@ -1,11 +1,15 @@
 {% extends 'djangofloor/base.html' %}
 {% load     bootstrap3 staticfiles i18n djangofloor pipeline %}
+{% block head_favicon %}
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">{% endblock %}
 {% block bootstrap3_nav %}
     <div class="navbar navbar-inverse" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="{% url 'index' %}">{{ df_project_name }}</a>
-            <a class="navbar-brand" href="{% url 'all_packages' order_by='-modification' %}">{% fontawesome_icon 'history' %}</a>
-            <a class="navbar-brand" href="{% url 'all_packages' order_by='normalized_name' %}">{% fontawesome_icon 'list-ol' %}</a>
+            <a class="navbar-brand" href="{% url 'index' %}">{{ df_project_name }}  <small>{{ version }}</small></a>
+            <a class="navbar-brand"
+               href="{% url 'all_packages' order_by='-modification' %}">{% fontawesome_icon 'history' %}</a>
+            <a class="navbar-brand"
+               href="{% url 'all_packages' order_by='normalized_name' %}">{% fontawesome_icon 'list-ol' %}</a>
         </div>
         {% if not read_only_mirror %}
             {% if user.is_authenticated and not df_remote_authenticated %}
@@ -22,12 +26,12 @@
                 <a class="navbar-brand" href="{% url 'admin:index' %}">{% fontawesome_icon 'wrench' %}</a>
             {% endif %}
         {% endif %}
-        <div class="col-xs-9 col-sm-3 col-md-3 pull-right">
+        <div class="col-xs-9 col-sm-6 col-md-4 pull-right">
             <form class="navbar-form navbar-right" role="form" action="{% url 'index' %}" method="get">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search for..." name="search">
       <span class="input-group-btn">
-        <button class="btn btn-default" type="submit">Search</button>
+        <button class="btn btn-default" type="submit">{% fontawesome_icon 'search' %}</button>
       </span>
                 </div>
             </form>
@@ -37,5 +41,5 @@
 {% endblock %}
 {% block footer %}
     <hr>
-    <footer>©Matthieu Gallet, 2016</footer>
+    <footer>©{{ author }}, 2016</footer>
 {% endblock %}

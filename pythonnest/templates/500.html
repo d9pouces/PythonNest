@@ -1,28 +1,49 @@
-{% load i18n %}
-<html>
+{% load i18n %}<!DOCTYPE html>
+<html lang="en-US">
 <head>
     <title>PythonNest</title>
-    <meta name="author" content="flanker"/>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png"/>
-    <link rel="stylesheet" type="text/css" href="/static/styles/root.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content=""/>
+    <meta name="robots" content="index, follow"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="shortcut icon" href="/static/favicon.png">
+    <script type="text/javascript" src="/static/bootstrap3/js/bootstrap.min.js" charset="utf-8"></script>
+    <link href="/static/bootstrap3/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all"/>
+    <!--[if lt IE 9 ]><script type="text/javascript" src="/static/js/html5shiv.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/js/respond.min.js" charset="utf-8"></script><![endif]-->
 </head>
 <body>
-<header>
-    <h1>
-        <span id="title"><a href="/">PythonNest</a></span>
-    </h1>
-</header>
-<article>
-    <h2 class="body-header">{% trans 'Something terrible happened' %}</h2>
 
-    <div class="body-content">
-        {% trans 'An error on the server was encountered during the processing of your request.' %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/">PythonNest</a>
+        <a class="navbar-brand" href="/packages/-modification.html"><i class="fa fa-history"></i></a>
+        <a class="navbar-brand" href="/packages/normalized_name.html"><i class="fa fa-list-ol"></i></a>
     </div>
 
-</article>
-<footer>
-    ©2014, flanker
-</footer>
+    <div class="col-xs-9 col-sm-6 col-md-4 pull-right">
+        <form class="navbar-form navbar-right" role="form" action="/" method="get">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." name="search">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+      </span>
+            </div>
+        </form>
+    </div>
+    <!--/.navbar-collapse -->
+</div>
+
+<div class="container">
+    <div class="panel panel-danger">
+        <div class="panel-heading"><strong>{% trans 'Something terrible happened' %}</strong></div>
+        <div class="panel-body">
+            {% trans 'An error on the server was encountered during the processing of your request.' %}
+        </div>
+    </div>
+</div>
+<hr>
+<footer>©Matthieu Gallet, 2016</footer>
 </body>
 </html>

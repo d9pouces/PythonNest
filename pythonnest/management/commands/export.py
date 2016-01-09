@@ -14,7 +14,7 @@ from pythonnest.models import Synchronization, Log
 from pythonnest.views import JSONDatetime
 
 
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 
 class Command(BaseCommand):

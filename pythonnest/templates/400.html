@@ -1,7 +1,9 @@
-{% extends "root.html" %}{% load i18n %}
-{% block body %}
-    <h2 class="body-header">{% trans "Error 400: bad request" %}</h2>
-    <div class="body-content">
-    {% trans 'The request you sent seems to be malformed.' %}
+{% extends "pythonnest/base.html" %}{% load i18n %}
+{% block content %}
+    <div class="panel panel-warning">
+        <div class="panel-heading"><strong>{% trans "Error 400: bad request" %}</strong></div>
+        <div class="panel-body">
+            {% trans 'The request you sent seems to be malformed.' %}
+        </div>
     </div>
 {% endblock %}

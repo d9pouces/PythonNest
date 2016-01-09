@@ -8,7 +8,7 @@ import gettext as gettext_module
 import os.path
 import pkg_resources
 import sys
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 # __copyright__ = "Copyright 2013, 19pouces.net"
 # __credits__ = "flanker"
 # __maintainer__ = "flanker"

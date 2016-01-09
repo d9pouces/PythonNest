@@ -29,7 +29,7 @@ class DownloadException(Exception):
 class MD5SumException(Exception):
     pass
 
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 
 class ProxiedTransport(xmlrpc.client.Transport):

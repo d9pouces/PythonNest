@@ -1,7 +1,9 @@
-{% extends "root.html" %}{% load i18n %}
-{% block body %}
-    <h2 class="body-header">{% trans "Error 401: authentication required" %}</h2>
-    <div class="body-content">
-    {% trans 'You must be logged in to access this page.' %}
+{% extends "pythonnest/base.html" %}{% load i18n %}
+{% block content %}
+    <div class="panel panel-warning">
+        <div class="panel-heading"><strong>{% trans "Error 401: authentication required" %}</strong></div>
+        <div class="panel-body">
+            {% trans 'You must be logged in to access this page.' %}
+        </div>
     </div>
 {% endblock %}

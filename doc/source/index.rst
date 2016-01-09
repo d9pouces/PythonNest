@@ -1,4 +1,4 @@
-..  documentation master file, created by
+.. Updoc documentation master file, created by
    sphinx-quickstart on Wed Feb 13 11:51:12 2013.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -6,23 +6,36 @@
 Welcome to PythonNest's documentation!
 ======================================
 
-Overview:
+Read-only Pypi mirror, with advanced export / import functionnalities compared to other Pypi mirrors.
+
+If you are looking for a mirror hosting your own private packages, you should look at `Moneta <http://moneta.readthedocs.org>`_.
 
 :doc:`installation`
     Instruction on how to get the distribution
 
-:doc:`api/index`
-    The complete API documentation, organized by modules
+:doc:`configuration`
+    All configuration options
+
+:doc:`debian`
+    Packaging PythonNest for Debian
+
+.. image:: _static/index.png
+
+.. image:: _static/search.png
+
+.. image:: _static/package.png
+
 
 
 Full table of contents
 ======================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    installation
-   api/index
+   configuration
+   debian
 
 Indices and tables
 ==================

@@ -1,7 +1,7 @@
 PythonNest
 ==========
 
-Pypi mirror, with advanced export / import functionnalities compared to other Pypi mirrors.
+Read-only Pypi mirror, with advanced export / import functionnalities compared to other Pypi mirrors.
 
 Installing
 ==========

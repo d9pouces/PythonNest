@@ -1,7 +1,9 @@
-{% extends "root.html" %}{% load i18n %}
-{% block body %}
-    <h2 class="body-header">{% trans "Error 404: page not found" %}</h2>
-    <div class="body-content">
-    {% trans 'We were unable to find the page you requested.' %}
+{% extends "pythonnest/base.html" %}{% load i18n %}
+{% block content %}
+    <div class="panel panel-warning">
+        <div class="panel-heading"><strong>{% trans 'Error 404: page not found' %}</strong></div>
+        <div class="panel-body">
+            {% trans 'We were unable to find the page you requested.' %}
+        </div>
     </div>
 {% endblock %}

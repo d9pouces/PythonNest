@@ -17,7 +17,7 @@ from pythonnest.models import Synchronization, Package, Release, Classifier, Dep
 from pythonnest.views import DATE_FORMAT
 
 
-__author__ = "flanker"
+__author__ = 'Matthieu Gallet'
 
 
 class Command(BaseCommand):

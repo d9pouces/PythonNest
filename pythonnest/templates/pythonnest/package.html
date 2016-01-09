@@ -1,0 +1,114 @@
+{% extends 'pythonnest/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="panel panel-info">
+
+        <div class="panel-heading">{{ package.name }}</div>
+        <div class="panel-body">
+            {% if package.summary %}
+                <p>{{ package.summary }}</p>
+            {% endif %}
+            <ul class="list-unstyled">
+                {% if package.home_page and package.home_page != 'UNKNOWN' and package.home_page != 'none' %}
+                    <li>{% trans 'Homepage: ' %}<a href="{{ package.home_page }}"><span
+                            class="link">➠</span> {{ package.home_page }}</a></li>{% endif %}
+                {% if package.author %}
+                    <li>{% trans 'Author: ' %}
+                        {% if package.author_email %}<a href="mailto:{{ package.author_email }}">{{ package.author }}
+                        </a>{% else %}
+                            {{ package.author }}{% endif %}
+                    </li>{% endif %}
+                {% if package.maintainer %}
+                    <li>{% trans 'Maintainer: ' %}
+                        {% if package.maintainer_email %}<a href="mailto:{{ package.maintainer_email }}">
+                            {{ package.maintainer }}
+                        </a>{% else %}{{ package.maintainer }}{% endif %}
+                    </li>{% endif %}
+                {% if package.license and package.license != 'UNKNOWN' and package.license != 'none' %}
+                    <li>{% trans 'License: ' %}{{ package.license }}</li>{% endif %}
+                {% if package.download_url and package.download_url != 'UNKNOWN' %}
+                    <li>{% trans 'Download URL: ' %}<a href="{{ package.download_url }}"><span
+                            class="link">➠</span> {{ package.download_url }}</a></li>{% endif %}
+                {% if package.project_url %}
+                    <li>{% trans 'Homepage: ' %}<a href="{{ package.project_url }}"><span
+                            class="link">➠</span> {{ package.project_url }}</a></li>{% endif %}
+                {% for role in roles %}
+                    <li>{{ role.get_role_display|capfirst }}: {{ role.user }}
+                        {% if is_admin %}<a href="{% url 'pythonnest.views.delete_role' role_id=role.id %}"><span
+                                onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
+                        {% endif %}</li>
+                {% endfor %}
+                {% if add_user_form %}
+                    <li>
+                        <form action="?" method="POST">{% csrf_token %}{{ add_user_form }}<input type="submit"
+                                                                                                 value="{% trans 'Add user' %}">
+                        </form>
+                    </li>
+                {% endif %}
+            </ul>
+
+
+        </div>
+
+    </div>
+
+    {% if release %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>{% trans 'Release: ' %}{{ release.version }}</strong></div>
+            <div class="panel-body">
+                {% if release.description %}
+                    <p>{{ release.description }}</p>
+                {% endif %}
+                <ul class="list-unstyled">
+                    {% if release.platform and release.platform != 'UNKNOWN' %}
+                        <li>{% trans 'Platform: ' %}{{ release.platform }}</li>{% endif %}
+                    {% if release.keywords %}
+                        <li>{% trans 'Keywords: ' %}{{ release.keywords }}</li>{% endif %}
+                    {% if release.docs_url %}
+                        <li>{% trans 'Docs: ' %}<a href="{{ release.docs_url }}"><span
+                                class="link">➠</span> {{ release.docs_url }}</a></li>{% endif %}
+
+                    {% if release.classifiers.all %}
+                        <li>{% trans 'Classifiers: ' %}
+                            {% for classifier in release.classifiers.all %}{% if not forloop.first %}, {% endif %}
+                                <a href="{% url 'pythonnest.views.show_classifier' classifier_id=classifier.id %}">{{ classifier.name }}</a>
+                            {% endfor %}</li>{% endif %}
+                    {% if release.requires.all %}
+                        <li>{% trans 'Requires: ' %}{{ release.requires.all|join:', ' }}</li>{% endif %}
+                    {% if release.obsoletes.all %}
+                        <li>{% trans 'Obsoletes: ' %}{{ release.obsoletes.all|join:', ' }}</li>{% endif %}
+                    {% if release.provides.all %}
+                        <li>{% trans 'Provides: ' %}{{ release.provides.all|join:', ' }}</li>{% endif %}
+                </ul>
+                <ul class="list-unstyled">
+                    {% for download in downloads %}
+                        <li><strong>{% blocktrans with type=download.packagetype %}Download {{ type }}: {% endblocktrans %}</strong>
+                            <a href="{{ download.globalurl }}"><span class="link">➠</span> {{ download.filename }}</a>
+                    <span class="download">{% blocktrans with size=download.size|filesizeformat md5=download.md5_digest dt=download.upload_time %}
+                        size: {{ size }}, MD5 hash: {{ md5 }}, uploaded at {{ dt }}
+                    {% endblocktrans %}{% if is_admin %}
+                        <a href="{% url 'pythonnest.views.delete_download' download_id=download.id %}"><span
+                                onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
+                    {% endif %}</span>
+                        </li>
+                    {% empty %}
+                        <li>{% trans 'No available download.' %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+    {% if releases %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>{% trans 'All available releases' %}</strong></div>
+            <div class="panel-body"><ul class="list-unstyled">
+                {% for release in releases %}
+                    <li>
+                        <a href="{% url 'pythonnest.views.show_package' package_id=package.id release_id=release.id %}">{{ release }}</a>
+                    </li>
+                {% endfor %}
+            </ul></div>
+        </div>    {% endif %}
+
+{% endblock %}

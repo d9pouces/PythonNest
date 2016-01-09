@@ -1,0 +1,29 @@
+{% extends 'pythonnest/base.html' %}
+{% load i18n bootstrap3 %}
+{% block content %}
+
+<div class="panel panel-info">
+    <div class="panel-heading">{% trans 'Search results' %} <span class="badge">{{ query.count }}</span> </div>
+<div class="panel-body">
+    <nav>{% bootstrap_pagination result_page url=nav_url %}</nav>
+    <table class="table table-striped">
+        <tr>
+            <th>{% trans 'Name' %}</th>
+            <th>{% trans 'Summary' %}</th>
+        </tr>
+        {% for result in result_page %}
+            <tr>
+                <td><a href="{% url 'pythonnest.views.show_package' package_id=result.id %}">{{ result.name }}</a></td>
+                <td>{% if result.summary %}<span>{{ result.summary }}</span>{% endif %}</td>
+
+            </tr>
+        {% empty %}
+            {% if alt_text %}
+                <tr>
+                    <td colspan="2">{{ alt_text|safe }}</td>
+                </tr>{% endif %}
+        {% endfor %}
+    </table>
+    <nav>{% bootstrap_pagination result_page url=nav_url %}</nav>
+</div></div>
+{% endblock %}

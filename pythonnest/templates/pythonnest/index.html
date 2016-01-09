@@ -1,0 +1,86 @@
+{% extends 'pythonnest/base.html' %}
+{% load i18n %}
+{% block content %}
+
+    <h2>{% trans "Client configuration" %}</h2>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Pip</div>
+        <div class="panel-body">
+            <p>{% trans 'Edit <span class="pre">~/.pip/pip.conf</span> to include these lines:' %}</p>
+    <pre>[global]
+index = {{ full_uri }}{% url 'rpc4django' %}
+index-url = {{ full_uri }}{% url 'simple' %}
+allow-all-external = true{% if use_ssl %}
+            cert = &lt;path to your CA&gt;{% endif %}</pre>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Easyinstall</div>
+        <div class="panel-body">
+            <p>{% trans 'Edit <span class="pre">~/.pydistutils.cfg</span> to include these lines:' %}</p>
+<pre>[easy_install]
+index_url = {{ full_uri }}{% url 'simple' %}</pre>
+            {% if use_ssl %}
+                <p>{% trans 'You should probably add your root certificate to the first existing file among:' %}</p>
+                <ul class="">
+                    <li>/etc/pki/tls/certs/ca-bundle.crt</li>
+                    <li>/etc/ssl/certs/ca-certificates.crt</li>
+                    <li>/usr/share/ssl/certs/ca-bundle.crt</li>
+                    <li>/usr/local/share/certs/ca-root.crt</li>
+                    <li>/etc/ssl/cert.pem</li>
+                    <li>/System/Library/OpenSSL/certs/cert.pem</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if not read_only_mirror %}
+        <div class="panel panel-info">
+            <div class="panel-heading">Setuptools</div>
+            <div class="panel-body">
+                <p>{% trans 'Edit <span class="pre">~/.pypirc</span> to include these lines:' %}</p>
+        <pre>[distutils]
+index-servers =
+    pythonnest
+
+[pythonnest]
+username: your-login
+password: your-password
+repository: {{ full_uri }}{% url 'setup' %}
+</pre>
+                <p>{% trans 'Run the following command to register a package to this repository:' %}</p>
+                <pre>python setup.py register -r {{ full_uri }}{% url 'setup' %}</pre>
+                <p>{% trans 'Run the following command to upload to this repository:' %}</p>
+                <pre>python setup.py bdist sdist upload -r {{ full_uri }}{% url 'setup' %}</pre>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="panel panel-info">
+        <div class="panel-heading">VirtualEnvs</div>
+        <div class="panel-body">
+    <p>{% trans 'To easily use virtual environments, adapt and run these lines:' %}</p>
+    <pre>sudo pip install pip --upgrade
+sudo pip install virtualenvwrapper
+echo "source /usr/local/bin/virtualenvwrapper.sh" &gt;&gt; ~/.bashrc
+source /usr/local/bin/virtualenvwrapper.sh
+# {% trans 'create virtual env' %}
+mkvirtualenv test
+# {% trans 'use virtual env' %}
+workon test
+</pre>
+        </div>
+    </div>
+
+        <div class="panel panel-info">
+        <div class="panel-heading">Buildout</div>
+        <div class="panel-body">
+    <p>{% trans 'Edit <span class="pre">~/.buildout/default.cfg</span> to include these lines:' %}</p>
+    <pre>[buildout]
+index = {{ full_uri }}{% url 'simple' %}</pre>
+        </div>
+    </div>
+
+{% endblock %}

@@ -160,20 +160,15 @@ class Release(models.Model):
     description = models.TextField(_('Description'), blank=True, default='', null=True)
     platform = models.CharField(_('platform'), db_index=True, blank=True, null=True, default='UNKNOWN', max_length=25)
     keywords = models.CharField(_('keywords'), db_index=True, blank=True, null=True, default='', max_length=255)
-    classifiers = models.ManyToManyField(Classifier, db_index=True, blank=True, null=True)
-    requires = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True, related_name='dep_requires')
-    requires_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True,
-                                           related_name='dep_requires_dist')
-    provides = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True, related_name='dep_provides')
-    provides_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True,
-                                           related_name='dep_provides_dist')
-    obsoletes = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True, related_name='dep_obsoletes')
-    obsoletes_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True,
-                                            related_name='dep_obsoletes_dist')
-    requires_external = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True,
-                                               related_name='dep_requires_external')
-    requires_python = models.ManyToManyField(Dependence, db_index=True, blank=True, null=True,
-                                             related_name='dep_requires_python')
+    classifiers = models.ManyToManyField(Classifier, db_index=True, blank=True)
+    requires = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires')
+    requires_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_dist')
+    provides = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_provides')
+    provides_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_provides_dist')
+    obsoletes = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_obsoletes')
+    obsoletes_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_obsoletes_dist')
+    requires_external = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_external')
+    requires_python = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_python')
     docs_url = models.URLField(_('docs url'), db_index=True, blank=True, default='', null=True)
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
     modification = models.DateTimeField(_('modification'), db_index=True, auto_now=True)

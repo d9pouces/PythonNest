@@ -9,7 +9,6 @@ SESSION_REDIS_PREFIX = 'session'
 SESSION_REDIS_HOST = '{REDIS_HOST}'
 SESSION_REDIS_PORT = '{REDIS_PORT}'
 SESSION_REDIS_DB = 10
-READ_ONLY = False
 
 ########################################################################################################################
 # caching
@@ -35,7 +34,9 @@ FLOOR_PROJECT_NAME = 'PythonNest'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ap6WerC2w8c6SGCPvFM5YDHdTXvBnzHcToS0J3r6LeetzReng6'
-
+READ_ONLY_MIRROR = True
+READ_ONLY_MIRROR_HELP = 'Allow people to create and upload packages'
+FLOOR_TEMPLATE_CONTEXT_PROCESSORS = ['pythonnest.context_processors.context_user', ]
 
 
 

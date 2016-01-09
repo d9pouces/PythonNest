@@ -7,11 +7,9 @@ import hashlib
 import json
 from json.encoder import JSONEncoder
 import datetime
-import mimetypes
 import os
-import stat
-import re
 import math
+from urllib.parse import quote
 
 from django import forms
 from django.conf import settings
@@ -19,22 +17,22 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, Http404, QueryDict, StreamingHttpResponse, HttpResponseNotModified, \
-    HttpResponseRedirect
+from django.http import HttpResponse, Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404, redirect, resolve_url
 from django.template import RequestContext
 from django.template.response import TemplateResponse
-from django.utils.http import is_safe_url
+from django.utils.html import escape
+from django.utils.http import is_safe_url, urlencode
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.static import was_modified_since
 
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType, normalize_str
@@ -170,7 +168,7 @@ def setup(request):
             if 'content' not in files:
                 raise PermissionDenied
             filename, content = files['content']
-            #noinspection PyUnboundLocalVariable
+            # noinspection PyUnboundLocalVariable
             if ReleaseDownload.objects.filter(package=package, release=release, filename=filename).count() > 0:
                 raise PermissionDenied
             md5 = hashlib.md5(content).hexdigest()
@@ -196,84 +194,57 @@ def setup(request):
     return render_to_response('simple.html', template_values, RequestContext(request))
 
 
-def static_serve(request, path, document_root=None):
-    if document_root is None:
-        document_root = settings.STATIC_ROOT
-    filename = os.path.abspath(os.path.join(document_root, path))
-    if not filename.startswith(document_root):
-        raise Http404
-    if settings.USE_XSENDFILE:
-        return xsendfile(request, filename)
-    return sendfile(request, filename)
+def search_result(request, query, alt_text):
+    url_query = urlencode({k: v for (k, v) in request.GET.items() if k != 'page'})
+    nav_url = '%s?%s' % (request.path, url_query)
+    paginator = Paginator(query, 30)
+    page_number = request.GET.get('page')
+    try:
+        result_page = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result_page = paginator.page(paginator.num_pages)
+    template_values = {'result_page': result_page, 'nav_url': nav_url, 'alt_text': alt_text, 'query': query, }
+    return render_to_response('pythonnest/search.html', template_values, RequestContext(request))
 
 
-def xsendfile(request, filename):
-    response = HttpResponse()
-    response['X-Sendfile'] = filename.encode('utf-8')
-    return response
-
-
-range_re = re.compile(r'bytes=(\d+)-(\d+)')
-
-
-def sendfile(request, filename):
-    # Respect the If-Modified-Since header.
-    if not os.path.isfile(filename):
-        raise Http404
-    statobj = os.stat(filename)
-    if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
-                              statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
-        return HttpResponseNotModified()
-    content_type = mimetypes.guess_type(filename)[0]
-    range_ = request.META.get('HTTP_RANGE', '')
-    t = range_re.match(range_)
-    size = os.path.getsize(filename)
-    start = 0
-    end = size - 1
-    if t:
-        start, end = int(t.group(1)), int(t.group(2))
-    if end - start + 1 < size:
-        obj = open(filename, 'rb')
-        obj.seek(start)
-        response = HttpResponse(obj.read(end - start + 1), content_type=content_type, status=206)
-        response['Content-Range'] = 'bytes %d-%d/%d' % (start, end, size)
-    else:
-        obj = open(filename, 'rb')
-        return StreamingHttpResponse(obj, content_type=content_type)
-    response['Content-Length'] = end - start + 1
-    #response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
-    return response
-
-
-def index(request, page='0', size='20'):
+def index(request):
     """Index view, displaying and processing a form."""
     search = SearchForm(request.GET)
     if search.is_valid():
         orig_pattern = search.cleaned_data['search']
-        alt_pattern = None if orig_pattern.find('*') > -1 else ('*%s*' % orig_pattern)
-        alt_url = reverse('pythonnest.views.index')
-
         patterns = orig_pattern.split()
         sub_query = None
         for pattern in patterns:
             sub_query = prepare_query(sub_query, '', 'normalized_name', pattern, global_and=True)
-        query = Package.objects.filter(sub_query).distinct()
-        page_int = int(page)
-        page_size = int(size)
-        packages = list(query.select_related()[page_int * page_size:(page_int + 1) * page_size])
-        total = query.count()
-        page_count = math.ceil(total / page_size)
-        page_index = page_int + 1
-        template_values = {'results': packages, 'title': _('PythonNest'), 'alt_pattern': alt_pattern,
-                           'page_count': page_count, 'page_index': page_index, 'alt_url': alt_url,
-                           'previous_page': None if page_int <= 0 else page_int - 1, 'pattern': orig_pattern,
-                           'next_page': None if page_index >= page_count else page_index, }
-        return render_to_response('search_result.html', template_values, RequestContext(request))
-    base_url = settings.HOST
-    use_ssl = base_url.startswith('https://')
-    template_values = {'base_url': base_url, 'use_ssl': use_ssl, }
-    template_values.update(csrf(request))  # prevents cross-domain requests
-    return render_to_response('index.html', template_values, RequestContext(request))
+        query = Package.objects.filter(sub_query).distinct().select_related()
+        alt_text = None
+        if orig_pattern.find('*') == -1:
+            alt_text = _('You should search “<a href="?search=%%2A%(pattern)s%%2A">*%(text)s*</a>” '
+                         'to find more packages.') % {'pattern': quote(orig_pattern), 'text': escape(orig_pattern)}
+
+        return search_result(request, query, alt_text)
+    full_uri = request.build_absolute_uri('/')[:-1]
+    base_url = settings.SERVER_NAME
+    use_ssl = settings.PROTOCOL == 'https'
+    template_values = {'base_url': base_url, 'use_ssl': use_ssl, 'full_uri': full_uri, }
+    return render_to_response('pythonnest/index.html', template_values, RequestContext(request))
+
+
+def all_packages(request, order_by='normalized_name'):
+    alt_text = _('No package matched your query.')
+    query = Package.objects.all().select_related().order_by(order_by)
+    return search_result(request, query, alt_text)
+
+
+def show_classifier(request, classifier_id):
+    classifier = get_object_or_404(Classifier, id=classifier_id)
+    alt_text = _('No package matched your query.')
+    query = classifier.release_set.all().select_related('package')
+    return search_result(request, query, alt_text)
 
 
 def show_package(request, package_id, release_id=None):
@@ -310,7 +281,7 @@ def show_package(request, package_id, release_id=None):
                        'is_editable': request.user in set([x.user for x in roles]),
                        'release': release, 'releases': releases, 'downloads': downloads, }
     template_values.update(csrf(request))
-    return render_to_response('show_package.html', template_values, RequestContext(request))
+    return render_to_response('pythonnest/package.html', template_values, RequestContext(request))
 
 
 @login_required
@@ -345,22 +316,6 @@ def delete_role(request, role_id):
         raise PermissionDenied
     role.delete()
     return redirect('pythonnest.views.show_package', package_id=package.id)
-
-
-def show_classifier(request, classifier_id, page='0', size='20'):
-    classifier = get_object_or_404(Classifier, id=classifier_id)
-    page_int = int(page)
-    page_size = int(size)
-    releases = list(classifier.release_set.all().select_related('package')
-                    .order_by('-id')[page_int * page_size:(page_int + 1) * page_size])
-    total = classifier.release_set.all().count()
-    page_count = math.ceil(total / page_size)
-    page_index = page_int + 1
-    template_values = {'title': _('PythonNest - %(c)s') % {'c': classifier.name},
-                       'releases': releases, 'page_count': page_count, 'page_index': page_index,
-                       'previous_page': None if page_int <= 0 else page_int - 1, 'classifier': classifier,
-                       'next_page': None if page_index >= page_count else page_index, }
-    return render_to_response('classifier.html', template_values, RequestContext(request))
 
 
 @sensitive_post_parameters()

@@ -8,7 +8,6 @@ import json
 from json.encoder import JSONEncoder
 import datetime
 import os
-import math
 from urllib.parse import quote
 
 from django import forms
@@ -22,6 +21,7 @@ from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404, redirect, resolve_url
 from django.template import RequestContext
@@ -36,12 +36,29 @@ from django.views.decorators.debug import sensitive_post_parameters
 
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType, normalize_str
-from pythonnest.rpcapi.utils import prepare_query
+from pythonnest.xmlrpc import XMLRPCSite, site
 
 
 __author__ = 'Matthieu Gallet'
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
+XML_RPC_SITE = XMLRPCSite()
+
+
+def prepare_query(previous_query, prefix, key, value, global_and=True):
+    kwargs = {}
+    if (isinstance(value, list) or isinstance(value, tuple)) and len(value) > 1:
+        value = [normalize_str(x) for x in value]
+        kwargs = {prefix + key + '__in': value}
+    elif isinstance(value, list) or isinstance(value, tuple):
+        value = normalize_str(value[0])
+    if not kwargs:
+        kwargs = {prefix + key + '__icontains': value}
+    if previous_query is None:
+        return Q(**kwargs)
+    elif global_and:
+        return previous_query & Q(**kwargs)
+    return previous_query | Q(**kwargs)
 
 
 class JSONDatetime(JSONEncoder):
@@ -49,6 +66,11 @@ class JSONDatetime(JSONEncoder):
         if isinstance(o, datetime.datetime):
             return o.strftime(DATE_FORMAT)
         return super(JSONDatetime, self).default(o)
+
+
+@csrf_exempt
+def xmlrpc(request):
+    return site.dispatch(request)
 
 
 def package_json(request, package_name):
@@ -86,7 +108,7 @@ def simple(request, package_name=None, version=None):
         package = None
         downloads = ReleaseDownload.objects.all()
     template_values = {'package': package, 'downloads': downloads}
-    return render_to_response('simple.html', template_values, RequestContext(request))
+    return render_to_response('pythonnest/simple.html', template_values, RequestContext(request))
 
 
 @csrf_exempt
@@ -191,7 +213,7 @@ def setup(request):
             download.python_version = values.get('pyversion')
             download.log()
     template_values = {}
-    return render_to_response('simple.html', template_values, RequestContext(request))
+    return render_to_response('pythonnest/simple.html', template_values, RequestContext(request))
 
 
 def search_result(request, query, alt_text):

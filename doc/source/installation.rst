@@ -5,8 +5,7 @@ As every Python package, you may use several ways to install PythonNest.
 Python 3.3+ is required, with the following packages:
 
   * setuptools >= 1.0
-  * djangofloor >= 1.5
-  * rpc4django (warning! you must install django 1.8 until rpc4django is patched to support django 1.9)
+  * djangofloor >= 0.17.0
 
 
 Installing or Upgrading
@@ -80,8 +79,8 @@ If you want to use SSL:
     # ok, I assume that you already have your certificate
     sudo a2enmod headers proxy proxy_http ssl
     openssl x509 -text -noout < $PEM
-    sudo chown www-data $PEM $KEYTAB
-    sudo chmod 0400 $PEM $KEYTAB
+    sudo chown www-data $PEM
+    sudo chmod 0400 $PEM
 
     cat << EOF | sudo tee /etc/apache2/sites-available/pythonnest.conf
     <VirtualHost *:80>

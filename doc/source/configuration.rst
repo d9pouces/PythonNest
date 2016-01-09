@@ -10,13 +10,14 @@ Here is the complete list of settings::
     [global]
     server_name = pythonnest.example.org
     protocol = https
-    bind_address = 127.0.0.1:8129
+    bind_address = 127.0.0.1:8211
     data_path = /var/pythonnest
     admin_email = admin@example.org
     time_zone = Europe/Paris
     language_code = fr-fr
     x_send_file =  true
     x_accel_converter = false
+    debug = false
 
     [database]
     engine =

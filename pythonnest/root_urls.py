@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url, include
+from django.conf.urls import url
+
 from pythonnest import views
-from ajax_select import urls as ajax_select_urls
 from pythonnest.views import xmlrpc
+
 
 __author__ = 'Matthieu Gallet'
 
@@ -19,7 +20,6 @@ urls = [
     url(r'^pypi/(?P<package_name>[^/]+)/json$', views.package_json),
     url(r'^pypi/(?P<package_name>[^/]+)/(?P<version>[^/]+)/json$', views.version_json),
     url(r'^pypi/?$', xmlrpc, name='rpc4django'),
-    url(r'^admin/lookups/', include(ajax_select_urls)),
     url(r'^simple/(?P<package_name>[^/]+)/(?P<version>[^/]+)$', views.simple),
     url(r'^simple/(?P<package_name>[^/]+)/$', views.simple),
     url(r'^simple/$', views.simple, name='simple'),

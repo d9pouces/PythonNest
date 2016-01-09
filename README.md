@@ -10,9 +10,7 @@ As every Python package, you may use several ways to install PythonNest.
 Python 3.3+ is required, with the following packages:
 
   * setuptools >= 0.7
-  * django >= 1.7
-  * rpc4django >=0.3
-
+  * djangofloor >= 0.17.5
 
 From the source::
 

@@ -12,7 +12,7 @@ __author__ = 'Matthieu Gallet'
 #     }
 
 
-FLOOR_INSTALLED_APPS = ['pythonnest', 'rpc4django', ]
+FLOOR_INSTALLED_APPS = ['pythonnest', ]
 FLOOR_INDEX = 'pythonnest.views.index'
 FLOOR_URL_CONF = 'pythonnest.root_urls.urls'
 FLOOR_PROJECT_NAME = 'PythonNest'

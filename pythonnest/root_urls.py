@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.conf.urls import url, include
-# from rpc4django.views import serve_rpc_request
 from pythonnest import views
 from ajax_select import urls as ajax_select_urls
 from pythonnest.views import xmlrpc

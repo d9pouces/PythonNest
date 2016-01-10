@@ -1,14 +1,14 @@
 Debian Installation
 ===================
 
-By default, pythonnest is only packaged as a standard Python project, downloadable from `Pypi <https://pypi.python.org>`_.
+By default, PythonNest is only packaged as a standard Python project, downloadable from `Pypi <https://pypi.python.org>`_.
 However, you can create pure Debian packages with `DjangoFloor <http://django-floor.readthedocs.org/en/latest/packaging.html#debian-ubuntu>`_.
 
 The source code provides several Bash scripts:
 
     * `debian-7-python3.sh`,
     * `debian-8-python3.sh`,
-    * `ubuntu-14.04-15.04.sh`.
+    * `ubuntu-14.04-15.10.sh`.
 
 These scripts are designed to run on basic installation and are split in five steps:
 

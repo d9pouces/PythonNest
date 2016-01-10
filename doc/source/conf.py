@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # 
-# documentation build configuration file, created by
-# sphinx-quickstart on Wed Feb 13 11:51:12 2013.
-# 
 # This file is execfile()d with the current directory set to its containing dir.
 # 
 # Note that not all possible configuration values are present in this
@@ -23,7 +20,10 @@ version = None
 for line in codecs.open(os.path.join(root_path, 'pythonnest', '__init__.py'), 'r', encoding='utf-8'):
     matcher = re.match(r"""^__version__\s*=\s*['"](.*)['"]\s*$""", line)
     version = version or matcher and matcher.group(1)
-
+author = None
+for line in codecs.open(os.path.join(root_path, 'pythonnest', '__init__.py'), 'r', encoding='utf-8'):
+    matcher = re.match(r"""^__author__\s*=\s*['"](.*)['"]\s*$""", line)
+    author = author or matcher and matcher.group(1)
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -57,7 +57,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'PythonNest'
 # noinspection PyShadowingBuiltins
-copyright = '2016, Matthieu Gallet'
+copyright = '2016, %s' % author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -125,7 +125,7 @@ html_theme_options = {}
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '_static/logo_principal.png'
+html_logo = '_static/logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -179,7 +179,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pythonnestdoc'
+htmlhelp_basename = 'PythonNest doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -193,7 +193,7 @@ htmlhelp_basename = 'pythonnestdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'pythonnest.tex', 'PythonNest Documentation',
+    ('index', 'pythonnest.tex', 'PythonNest\'s Documentation',
      'flanker', 'manual'),
 ]
 
@@ -226,8 +226,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pythonnest', 'PythonNest Documentation',
-     ['flanker'], 1)
+    ('index', 'pythonnest', 'PythonNest\'s documentation',
+     [author], 1)
 ]
 
 
@@ -235,9 +235,9 @@ man_pages = [
 
 # Bibliographic Dublin Core info.
 epub_title = "PythonNest"
-epub_author = "flanker"
+epub_author = author
 epub_publisher = "19pouces.net"
-epub_copyright = '2013, 19pouces.net'
+epub_copyright = '2016, %s' % author
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

@@ -7,18 +7,12 @@ Python 3.3+ is required, with the following packages:
   * setuptools >= 1.0
   * djangofloor >= 0.17.0
 
-
 Installing or Upgrading
 -----------------------
 
-Here is a simple tutorial to install pythonnest on a basic Debian/Linux installation.
+Here is a simple tutorial to install PythonNest on a basic Debian/Linux installation.
 You should easily adapt it on a different Linux or Unix flavor.
 
-Let's start by defining some variables:
-
-.. code-block:: bash
-
-    SERVICE_NAME=pythonnest.example.org
 
 Database
 --------
@@ -29,7 +23,7 @@ PostgreSQL is often a good choice for Django sites:
 
    sudo apt-get install postgresql
    echo "CREATE USER pythonnest" | sudo -u postgres psql -d postgres
-   echo "ALTER USER pythonnest WITH ENCRYPTED PASSWORD 'upd0c-5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
+   echo "ALTER USER pythonnest WITH ENCRYPTED PASSWORD '5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
    echo "ALTER ROLE pythonnest CREATEDB" | sudo -u postgres psql -d postgres
    echo "CREATE DATABASE pythonnest OWNER pythonnest" | sudo -u postgres psql -d postgres
 
@@ -37,6 +31,8 @@ Apache
 ------
 
 I only present the installation with Apache, but an installation behind nginx should be similar.
+You cannot use different server names for browsing your mirror. If you use `pythonnest.example.org`
+in the configuration, you cannot use its IP address to access the website.
 
 .. code-block:: bash
 
@@ -44,24 +40,23 @@ I only present the installation with Apache, but an installation behind nginx sh
     sudo a2enmod headers proxy proxy_http
     sudo a2dissite 000-default.conf
     # sudo a2dissite 000-default on Debian7
-    SERVICE_NAME=pythonnest.example.com
+    SERVICE_NAME=pythonnest.example.org
     cat << EOF | sudo tee /etc/apache2/sites-available/pythonnest.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
         Alias /static/ /var/pythonnest/static/
         ProxyPass /static/ !
-        ProxyPass / http://localhost:8211/
-        ProxyPassReverse / http://localhost:8211/
+        Alias /media/ /var/pythonnest/media/
+        ProxyPass /media/ !
+        ProxyPass / http://127.0.0.1:9000/
+        ProxyPassReverse / http://127.0.0.1:9000/
         DocumentRoot /var/pythonnest/
         ServerSignature off
         XSendFile on
         XSendFilePath /var/pythonnest/storage/
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
-        <Location /static/>
-            Order deny,allow
-            Allow from all
-            Satisfy any
-        </Location>
+
+
     </VirtualHost>
     EOF
     sudo mkdir /var/pythonnest/
@@ -69,6 +64,7 @@ I only present the installation with Apache, but an installation behind nginx sh
     sudo a2ensite pythonnest.conf
     sudo apachectl -t
     sudo apachectl restart
+
 
 If you want to use SSL:
 
@@ -82,6 +78,7 @@ If you want to use SSL:
     sudo chown www-data $PEM
     sudo chmod 0400 $PEM
 
+    SERVICE_NAME=pythonnest.example.org
     cat << EOF | sudo tee /etc/apache2/sites-available/pythonnest.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
@@ -93,14 +90,24 @@ If you want to use SSL:
         SSLEngine on
         Alias /static/ /var/pythonnest/static/
         ProxyPass /static/ !
-        ProxyPass / http://localhost:8211/
-        ProxyPassReverse / http://localhost:8211/
+        Alias /media/ /var/pythonnest/media/
+        ProxyPass /media/ !
+        ProxyPass / http://127.0.0.1:9000/
+        ProxyPassReverse / http://127.0.0.1:9000/
         DocumentRoot /var/pythonnest/
         ServerSignature off
         RequestHeader set X_FORWARDED_PROTO https
         <Location />
             Options +FollowSymLinks +Indexes
+
         </Location>
+        <Location /static/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
+
+
         XSendFile on
         XSendFilePath /var/pythonnest/storage/
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
@@ -117,17 +124,18 @@ If you want to use SSL:
 Application
 -----------
 
-Now, it's time to install pythonnest (do not forget to use Python3.2 on Debian 7):
+Now, it's time to install PythonNest (do not forget to use Python3.2 on Debian 7):
 
 .. code-block:: bash
 
+    SERVICE_NAME=pythonnest.example.org
     sudo mkdir -p /var/pythonnest
     sudo adduser --disabled-password pythonnest
     sudo chown pythonnest:www-data /var/pythonnest
     sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u pythonnest -i
-    SERVICE_NAME=pythonnest.example.com
+    SERVICE_NAME=pythonnest.example.org
     mkvirtualenv pythonnest -p `which python3.4`
     workon pythonnest
     pip install setuptools --upgrade
@@ -139,7 +147,7 @@ Now, it's time to install pythonnest (do not forget to use Python3.2 on Debian 7
     server_name = $SERVICE_NAME
     protocol = http
     ; use https if your Apache uses SSL
-    bind_address = 127.0.0.1:8211
+    bind_address = 127.0.0.1:9000
     data_path = /var/pythonnest
     admin_email = admin@$SERVICE_NAME
     time_zone = Europe/Paris
@@ -148,16 +156,14 @@ Now, it's time to install pythonnest (do not forget to use Python3.2 on Debian 7
     x_accel_converter = false
     debug = false
     ; leave it blank if you do not use kerberos
-
     [database]
     engine = django.db.backends.postgresql_psycopg2
     name = pythonnest
     user = pythonnest
-    password = upd0c-5trongp4ssw0rd
+    password = 5trongp4ssw0rd
     host = localhost
     port = 5432
     EOF
-
     pythonnest-manage migrate
     pythonnest-manage collectstatic --noinput
 
@@ -188,7 +194,7 @@ You can also use systemd to launch pythonnest:
 
     cat << EOF | sudo tee /etc/systemd/system/pythonnest-gunicorn.service
     [Unit]
-    Description=pythonnest Gunicorn process
+    Description=PythonNest Gunicorn process
     After=network.target
     [Service]
     User=pythonnest

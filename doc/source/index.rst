@@ -1,7 +1,4 @@
-.. Updoc documentation master file, created by
-   sphinx-quickstart on Wed Feb 13 11:51:12 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. PythonNest documentation master file, created by
 
 Welcome to PythonNest's documentation!
 ======================================
@@ -27,6 +24,7 @@ If you are looking for a mirror hosting your own private packages, you should lo
 
 
 
+
 Full table of contents
 ======================
 
@@ -36,6 +34,7 @@ Full table of contents
    installation
    configuration
    debian
+
 
 Indices and tables
 ==================

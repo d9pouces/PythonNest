@@ -2,9 +2,9 @@ Installation
 ============
 
 As every Python package, you may use several ways to install PythonNest.
-Python 3.3+ is required, with the following packages:
+The following packages are required:
 
-  * setuptools >= 1.0
+  * setuptools >= 3.0
   * djangofloor >= 0.17.0
 
 Installing or Upgrading
@@ -12,6 +12,7 @@ Installing or Upgrading
 
 Here is a simple tutorial to install PythonNest on a basic Debian/Linux installation.
 You should easily adapt it on a different Linux or Unix flavor.
+
 
 
 Database
@@ -26,6 +27,9 @@ PostgreSQL is often a good choice for Django sites:
    echo "ALTER USER pythonnest WITH ENCRYPTED PASSWORD '5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
    echo "ALTER ROLE pythonnest CREATEDB" | sudo -u postgres psql -d postgres
    echo "CREATE DATABASE pythonnest OWNER pythonnest" | sudo -u postgres psql -d postgres
+
+
+
 
 Apache
 ------
@@ -107,7 +111,6 @@ If you want to use SSL:
             Satisfy any
         </Location>
 
-
         XSendFile on
         XSendFilePath /var/pythonnest/storage/
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
@@ -124,7 +127,7 @@ If you want to use SSL:
 Application
 -----------
 
-Now, it's time to install PythonNest (do not forget to use Python3.2 on Debian 7):
+Now, it's time to install PythonNest:
 
 .. code-block:: bash
 
@@ -132,11 +135,11 @@ Now, it's time to install PythonNest (do not forget to use Python3.2 on Debian 7
     sudo mkdir -p /var/pythonnest
     sudo adduser --disabled-password pythonnest
     sudo chown pythonnest:www-data /var/pythonnest
-    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
+    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u pythonnest -i
     SERVICE_NAME=pythonnest.example.org
-    mkvirtualenv pythonnest -p `which python3.4`
+    mkvirtualenv pythonnest -p `which python3.5`
     workon pythonnest
     pip install setuptools --upgrade
     pip install pip --upgrade
@@ -155,7 +158,6 @@ Now, it's time to install PythonNest (do not forget to use Python3.2 on Debian 7
     x_send_file =  true
     x_accel_converter = false
     debug = false
-    ; leave it blank if you do not use kerberos
     [database]
     engine = django.db.backends.postgresql_psycopg2
     name = pythonnest
@@ -166,6 +168,7 @@ Now, it's time to install PythonNest (do not forget to use Python3.2 on Debian 7
     EOF
     pythonnest-manage migrate
     pythonnest-manage collectstatic --noinput
+
 
 
 supervisor
@@ -184,6 +187,7 @@ Supervisor is required to automatically launch pythonnest:
     sudo /etc/init.d/supervisor restart
 
 Now, Supervisor should start pythonnest after a reboot.
+
 
 systemd
 -------
@@ -207,4 +211,6 @@ You can also use systemd to launch pythonnest:
     WantedBy=multi-user.target
     EOF
     systemctl enable pythonnest-gunicorn.service
+
+
 

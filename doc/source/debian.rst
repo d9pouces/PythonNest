@@ -15,10 +15,11 @@ These scripts are designed to run on basic installation and are split in five st
     * update system and install missing packages,
     * create a virtualenv and install all dependencies,
     * package all dependencies,
-    * package pythonnest,
-    * install all packages and pythonnest, prepare a simple configuration to test.
+    * package PythonNest,
+    * install all packages and PythonNest, prepare a simple configuration to test.
 
 If everything is ok, you can copy all the .deb packages to your private mirror or to the destination server.
 The configuration is set in `/etc/pythonnest/settings.ini`.
-By default, pythonnest is installed with Apache 2.2 (or 2.4) and Supervisor.
+By default, PythonNest is installed with Apache 2.2 (or 2.4) and Supervisor.
 You can switch to Nginx or Systemd by tweaking the right `stdeb-XXX.cfg` file.
+

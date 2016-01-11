@@ -11,7 +11,7 @@ import codecs
 import re
 
 import sys
-import os.path
+import os
 
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(root_path)
@@ -194,7 +194,7 @@ htmlhelp_basename = 'PythonNest doc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
     ('index', 'pythonnest.tex', 'PythonNest\'s Documentation',
-     'flanker', 'manual'),
+     author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -269,7 +269,5 @@ epub_copyright = '2016, %s' % author
 
 # Allow duplicate toc entries.
 # epub_tocdup = True
-# 
-intersphinx_mapping = {
-    'python': ('http://docs.python.org/3.3/', 'externals/python_3.3.inv'),
-}
+#
+intersphinx_mapping = {}

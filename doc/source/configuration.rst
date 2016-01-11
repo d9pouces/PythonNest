@@ -18,7 +18,6 @@ Here is the complete list of settings::
     x_send_file =  true
     x_accel_converter = false
     debug = false
-
     [database]
     engine =
     name =
@@ -26,6 +25,7 @@ Here is the complete list of settings::
     password =
     host =
     port =
+
 
 If you need more complex settings, you can override default values (given in `djangofloor.defaults` and
 `pythonnest.defaults`) by creating a file named `[prefix]/etc/pythonnest/settings.py`.

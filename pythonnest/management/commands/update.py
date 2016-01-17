@@ -135,7 +135,7 @@ class Command(BaseCommand):
             for attr_name in ('home_page', 'license', 'summary', 'download_url', 'project_url',
                               'author', 'author_email', 'maintainer', 'maintainer_email'):
                 if release_data.get(attr_name):
-                    update_kwargs[attr_name] = release_data[attr_name]
+                    update_kwargs[attr_name] = release_data[attr_name][0:450]
             if update_kwargs:
                 Package.objects.filter(id=package.id).update(**update_kwargs)
             self.stdout.write(yellow(_('package roles (%(p)s, %(v)s)') % values))
@@ -155,7 +155,7 @@ class Command(BaseCommand):
         release = Release.objects.get_or_create(package=package, version=version)[0]
         for attr_name in ('stable_version', 'description', 'platform', 'docs_url', 'project_url', 'keywords'):
             if release_data.get(attr_name):
-                setattr(package, attr_name, release_data.get(attr_name))
+                setattr(package, attr_name, release_data.get(attr_name)[0:450])
         release.is_hidden = release_data.get('_pypi_hidden', False)
         for attr_name in ('classifiers', 'requires', 'requires_dist', 'provides', 'provides_dist',
                           'obsoletes', 'obsoletes_dist', 'requires_external', 'requires_python'):

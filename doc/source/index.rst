@@ -44,6 +44,7 @@ Full table of contents
    installation
    configuration
    debian
+   operating
 
 
 Indices and tables

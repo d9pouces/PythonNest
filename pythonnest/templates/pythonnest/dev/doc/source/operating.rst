@@ -14,7 +14,7 @@ You can populate your mirror by copying an existing mirror such as pypi.python.o
   pythonnest-manage update [--url http://pypi.python.org/pypi] [--init-all] [-h]
 
 The source mirror must implement the XML-RPC API (of course, pypi.python.org does).
-You have to download around 10 GB to dump an official Pypi mirror if you restrict yourself to the last version of the
+You have to download around 10 GB (and to wait several hours) to dump an official Pypi mirror if you restrict yourself to the last version of the
 downloaded packages.
 
 

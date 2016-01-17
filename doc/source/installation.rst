@@ -169,6 +169,10 @@ Now, it's time to install PythonNest:
 
 
 
+Look at :doc:`operating` for actually dumping the official mirror Pypi.
+
+
+
 supervisor
 ----------
 

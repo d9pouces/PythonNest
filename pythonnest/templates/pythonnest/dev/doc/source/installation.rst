@@ -2,7 +2,11 @@
 
 {% block webserver_ssl_keytab %}{% endblock %}
 {% block webserver_ssl_auth %}{% endblock %}
-{% block post_application %}{% endblock %}
+{% block post_application %}
+
+
+Look at :doc:`operating` for actually dumping the official mirror Pypi.
+{% endblock %}
 {% block ini_configuration_kerberos %}{% endblock %}
 
 {% block webserver_ssl_xsendfilepath %}{% endblock %}

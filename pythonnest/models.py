@@ -50,8 +50,8 @@ class Synchronization(models.Model):
     Keeps informations about synchronizations
     """
 
-    source = models.CharField(_('Source'), blank=True, db_index=True, default='', max_length=255)
-    destination = models.CharField(_('Destination'), blank=True, db_index=True, default='', max_length=255)
+    source = models.CharField(_('Source'), blank=True, db_index=True, default='', max_length=455)
+    destination = models.CharField(_('Destination'), blank=True, db_index=True, default='', max_length=455)
     last_serial = models.IntegerField(_('Last synchronized serial'), blank=True, null=True, default=None)
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
     modification = models.DateTimeField(_('modification'), db_index=True, auto_now=True)
@@ -65,7 +65,7 @@ class Synchronization(models.Model):
 
 
 class CachedName(models.Model):
-    name = models.CharField(_('Classifier'), db_index=True, max_length=255)
+    name = models.CharField(_('Classifier'), db_index=True, max_length=455)
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
     modification = models.DateTimeField(_('modification'), db_index=True, auto_now=True)
     __cache = None
@@ -96,14 +96,14 @@ class PackageType(CachedName):
 
 
 class Package(models.Model):
-    name = models.CharField(_('package name'), db_index=True, blank=True, default='', max_length=255)
-    normalized_name = models.CharField(_('normalized name'), db_index=True, blank=True, default='', max_length=255)
-    author = models.CharField(_('author'), db_index=True, blank=True, null=True, max_length=255)
-    author_email = models.CharField(_('author email'), db_index=True, blank=True, null=True, max_length=255)
-    maintainer = models.CharField(_('maintainer'), db_index=True, blank=True, null=True, max_length=255)
-    maintainer_email = models.CharField(_('maintainer email'), db_index=True, blank=True, null=True, max_length=255)
+    name = models.CharField(_('package name'), db_index=True, blank=True, default='', max_length=455)
+    normalized_name = models.CharField(_('normalized name'), db_index=True, blank=True, default='', max_length=455)
+    author = models.CharField(_('author'), db_index=True, blank=True, null=True, max_length=455)
+    author_email = models.CharField(_('author email'), db_index=True, blank=True, null=True, max_length=455)
+    maintainer = models.CharField(_('maintainer'), db_index=True, blank=True, null=True, max_length=455)
+    maintainer_email = models.CharField(_('maintainer email'), db_index=True, blank=True, null=True, max_length=455)
     home_page = models.URLField(_('home page'), db_index=True, blank=True, default='')
-    license = models.CharField(_('license'), db_index=True, blank=True, default='UNKNOWN', max_length=255)
+    license = models.CharField(_('license'), db_index=True, blank=True, default='UNKNOWN', max_length=455)
     summary = models.TextField(_('summary'), blank=True, default='')
     download_url = models.URLField(_('download url'), db_index=True, blank=True, default='')
     project_url = models.URLField(_('project url'), db_index=True, blank=True, default='')
@@ -154,12 +154,12 @@ class PackageRole(models.Model):
 
 class Release(models.Model):
     package = models.ForeignKey(Package, db_index=True)
-    version = models.CharField(_('version name'), db_index=True, blank=True, null=True, default='', max_length=255)
+    version = models.CharField(_('version name'), db_index=True, blank=True, null=True, default='', max_length=455)
     stable_version = models.CharField(_('stable version name'), db_index=True, null=True, blank=True, default='',
-                                      max_length=255)
+                                      max_length=455)
     description = models.TextField(_('Description'), blank=True, default='', null=True)
     platform = models.CharField(_('platform'), db_index=True, blank=True, null=True, default='UNKNOWN', max_length=25)
-    keywords = models.CharField(_('keywords'), db_index=True, blank=True, null=True, default='', max_length=255)
+    keywords = models.CharField(_('keywords'), db_index=True, blank=True, null=True, default='', max_length=455)
     classifiers = models.ManyToManyField(Classifier, db_index=True, blank=True)
     requires = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires')
     requires_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_dist')
@@ -217,15 +217,15 @@ class ReleaseDownload(models.Model):
     package = models.ForeignKey(Package, db_index=True, null=True, blank=True)
     release = models.ForeignKey(Release, db_index=True)
     uid = models.CharField(_('UID'), db_index=True, max_length=40, blank=True, default='')
-    url = models.CharField(_('URL'), db_index=True, max_length=255, blank=True, default='')
+    url = models.CharField(_('URL'), db_index=True, max_length=455, blank=True, default='')
     package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True, default=None)
-    filename = models.CharField(_('Filename'), db_index=True, max_length=255)
-    file = models.FileField(_('File'), db_index=True, max_length=255, upload_to=release_download_path)
+    filename = models.CharField(_('Filename'), db_index=True, max_length=455)
+    file = models.FileField(_('File'), db_index=True, max_length=455, upload_to=release_download_path)
     size = models.IntegerField(_('Size'), db_index=True, blank=True, default=0)
     md5_digest = models.CharField(_('MD5'), db_index=True, max_length=40, blank=True, default='')
     downloads = models.IntegerField(_('Downloads'), db_index=True, blank=True, default=0)
     has_sig = models.BooleanField(_('Has signature'), db_index=True, default=False)
-    python_version = models.CharField(_('Python version'), db_index=True, max_length=255, blank=True, default='any')
+    python_version = models.CharField(_('Python version'), db_index=True, max_length=355, blank=True, default='any')
     comment_text = models.TextField(_('Comment'), blank=True, default='')
     upload_time = models.DateTimeField(_('Upload time'), blank=True, null=True, default=None, db_index=True)
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
@@ -285,7 +285,7 @@ class Log(models.Model):
     release = models.ForeignKey(Release, db_index=True, blank=True, null=True)
     download = models.ForeignKey(ReleaseDownload, db_index=True, blank=True, null=True)
     timestamp = models.IntegerField(_('timestamp'))
-    action = models.CharField(_('action'), max_length=255, blank=True, default='')
+    action = models.CharField(_('action'), max_length=455, blank=True, default='')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.timestamp = int(time.time())

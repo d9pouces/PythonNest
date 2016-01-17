@@ -136,10 +136,10 @@ Now, it's time to install PythonNest:
     sudo mkdir -p /var/pythonnest
     sudo adduser --disabled-password pythonnest
     sudo chown pythonnest:www-data /var/pythonnest
-    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
+    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u pythonnest -i
-    mkvirtualenv pythonnest -p `which python3.5`
+    mkvirtualenv pythonnest -p `which python3.4`
     workon pythonnest
     pip install setuptools --upgrade
     pip install pip --upgrade

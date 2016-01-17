@@ -55,6 +55,11 @@ in the configuration, you cannot use its IP address to access the website.
         ProxyPassReverse / http://localhost:8130/
         DocumentRoot /var/pythonnest/static
         ServerSignature off
+        <Location /static/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
     </VirtualHost>
     EOF
     sudo mkdir /var/pythonnest
@@ -124,8 +129,6 @@ Now, it's time to install PythonNest:
     sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u pythonnest -i
-    SERVICE_NAME=pythonnest.example.org
-    PROJECT_NAME=pythonnest
     mkvirtualenv pythonnest -p `which python3.4`
     workon pythonnest
     pip install setuptools --upgrade

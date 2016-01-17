@@ -49,17 +49,22 @@ in the configuration, you cannot use its IP address to access the website.
         ServerName $SERVICE_NAME
         Alias /static/ /var/pythonnest/static/
         ProxyPass /static/ !
-        Alias /media/ /var/pythonnest/data/media/
-        ProxyPass /media/ !
-        ProxyPass / http://localhost:8130/
-        ProxyPassReverse / http://localhost:8130/
-        DocumentRoot /var/pythonnest/static
-        ServerSignature off
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
+        Alias /media/ /var/pythonnest/data/media/
+        ProxyPass /media/ !
+        <Location /media/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
+        ProxyPass / http://localhost:8130/
+        ProxyPassReverse / http://localhost:8130/
+        DocumentRoot /var/pythonnest/static
+        ServerSignature off
     </VirtualHost>
     EOF
     sudo mkdir /var/pythonnest
@@ -93,18 +98,23 @@ If you want to use SSL:
         SSLEngine on
         Alias /static/ /var/pythonnest/static/
         ProxyPass /static/ !
-        Alias /media/ /var/pythonnest/data/media/
-        ProxyPass /media/ !
-        ProxyPass / http://localhost:8130/
-        ProxyPassReverse / http://localhost:8130/
-        DocumentRoot /var/pythonnest/static
-        ServerSignature off
-        RequestHeader set X_FORWARDED_PROTO https
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
+        Alias /media/ /var/pythonnest/data/media/
+        ProxyPass /media/ !
+        <Location /media/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
+        ProxyPass / http://localhost:8130/
+        ProxyPassReverse / http://localhost:8130/
+        DocumentRoot /var/pythonnest/static
+        ServerSignature off
+        RequestHeader set X_FORWARDED_PROTO https
     </VirtualHost>
     EOF
     sudo mkdir /var/pythonnest
@@ -126,10 +136,10 @@ Now, it's time to install PythonNest:
     sudo mkdir -p /var/pythonnest
     sudo adduser --disabled-password pythonnest
     sudo chown pythonnest:www-data /var/pythonnest
-    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
+    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u pythonnest -i
-    mkvirtualenv pythonnest -p `which python3.4`
+    mkvirtualenv pythonnest -p `which python3.5`
     workon pythonnest
     pip install setuptools --upgrade
     pip install pip --upgrade

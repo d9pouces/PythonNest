@@ -11,8 +11,8 @@
     <pre>[global]
 index = {{ full_uri }}{% url 'rpc4django' %}
 index-url = {{ full_uri }}{% url 'simple' %}
-allow-all-external = true{% if use_ssl %}
-            cert = &lt;path to your CA&gt;{% endif %}</pre>
+allow-all-external = true
+{% if use_ssl %}cert = &lt;path to your CA&gt;{% else %}trusted-host={{ base_url }}{% endif %}</pre>
         </div>
     </div>
 

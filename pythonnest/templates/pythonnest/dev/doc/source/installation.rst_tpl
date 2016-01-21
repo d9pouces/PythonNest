@@ -1,4 +1,4 @@
-{% extends 'djangofloor/dev/doc/source/installation.rst' %}
+{% extends 'djangofloor/dev/doc/source/installation.rst_tpl' %}
 
 {% block webserver_ssl_keytab %}{% endblock %}
 {% block webserver_ssl_auth %}{% endblock %}

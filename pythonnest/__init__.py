@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-pythonnest core package.
+"""Pythonnest core package.
 """
 __author__ = 'Matthieu Gallet'
-__version__ = '1.0.5'
+__version__ = '1.0.6'

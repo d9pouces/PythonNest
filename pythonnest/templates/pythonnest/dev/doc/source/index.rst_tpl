@@ -1,4 +1,4 @@
-{% extends 'djangofloor/dev/doc/source/index.rst' %}
+{% extends 'djangofloor/dev/doc/source/index.rst_tpl' %}
 
 {% block description %}
 Read-only Pypi mirror for disconnected networks, with advanced export / import functionnalities compared to other Pypi mirrors.

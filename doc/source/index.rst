@@ -20,7 +20,7 @@ If you are looking for a mirror hosting your own private packages, you should lo
     All configuration options
 
 :doc:`debian`
-    Packaging PythonNest for Debian
+    Packaging PythonNest for Debian or Ubuntu servers
 
 :doc:`operating`
     Operating the mirror: update, import and export operations

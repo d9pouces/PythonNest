@@ -30,6 +30,7 @@ class XMLRPCSite(object):
         data = dumps(result, method_name, True)
         return HttpResponse(data, content_type='application/xml+rpc')
 
+
 @lru_cache()
 def import_rpc_methods():
     """Import all `signals.py` files to register signals.

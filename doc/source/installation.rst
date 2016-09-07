@@ -2,10 +2,15 @@ Installation
 ============
 
 Like many Python packages, you can use several methods to install PythonNest.
-The following packages are required:
+PythonNest designed to run with python3.4.x+.
+The following packages are also required:
 
   * setuptools >= 3.0
-  * djangofloor >= 0.17.0
+  * djangofloor >= 0.18.0
+
+
+Of course you can install it from the source, but the preferred way is to install it as a standard Python package, via pip.
+
 
 Installing or Upgrading
 -----------------------
@@ -143,7 +148,7 @@ Now, it's time to install PythonNest:
     workon pythonnest
     pip install setuptools --upgrade
     pip install pip --upgrade
-    pip install pythonnest psycopg2
+    pip install pythonnest psycopg2 gevent
     mkdir -p $VIRTUAL_ENV/etc/pythonnest
     cat << EOF > $VIRTUAL_ENV/etc/pythonnest/settings.ini
     [database]
@@ -158,12 +163,17 @@ Now, it's time to install PythonNest:
     bind_address = localhost:8130
     data_path = /var/pythonnest
     debug = False
+    extra_apps = 
     language_code = fr-FR
     protocol = http
     secret_key = ap6WerC2w8c6SGCPvFM5YDHdTXvBnzHcToS0J3r6LeetzReng6
     server_name = pythonnest.example.org
     time_zone = Europe/Paris
+    [sentry]
+    dsn_url = 
     EOF
+    chmod 0400 $VIRTUAL_ENV/etc/pythonnest/settings.ini
+    # required since there are password in this file
     pythonnest-manage migrate
     pythonnest-manage collectstatic --noinput
 
@@ -179,6 +189,7 @@ supervisor
 Supervisor is required to automatically launch pythonnest:
 
 .. code-block:: bash
+
 
     sudo apt-get install supervisor
     cat << EOF | sudo tee /etc/supervisor/conf.d/pythonnest.conf
@@ -214,6 +225,7 @@ You can also use systemd to launch pythonnest:
     WantedBy=multi-user.target
     EOF
     systemctl enable pythonnest-gunicorn.service
+    sudo service pythonnest-gunicorn start
 
 
 

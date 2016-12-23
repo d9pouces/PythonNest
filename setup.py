@@ -21,7 +21,7 @@ for line in codecs.open(os.path.join('pythonnest', '__init__.py'), 'r', encoding
 with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
     long_description = fd.read()
 
-entry_points = {'console_scripts': ['pythonnest-manage = djangofloor.scripts:manage',
+entry_points = {'console_scripts': ['pythonnest-manage = djangofloor.scripts:django',
                                     'pythonnest-gunicorn = djangofloor.scripts:gunicorn']}
 
 setup(
@@ -40,7 +40,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=18', 'djangofloor>=0.17.0', ],
+    install_requires=['setuptools>=18', 'djangofloor>=1.0.0', ],
     setup_requires=['setuptools>=18', ],
     classifiers=['Operating System :: Microsoft :: Windows',
                  'Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',

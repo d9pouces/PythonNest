@@ -6,7 +6,7 @@ from xmlrpc.client import loads, dumps
 from xmlrpc.client import Fault
 from django.conf import settings
 from django.http.response import HttpResponse
-from djangofloor.decorators import ViewWrapper
+from djangofloor.decorators import Connection
 
 logger = logging.getLogger('django.request')
 
@@ -21,14 +21,15 @@ class XMLRPCSite(object):
         rpc_args = rpc_call[0]
         method_name = rpc_call[1]
         try:
-            wrapper = self.methods[method_name]
-            src_result = wrapper(request, *rpc_args)
+            connection = self.methods[method_name]
+            src_result = connection(request, *rpc_args)
             result = src_result,
         except Exception as e:
             logger.exception('Exception in XML RPC call')
             result = Fault(e.__class__.__name__, str(e))
         data = dumps(result, method_name, True)
         return HttpResponse(data, content_type='application/xml+rpc')
+
 
 @lru_cache()
 def import_rpc_methods():
@@ -44,18 +45,20 @@ def import_rpc_methods():
 site = XMLRPCSite()
 
 
-class XMLRPCWrapper(ViewWrapper):
+class XMLRPCWrapper(Connection):
+    required_function_arg = 'request'
 
     def __init__(self, xml_rpc_site, fn, path=None):
         self.site = xml_rpc_site
         super(XMLRPCWrapper, self).__init__(fn, path=path)
 
-    def register(self, path):
-        self.site.methods[path] = self
+    def register(self):
+        self.site.methods[self.path] = self
 
 
 def register_rpc_method(fn=None, name=None):
-    wrapped = lambda fn_: XMLRPCWrapper(site, fn_, path=name)
+    def wrapped(fn_):
+        return XMLRPCWrapper(site, fn_, path=name)
     if fn is not None:
         wrapped = wrapped(fn)
     return wrapped

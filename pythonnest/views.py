@@ -2,12 +2,12 @@
 """Here are defined Python functions of views.
 Views are binded to URLs in :mod:`.urls`.
 """
-from distutils.version import LooseVersion
+import datetime
 import hashlib
 import json
-from json.encoder import JSONEncoder
-import datetime
 import os
+from distutils.version import LooseVersion
+from json.encoder import JSONEncoder
 from urllib.parse import quote
 
 from django import forms
@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
@@ -37,7 +36,6 @@ from django.views.decorators.debug import sensitive_post_parameters
 from pythonnest.models import Package, Release, ReleaseDownload, PackageRole, Classifier, Dependence, MEDIA_ROOT_LEN, \
     PackageType, normalize_str
 from pythonnest.xmlrpc import XMLRPCSite, site
-
 
 __author__ = 'Matthieu Gallet'
 
@@ -73,6 +71,7 @@ def xmlrpc(request):
     return site.dispatch(request)
 
 
+# noinspection PyUnusedLocal
 def package_json(request, package_name):
     package = get_object_or_404(Package, normalized_name__iexact=normalize_str(package_name))
     releases = list(Release.objects.filter(package=package).order_by('-id')[0:1])
@@ -84,6 +83,7 @@ def package_json(request, package_name):
                         content_type='application/json')
 
 
+# noinspection PyUnusedLocal
 def version_json(request, package_name, version):
     release = get_object_or_404(Release, package__normalized_name__iexact=normalize_str(package_name), version=version)
     result = {'info': release.data(), 'urls': [x.data() for x in ReleaseDownload.objects.filter(release=release)]}
@@ -213,7 +213,7 @@ def setup(request):
             download.python_version = values.get('pyversion')
             download.log()
     template_values = {}
-    return render_to_response('pythonnest/simple.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'pythonnest/simple.html', template_values)
 
 
 def search_result(request, query, alt_text):
@@ -230,7 +230,7 @@ def search_result(request, query, alt_text):
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_page = paginator.page(paginator.num_pages)
     template_values = {'result_page': result_page, 'nav_url': nav_url, 'alt_text': alt_text, 'query': query, }
-    return render_to_response('pythonnest/search.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'pythonnest/search.html', template_values)
 
 
 def index(request):
@@ -253,7 +253,7 @@ def index(request):
     base_url = settings.SERVER_NAME
     use_ssl = settings.PROTOCOL == 'https'
     template_values = {'base_url': base_url, 'use_ssl': use_ssl, 'full_uri': full_uri, }
-    return render_to_response('pythonnest/index.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'pythonnest/index.html', template_values)
 
 
 def all_packages(request, order_by='normalized_name'):
@@ -302,8 +302,7 @@ def show_package(request, package_id, release_id=None):
                        'package': package, 'roles': roles, 'is_admin': is_admin, 'add_user_form': add_user_form,
                        'is_editable': request.user in set([x.user for x in roles]),
                        'release': release, 'releases': releases, 'downloads': downloads, }
-    template_values.update(csrf(request))
-    return render_to_response('pythonnest/package.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'pythonnest/package.html', template_values)
 
 
 @login_required
@@ -374,4 +373,4 @@ def create_user(request, template_name='create_user.html',
     }
     if extra_context is not None:
         context.update(extra_context)
-    return TemplateResponse(request, template_name, context, current_app=current_app)
+    return TemplateResponse(request, template_name, context)

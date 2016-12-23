@@ -24,5 +24,4 @@ urls = [
     url(r'^simple/(?P<package_name>[^/]+)/$', views.simple),
     url(r'^simple/$', views.simple, name='simple'),
     url(r'^setup/?$', views.setup, name='setup'),
-
 ]

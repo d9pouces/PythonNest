@@ -1,11 +1,13 @@
 {% extends 'djangofloor/base.html' %}
 {% load     bootstrap3 staticfiles i18n djangofloor pipeline %}
+{% block head_title %}{% trans 'Python Package Index' %}{% endblock %}
+
 {% block head_favicon %}
     <link rel="shortcut icon" href="{% static 'favicon.png' %}">{% endblock %}
 {% block bootstrap3_nav %}
     <div class="navbar navbar-inverse" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="{% url 'index' %}">{{ df_project_name }}  <small>{{ version }}</small></a>
+            <a class="navbar-brand" href="{% url 'index' %}">Python Package Index</a>
             <a class="navbar-brand"
                href="{% url 'all_packages' order_by='-modification' %}">{% fontawesome_icon 'history' %}</a>
             <a class="navbar-brand"
@@ -41,5 +43,7 @@
 {% endblock %}
 {% block footer %}
     <hr>
-    <footer>©{{ author }}, 2016</footer>
+    <footer class="text-muted text-center">
+        PythonNest v. {{ version }} — ©{{ author }}, 2017.
+    </footer>
 {% endblock %}

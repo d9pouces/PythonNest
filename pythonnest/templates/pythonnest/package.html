@@ -34,7 +34,7 @@
                             class="link">➠</span> {{ package.project_url }}</a></li>{% endif %}
                 {% for role in roles %}
                     <li>{{ role.get_role_display|capfirst }}: {{ role.user }}
-                        {% if is_admin %}<a href="{% url 'pythonnest.views.delete_role' role_id=role.id %}"><span
+                        {% if is_admin %}<a href="{% url 'delete_role' role_id=role.id %}"><span
                                 onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
                         {% endif %}</li>
                 {% endfor %}
@@ -71,7 +71,7 @@
                     {% if release.classifiers.all %}
                         <li>{% trans 'Classifiers: ' %}
                             {% for classifier in release.classifiers.all %}{% if not forloop.first %}, {% endif %}
-                                <a href="{% url 'pythonnest.views.show_classifier' classifier_id=classifier.id %}">{{ classifier.name }}</a>
+                                <a href="{% url 'show_classifier' classifier_id=classifier.id %}">{{ classifier.name }}</a>
                             {% endfor %}</li>{% endif %}
                     {% if release.requires.all %}
                         <li>{% trans 'Requires: ' %}{{ release.requires.all|join:', ' }}</li>{% endif %}
@@ -87,7 +87,7 @@
                     <span class="download">{% blocktrans with size=download.size|filesizeformat md5=download.md5_digest dt=download.upload_time %}
                         size: {{ size }}, MD5 hash: {{ md5 }}, uploaded at {{ dt }}
                     {% endblocktrans %}{% if is_admin %}
-                        <a href="{% url 'pythonnest.views.delete_download' download_id=download.id %}"><span
+                        <a href="{% url 'delete_download' download_id=download.id %}"><span
                                 onclick='return confirm("{% trans 'Are you sure?' %}");' class="link">✗</span></a>
                     {% endif %}</span>
                         </li>
@@ -105,7 +105,7 @@
             <div class="panel-body"><ul class="list-unstyled">
                 {% for release in releases %}
                     <li>
-                        <a href="{% url 'pythonnest.views.show_package' package_id=package.id release_id=release.id %}">{{ release }}</a>
+                        <a href="{% url 'show_package' package_id=package.id release_id=release.id %}">{{ release }}</a>
                     </li>
                 {% endfor %}
             </ul></div>

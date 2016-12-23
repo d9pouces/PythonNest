@@ -13,7 +13,7 @@
         </tr>
         {% for result in result_page %}
             <tr>
-                <td><a href="{% url 'pythonnest.views.show_package' package_id=result.id %}">{{ result.name }}</a></td>
+                <td><a href="{% url 'show_package' package_id=result.id %}">{{ result.name }}</a></td>
                 <td>{% if result.summary %}<span>{{ result.summary }}</span>{% endif %}</td>
 
             </tr>

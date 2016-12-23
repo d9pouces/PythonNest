@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import gzip
 import hashlib
+from argparse import ArgumentParser
 from optparse import make_option
 import os
 import socket
@@ -28,6 +29,7 @@ class DownloadException(Exception):
 
 class MD5SumException(Exception):
     pass
+
 
 __author__ = 'Matthieu Gallet'
 
@@ -76,20 +78,22 @@ class Command(BaseCommand):
     # pylint: disable=R0915
     args = ''
     help = 'Update the local database from another Pypi server'
-    option_list = BaseCommand.option_list + (
-        make_option('--url', default='http://pypi.python.org/pypi',
-                    help='Server to sync. against (default: http://pypi.python.org/pypi)'),
-        make_option('--limit', type=int, default=None, help='Do not download more thant --limit archives'),
-        make_option('--serial', type=int, default=None, help='Start from this serial'),
-        make_option('--retry', type=int, default=5, help='Max retry count (default 5)'),
-        make_option('--timeout', type=int, default=10, help='Timeout for network operations (default 10s)'),
-        make_option('--nocontinue', action='store_true', default=False, help='Stop after error'),
-        make_option('--package', action='store', default=None, help='Download all releases of a single package'),
-        make_option('--latest', action='store_true', default=False,
-                    help='Download the latest release of all packages'),
-        make_option('--init-all', action='store_true', default=False,
-                    help='Download all releases of all packages (very long initial sync!)'),
-    )
+
+    def add_arguments(self, parser):
+        assert isinstance(parser, ArgumentParser)
+        parser.add_argument('--url', default='https://pypi.python.org/pypi',
+                            help='Server to sync. against (default: http://pypi.python.org/pypi)'),
+        parser.add_argument('--limit', type=int, default=None, help='Do not download more thant --limit archives'),
+        parser.add_argument('--serial', type=int, default=None, help='Start from this serial'),
+        parser.add_argument('--retry', type=int, default=5, help='Max retry count (default 5)'),
+        parser.add_argument('--timeout', type=int, default=10, help='Timeout for network operations (default 10s)'),
+        parser.add_argument('--nocontinue', action='store_true', default=False, help='Stop after error'),
+        parser.add_argument('--package', action='store', default=None,
+                            help='Download all releases of a single package'),
+        parser.add_argument('--latest', action='store_true', default=False,
+                            help='Download the latest release of all packages'),
+        parser.add_argument('--init-all', action='store_true', default=False,
+                            help='Download all releases of all packages (very long initial sync!)'),
 
     def __init__(self):
         super(Command, self).__init__()
@@ -187,7 +191,8 @@ class Command(BaseCommand):
             if not os.path.isdir(path_dirname):
                 os.makedirs(path_dirname)
             try:
-                self.try_download(self.download_release_file, _('Unable to download file %(url)s') % {'url': release_url},
+                self.try_download(self.download_release_file,
+                                  _('Unable to download file %(url)s') % {'url': release_url},
                                   path, release_url)
             except DownloadException:
                 ReleaseMiss.objects.get_or_create(release=release)

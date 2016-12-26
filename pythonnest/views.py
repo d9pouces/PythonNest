@@ -22,8 +22,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, Http404, QueryDict, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404, redirect, resolve_url
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, redirect, resolve_url
 from django.template.response import TemplateResponse
 from django.utils.html import escape
 from django.utils.http import is_safe_url, urlencode
@@ -96,6 +95,7 @@ class SearchForm(forms.Form):
     search = forms.CharField(max_length=255)
 
 
+@never_cache
 def simple(request, package_name=None, version=None):
     if package_name is not None:
         package = get_object_or_404(Package, normalized_name__iexact=normalize_str(package_name))
@@ -108,7 +108,7 @@ def simple(request, package_name=None, version=None):
         package = None
         downloads = ReleaseDownload.objects.all()
     template_values = {'package': package, 'downloads': downloads}
-    return render_to_response('pythonnest/simple.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'pythonnest/simple.html', template_values)
 
 
 @csrf_exempt
@@ -348,6 +348,8 @@ def create_user(request, template_name='create_user.html',
     """
     Displays the login form and handles the login action.
     """
+    # noinspection PyUnusedLocal
+    current_app = current_app
     redirect_to = request.REQUEST.get(redirect_field_name, '')
 
     if request.method == "POST":

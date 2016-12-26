@@ -6,6 +6,8 @@ from xmlrpc.client import loads, dumps
 from xmlrpc.client import Fault
 from django.conf import settings
 from django.http.response import HttpResponse
+from django.views.decorators.cache import never_cache
+
 from djangofloor.decorators import Connection
 
 logger = logging.getLogger('django.request')
@@ -15,6 +17,7 @@ class XMLRPCSite(object):
     def __init__(self):
         self.methods = {}
 
+    # @never_cache()
     def dispatch(self, request):
         import_rpc_methods()
         rpc_call = loads(request.body.decode('utf-8'))
@@ -53,12 +56,17 @@ class XMLRPCWrapper(Connection):
         super(XMLRPCWrapper, self).__init__(fn, path=path)
 
     def register(self):
-        self.site.methods[self.path] = self
+        self.site.methods[self.path.rpartition('.')[2]] = self
+
+    def __call__(self, request, *args):
+        return self.function(request, *args)
 
 
 def register_rpc_method(fn=None, name=None):
     def wrapped(fn_):
-        return XMLRPCWrapper(site, fn_, path=name)
+        wrapper = XMLRPCWrapper(site, fn_, path=name)
+        wrapper.register()
+        return fn_
     if fn is not None:
         wrapped = wrapped(fn)
     return wrapped

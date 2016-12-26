@@ -15,7 +15,7 @@ __author__ = 'Matthieu Gallet'
 
 # noinspection PyUnusedLocal
 @register_rpc_method
-def list_packages():
+def list_packages(request):
     """Retrieve a list of the package names registered with the package index. Returns a list of name strings."""
     return [x.name for x in Package.objects.all().only('name')]
 

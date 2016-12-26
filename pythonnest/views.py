@@ -249,9 +249,9 @@ def index(request):
                          'to find more packages.') % {'pattern': quote(orig_pattern), 'text': escape(orig_pattern)}
 
         return search_result(request, query, alt_text)
-    full_uri = request.build_absolute_uri('/')[:-1]
+    full_uri = settings.SERVER_BASE_URL[:-1]
     base_url = settings.SERVER_NAME
-    use_ssl = settings.PROTOCOL == 'https'
+    use_ssl = settings.USE_SSL
     template_values = {'base_url': base_url, 'use_ssl': use_ssl, 'full_uri': full_uri, }
     return TemplateResponse(request, 'pythonnest/index.html', template_values)
 

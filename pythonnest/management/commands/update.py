@@ -82,7 +82,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         assert isinstance(parser, ArgumentParser)
         parser.add_argument('--url', default='https://pypi.python.org/pypi',
-                            help='Server to sync. against (default: http://pypi.python.org/pypi)'),
+                            help='Server to sync. against (default: https://pypi.python.org/pypi)'),
         parser.add_argument('--limit', type=int, default=None, help='Do not download more thant --limit archives'),
         parser.add_argument('--serial', type=int, default=None, help='Start from this serial'),
         parser.add_argument('--retry', type=int, default=5, help='Max retry count (default 5)'),

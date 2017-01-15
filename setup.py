@@ -40,7 +40,7 @@ setup(
     test_suite='pythonnest.tests',
     ext_modules=[],
     cmdclass={},
-    install_requires=['setuptools>=18', 'djangofloor>=1.0.0', ],
+    install_requires=['setuptools>=18', 'djangofloor>=1.0.0', 'django-allauth'],
     setup_requires=['setuptools>=18', ],
     classifiers=['Operating System :: Microsoft :: Windows',
                  'Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',

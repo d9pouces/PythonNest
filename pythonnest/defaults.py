@@ -18,7 +18,7 @@ READ_ONLY_MIRROR = True
 FLOOR_INDEX = 'pythonnest.views.index'
 # FLOOR_URL_CONF = 'pythonnest.root_urls.urls'
 # FLOOR_PROJECT_NAME = 'PythonNest'
-# BIND_ADDRESS = 'localhost:8130'
+# LISTEN_ADDRESS = 'localhost:8130'
 # Make this unique, and don't share it with anybody.
 # SECRET_KEY = 'ap6WerC2w8c6SGCPvFM5YDHdTXvBnzHcToS0J3r6LeetzReng6'
 # READ_ONLY_MIRROR_HELP = 'Allow people to create and upload packages'

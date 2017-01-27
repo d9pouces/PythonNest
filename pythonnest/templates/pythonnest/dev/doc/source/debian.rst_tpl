@@ -1,2 +1,0 @@
-{% extends 'djangofloor/dev/doc/source/debian.rst_tpl' %}
-{% block authentication %}{% endblock %}

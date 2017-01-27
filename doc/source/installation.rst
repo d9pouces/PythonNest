@@ -1,12 +1,12 @@
 Installation
 ============
 
-Like many Python packages, you can use several methods to install PythonNest.
-PythonNest designed to run with python3.4.x+.
+Like many Python packages, you can use several methods to install Pythonnest.
+Pythonnest designed to run with python3.5.x+.
 The following packages are also required:
 
-  * setuptools >= 3.0
-  * djangofloor >= 0.18.0
+  * setuptools >= 3.0,
+  * djangofloor >= 1.0.0.
 
 
 Of course you can install it from the source, but the preferred way is to install it as a standard Python package, via pip.
@@ -15,8 +15,25 @@ Of course you can install it from the source, but the preferred way is to instal
 Installing or Upgrading
 -----------------------
 
-Here is a simple tutorial to install PythonNest on a basic Debian/Linux installation.
+Here is a simple tutorial to install Pythonnest on a basic Debian/Linux installation.
 You should easily adapt it on a different Linux or Unix flavor.
+
+If you want to upgrade an existing installation, just install the new version (with the `--upgrade` flag for `pip`) and run
+the `collectstatic` and `migrate` commands (for updating both static files and the database).
+
+
+
+Preparing the environment
+-------------------------
+
+.. code-block:: bash
+
+    sudo adduser --disabled-password pythonnest
+    sudo chown pythonnest:www-data ./django_data
+    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
+    sudo -u pythonnest -H -i
+    mkvirtualenv pythonnest -p `which python3.5`
+    workon pythonnest
 
 
 Database
@@ -32,48 +49,55 @@ PostgreSQL is often a good choice for Django sites:
    echo "ALTER ROLE pythonnest CREATEDB" | sudo -u postgres psql -d postgres
    echo "CREATE DATABASE pythonnest OWNER pythonnest" | sudo -u postgres psql -d postgres
 
+Pythonnest also requires Redis for websockets, background tasks, caching pages and storing sessions:
+
+
+.. code-block:: bash
+
+    sudo apt-get install redis-server
+
+
 
 
 
 Apache
 ------
 
-I only present the installation with Apache, but an installation behind nginx should be similar.
-You cannot use different server names for browsing your mirror. If you use `pythonnest.example.org`
-in the configuration, you cannot use its IP address to access the website.
+Only the Apache installation is presented, but an installation behind nginx should be similar.
+Only the chosen server name (like `pythonnest.example.org`) can be used for accessing your site. For example, you cannot use its IP address.
 
 .. code-block:: bash
 
     SERVICE_NAME=pythonnest.example.org
     sudo apt-get install apache2 libapache2-mod-xsendfile
-    sudo a2enmod headers proxy proxy_http
+    sudo a2enmod headers proxy proxy_http xsendfile
     sudo a2dissite 000-default.conf
     # sudo a2dissite 000-default on Debian7
     cat << EOF | sudo tee /etc/apache2/sites-available/pythonnest.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
-        Alias /static/ /var/pythonnest/static/
+        Alias /static/ django_data/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        Alias /media/ /var/pythonnest/data/media/
+        Alias /media/ django_data/media/
         ProxyPass /media/ !
         <Location /media/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        ProxyPass / http://localhost:8130/
-        ProxyPassReverse / http://localhost:8130/
-        DocumentRoot /var/pythonnest/static
+        ProxyPass / http://localhost:9000/
+        ProxyPassReverse / http://localhost:9000/
+        DocumentRoot django_data/static/
         ServerSignature off
     </VirtualHost>
     EOF
-    sudo mkdir /var/pythonnest
-    sudo chown -R www-data:www-data /var/pythonnest
+    sudo mkdir ./django_data
+    sudo chown -R www-data:www-data ./django_data
     sudo a2ensite pythonnest.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -101,29 +125,29 @@ If you want to use SSL:
         ServerName $SERVICE_NAME
         SSLCertificateFile $PEM
         SSLEngine on
-        Alias /static/ /var/pythonnest/static/
+        Alias /static/ django_data/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        Alias /media/ /var/pythonnest/data/media/
+        Alias /media/ django_data/media/
         ProxyPass /media/ !
         <Location /media/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        ProxyPass / http://localhost:8130/
-        ProxyPassReverse / http://localhost:8130/
-        DocumentRoot /var/pythonnest/static
+        ProxyPass / http://localhost:9000/
+        ProxyPassReverse / http://localhost:9000/
+        DocumentRoot django_data/static/
         ServerSignature off
         RequestHeader set X_FORWARDED_PROTO https
     </VirtualHost>
     EOF
-    sudo mkdir /var/pythonnest
-    sudo chown -R www-data:www-data /var/pythonnest
+    sudo mkdir ./django_data
+    sudo chown -R www-data:www-data ./django_data
     sudo a2ensite pythonnest.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -134,46 +158,27 @@ If you want to use SSL:
 Application
 -----------
 
-Now, it's time to install PythonNest:
+Now, it's time to install Pythonnest:
 
 .. code-block:: bash
 
-    sudo mkdir -p /var/pythonnest
-    sudo adduser --disabled-password pythonnest
-    sudo chown pythonnest:www-data /var/pythonnest
-    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
-    # application
-    sudo -u pythonnest -i
-    mkvirtualenv pythonnest -p `which python3.4`
-    workon pythonnest
     pip install setuptools --upgrade
     pip install pip --upgrade
     pip install pythonnest psycopg2 gevent
     mkdir -p $VIRTUAL_ENV/etc/pythonnest
     cat << EOF > $VIRTUAL_ENV/etc/pythonnest/settings.ini
+    [global]
+    data = $HOME/pythonnest
     [database]
-    engine = django.db.backends.postgresql_psycopg2
+    db = pythonnest
+    engine = postgresql
     host = localhost
-    name = pythonnest
     password = 5trongp4ssw0rd
     port = 5432
     user = pythonnest
-    [global]
-    admin_email = admin@pythonnest.example.org
-    bind_address = localhost:8130
-    data_path = /var/pythonnest
-    debug = False
-    extra_apps = 
-    language_code = fr-FR
-    protocol = http
-    secret_key = ap6WerC2w8c6SGCPvFM5YDHdTXvBnzHcToS0J3r6LeetzReng6
-    server_name = pythonnest.example.org
-    time_zone = Europe/Paris
-    [sentry]
-    dsn_url = 
     EOF
     chmod 0400 $VIRTUAL_ENV/etc/pythonnest/settings.ini
-    # required since there are password in this file
+    # protect passwords in the config files from by being readable by everyone
     pythonnest-manage migrate
     pythonnest-manage collectstatic --noinput
 
@@ -194,7 +199,7 @@ Supervisor is required to automatically launch pythonnest:
     sudo apt-get install supervisor
     cat << EOF | sudo tee /etc/supervisor/conf.d/pythonnest.conf
     [program:pythonnest_gunicorn]
-    command = /home/pythonnest/.virtualenvs/pythonnest/bin/pythonnest-gunicorn
+    command = $VIRTUAL_ENV/bin/pythonnest-gunicorn
     user = pythonnest
     EOF
     sudo service supervisor stop
@@ -212,20 +217,38 @@ You can also use systemd to launch pythonnest:
 
     cat << EOF | sudo tee /etc/systemd/system/pythonnest-gunicorn.service
     [Unit]
-    Description=PythonNest Gunicorn process
+    Description=Pythonnest Gunicorn process
     After=network.target
     [Service]
     User=pythonnest
     Group=pythonnest
-    WorkingDirectory=/var/pythonnest/
-    ExecStart=/home/pythonnest/.virtualenvs/pythonnest/bin/pythonnest-gunicorn
-    ExecReload=/bin/kill -s HUP $MAINPID
-    ExecStop=/bin/kill -s TERM $MAINPID
+    WorkingDirectory=./django_data/
+    ExecStart=/bin/pythonnest-gunicorn
+    ExecReload=/bin/kill -s HUP \$MAINPID
+    ExecStop=/bin/kill -s TERM \$MAINPID
     [Install]
     WantedBy=multi-user.target
     EOF
     systemctl enable pythonnest-gunicorn.service
     sudo service pythonnest-gunicorn start
+    cat << EOF | sudo tee /etc/systemd/system/.service
+    [Unit]
+    Description=Pythonnest Celery process
+    After=network.target
+    [Service]
+    User=pythonnest
+    Group=pythonnest
+    Type=forking
+    WorkingDirectory=./django_data/
+    ExecStart=$VIRTUAL_ENV/bin/ worker -Q celery
+    ExecReload=/bin/kill -s HUP \$MAINPID
+    ExecStop=/bin/kill -s TERM \$MAINPID
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+    mkdir -p /run
+    sudo systemctl enable .service
+    sudo service  start
 
 
 

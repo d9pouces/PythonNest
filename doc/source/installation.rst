@@ -29,7 +29,7 @@ Preparing the environment
 .. code-block:: bash
 
     sudo adduser --disabled-password pythonnest
-    sudo chown pythonnest:www-data ./django_data
+    sudo chown pythonnest:www-data $VIRTUALENV/var/pythonnest
     sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
     sudo -u pythonnest -H -i
     mkvirtualenv pythonnest -p `which python3.5`
@@ -49,8 +49,8 @@ PostgreSQL is often a good choice for Django sites:
    echo "ALTER ROLE pythonnest CREATEDB" | sudo -u postgres psql -d postgres
    echo "CREATE DATABASE pythonnest OWNER pythonnest" | sudo -u postgres psql -d postgres
 
-Pythonnest also requires Redis for websockets, background tasks, caching pages and storing sessions:
 
+Pythonnest can use Redis for caching pages and storing sessions:
 
 .. code-block:: bash
 
@@ -76,14 +76,14 @@ Only the chosen server name (like `pythonnest.example.org`) can be used for acce
     cat << EOF | sudo tee /etc/apache2/sites-available/pythonnest.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
-        Alias /static/ django_data/static/
+        Alias /static/ $VIRTUALENV/var/pythonnest/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        Alias /media/ django_data/media/
+        Alias /media/ $VIRTUALENV/var/pythonnest/media/
         ProxyPass /media/ !
         <Location /media/>
             Order deny,allow
@@ -92,12 +92,12 @@ Only the chosen server name (like `pythonnest.example.org`) can be used for acce
         </Location>
         ProxyPass / http://localhost:9000/
         ProxyPassReverse / http://localhost:9000/
-        DocumentRoot django_data/static/
+        DocumentRoot $VIRTUALENV/var/pythonnest/static/
         ServerSignature off
     </VirtualHost>
     EOF
-    sudo mkdir ./django_data
-    sudo chown -R www-data:www-data ./django_data
+    sudo mkdir $VIRTUALENV/var/pythonnest
+    sudo chown -R www-data:www-data $VIRTUALENV/var/pythonnest
     sudo a2ensite pythonnest.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -125,14 +125,14 @@ If you want to use SSL:
         ServerName $SERVICE_NAME
         SSLCertificateFile $PEM
         SSLEngine on
-        Alias /static/ django_data/static/
+        Alias /static/ $VIRTUALENV/var/pythonnest/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        Alias /media/ django_data/media/
+        Alias /media/ $VIRTUALENV/var/pythonnest/media/
         ProxyPass /media/ !
         <Location /media/>
             Order deny,allow
@@ -141,13 +141,13 @@ If you want to use SSL:
         </Location>
         ProxyPass / http://localhost:9000/
         ProxyPassReverse / http://localhost:9000/
-        DocumentRoot django_data/static/
+        DocumentRoot $VIRTUALENV/var/pythonnest/static/
         ServerSignature off
         RequestHeader set X_FORWARDED_PROTO https
     </VirtualHost>
     EOF
-    sudo mkdir ./django_data
-    sudo chown -R www-data:www-data ./django_data
+    sudo mkdir $VIRTUALENV/var/pythonnest
+    sudo chown -R www-data:www-data $VIRTUALENV/var/pythonnest
     sudo a2ensite pythonnest.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -222,7 +222,7 @@ You can also use systemd to launch pythonnest:
     [Service]
     User=pythonnest
     Group=pythonnest
-    WorkingDirectory=./django_data/
+    WorkingDirectory=$VIRTUALENV/var/pythonnest/
     ExecStart=/bin/pythonnest-gunicorn
     ExecReload=/bin/kill -s HUP \$MAINPID
     ExecStop=/bin/kill -s TERM \$MAINPID
@@ -231,24 +231,6 @@ You can also use systemd to launch pythonnest:
     EOF
     systemctl enable pythonnest-gunicorn.service
     sudo service pythonnest-gunicorn start
-    cat << EOF | sudo tee /etc/systemd/system/.service
-    [Unit]
-    Description=Pythonnest Celery process
-    After=network.target
-    [Service]
-    User=pythonnest
-    Group=pythonnest
-    Type=forking
-    WorkingDirectory=./django_data/
-    ExecStart=$VIRTUAL_ENV/bin/ worker -Q celery
-    ExecReload=/bin/kill -s HUP \$MAINPID
-    ExecStop=/bin/kill -s TERM \$MAINPID
-    [Install]
-    WantedBy=multi-user.target
-    EOF
-    mkdir -p /run
-    sudo systemctl enable .service
-    sudo service  start
 
 
 

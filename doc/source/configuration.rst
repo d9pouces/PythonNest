@@ -24,17 +24,17 @@ Here is the complete list of settings:
 .. code-block:: ini
 
   [database]
-  db = django_data/database.sqlite3 
+  db = pythonnest 
   	# Main database name (or path of the sqlite3 database)
-  engine = sqlite3 
+  engine = postgresql 
   	# Main database engine ("mysql", "postgresql", "sqlite3", "oracle", or the dotted name of the Django backend)
-  host =  
+  host = localhost 
   	# Main database host
-  password =  
+  password = 5trongp4ssw0rd 
   	# Main database password
-  port =  
+  port = 5432 
   	# Main database port
-  user =  
+  user = pythonnest 
   	# Main database user
   
   [email]
@@ -52,9 +52,9 @@ Here is the complete list of settings:
   	# SMTP user
   
   [global]
-  admin_email = admin@localhost 
+  admin_email = admin@pythonnest.example.org 
   	# e-mail address for receiving logged errors
-  data = ./django_data 
+  data = $VIRTUALENV/var/pythonnest 
   	# where all data will be stored (static/uploaded/temporary files, …)If you change it, you must run the collectstatic and migrate commands again.
   language_code = fr-FR 
   	# default to fr_FR
@@ -63,7 +63,7 @@ Here is the complete list of settings:
   log_remote_url =  
   	# Send logs to a syslog or systemd log daemon.  
   	# Examples: syslog+tcp://localhost:514/user, syslog:///local7,syslog:///dev/log/daemon, logd:///project_name
-  server_url = http://localhost:9000/ 
+  server_url = http://pythonnest.example.org 
   	# Public URL of your website.  
   	# Default to "http://listen_address" but should be ifferent if you use a reverse proxy like Apache or Nginx. Example: http://www.example.org.
   time_zone = Europe/Paris 
@@ -128,7 +128,6 @@ or try to run the server interactively:
   pythonnest-manage config
   pythonnest-manage runserver
   pythonnest-gunicorn
-   worker -Q celery
 
 
 
@@ -167,7 +166,7 @@ We use logrotate to backup the database, with a new file each day.
   EOF
   touch /var/backups/pythonnest/backup_db.sql.gz
   crontab -e
-  MAILTO=admin@localhost
+  MAILTO=admin@pythonnest.example.org
   0 1 * * * pythonnest-manage clearsessions
   0 2 * * * logrotate -f /etc/pythonnest/backup_db.conf
 
@@ -193,8 +192,8 @@ If you have a lot of files to backup, beware of the available disk place!
   EOF
   touch /var/backups/pythonnest/backup_media.tar.gz
   crontab -e
-  MAILTO=admin@localhost
-  0 3 * * * rsync -arltDE django_data/media/ /var/backups/pythonnest/media/
+  MAILTO=admin@pythonnest.example.org
+  0 3 * * * rsync -arltDE $VIRTUALENV/var/pythonnest/media/ /var/backups/pythonnest/media/
   0 5 0 * * logrotate -f /etc/pythonnest/backup_media.conf
 
 Restoring a backup
@@ -203,7 +202,7 @@ Restoring a backup
 .. code-block:: bash
 
   cat /var/backups/pythonnest/backup_db.sql.gz | gunzip | pythonnest-manage dbshell
-  tar -C django_data/media/ -xf /var/backups/pythonnest/backup_media.tar.gz
+  tar -C $VIRTUALENV/var/pythonnest/media/ -xf /var/backups/pythonnest/backup_media.tar.gz
 
 
 

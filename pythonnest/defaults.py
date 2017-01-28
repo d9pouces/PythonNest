@@ -13,7 +13,7 @@ DF_AUTHENTICATION_BACKENDS = ['allauth.account.auth_backends.AuthenticationBacke
 DF_URL_CONF = 'pythonnest.root_urls.urls'
 READ_ONLY_MIRROR = True
 # DF_TEMPLATE_CONTEXT_PROCESSORS = ['pythonnest.context_processors.context_user', ]
-
+USE_CELERY = False
 
 FLOOR_INDEX = 'pythonnest.views.index'
 # FLOOR_URL_CONF = 'pythonnest.root_urls.urls'

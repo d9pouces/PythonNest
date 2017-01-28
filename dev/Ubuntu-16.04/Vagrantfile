@@ -83,8 +83,8 @@ sudo apt-get update
 sudo apt-get install -y npm
 sudo npm -g install yuglify
 sudo apt-get install -y virtualenvwrapper python3.5 python3.5-dev python3-pip build-essential
-sudo -H pip3 install git+https://github.com/d9pouces/EasyDjango.git
-sudo -H pip3 install git+https://github.com/d9pouces/pythonnest.git
+sudo -H pip3 install git+https://github.com/d9pouces/EasyDjango.git --upgrade
+sudo -H pip3 install git+https://github.com/d9pouces/pythonnest.git --upgrade
 sudo mkdir -p /var/pythonnest/logs /etc/pythonnest
 sudo adduser --system --shell /bin/bash --disabled-password --gecos "" pythonnest
 cat << EOF | sudo -H tee /etc/pythonnest/settings.ini

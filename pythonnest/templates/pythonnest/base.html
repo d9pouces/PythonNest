@@ -15,14 +15,14 @@
         </div>
         {% if not read_only_mirror %}
             {% if user.is_authenticated and not df_remote_authenticated %}
-                <a class="navbar-brand" href="{% url 'account_email' %}">{% fontawesome_icon 'pencil' %}&nbsp;
+                <a class="navbar-brand" href="{% url 'df:set_password' %}">{% fontawesome_icon 'pencil' %}&nbsp;
                     <small>{{ user }}</small>
                 </a>
-                <a class="navbar-brand" href="{% url 'account_logout' %}">{% fontawesome_icon 'sign-out' %}</a>
+                <a class="navbar-brand" href="{% url 'df:logout' %}">{% fontawesome_icon 'sign-out' %}</a>
             {% elif user.is_authenticated %}
                 <a class="navbar-brand">{{ user.username }}</a>
             {% elif user.is_anonymous %}
-                <a class="navbar-brand" href="{% url 'account_login' %}">{% fontawesome_icon 'sign-in' %}</a>
+                <a class="navbar-brand" href="{% url 'login' %}">{% fontawesome_icon 'sign-in' %}</a>
             {% endif %}
             {% if user.is_staff %}
                 <a class="navbar-brand" href="{% url 'admin:index' %}">{% fontawesome_icon 'wrench' %}</a>

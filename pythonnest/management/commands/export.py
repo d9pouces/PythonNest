@@ -2,6 +2,7 @@
 import codecs
 import hashlib
 import json
+from argparse import ArgumentParser
 from optparse import make_option
 import os
 import shutil
@@ -21,11 +22,12 @@ class Command(BaseCommand):
     """Update local database from another Pypi server"""
     args = ''
     help = 'Export the database'
-    option_list = BaseCommand.option_list + (
-        make_option('--path', default='export', help='Folder to export data to'),
-        make_option('--serial', type=int, default=None, help='Start from this serial'),
-        make_option('--tag', default='export', help='Tag identifying this export'),
-    )
+
+    def add_arguments(self, parser):
+        assert isinstance(parser, ArgumentParser)
+        parser.add_argument('--path', default='export', help='Folder to export data to')
+        parser.add_argument('--serial', type=int, default=None, help='Start from this serial')
+        parser.add_argument('--tag', default='export', help='Tag identifying this export')
 
     def handle(self, *args, **options):
         # first: determine the type of server

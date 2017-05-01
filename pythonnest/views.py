@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.http import HttpResponse, Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, resolve_url
@@ -159,7 +159,7 @@ def setup(request):
         version_name = values.get('version', '')
         if not package_name or not version_name:
             raise PermissionDenied(_('No package name provided'))
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             return HttpResponse(ugettext('You must be authenticated'), status=401)
         package, package_created = Package.objects.get_or_create(name=package_name)
         if package_created:

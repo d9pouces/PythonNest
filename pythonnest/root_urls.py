@@ -8,6 +8,7 @@ from pythonnest.views import xmlrpc
 
 __author__ = 'Matthieu Gallet'
 
+app_name = 'pythonnest'
 urls = [
     url(r'^index\.html$', views.index),
     url(r'^packages/(?P<order_by>(\-modification|normalized_name))\.html$', views.all_packages, name='all_packages'),

@@ -126,14 +126,14 @@ class Package(models.Model):
         return result
 
     def is_admin(self, user):
-        if user.is_anonymous():
+        if user.is_anonymous:
             return False
         if user.is_superuser:
             return True
         return PackageRole.objects.filter(package=self, user=user, role=PackageRole.OWNER).count() > 1
 
     def is_maintainer(self, user):
-        if user.is_anonymous():
+        if user.is_anonymous:
             return False
         if user.is_superuser:
             return True

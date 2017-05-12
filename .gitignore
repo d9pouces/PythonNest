@@ -52,3 +52,6 @@ docs/_build/
 
 # PyBuilder
 target/
+.vagrant/
+django_data/
+pythonnest/rpcapi/

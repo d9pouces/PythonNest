@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-import os
-from djangofloor.scripts import gunicorn
-os.environ['DF_CONF_NAME'] = 'pythonnest-gunicorn'
+from djangofloor.scripts import gunicorn, set_env
+
+__author__ = 'Matthieu Gallet'
+
+set_env(command_name='pythonnest-gunicorn')
 gunicorn()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Here are defined all admin models.
 These admin models are associated to a :class:`django.db.models.Model`
 and registered to the :class:`django.contrib.admin.site`.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This file describes REST API, built on top of django-tastypie.
 """

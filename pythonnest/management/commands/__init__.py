@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Define each management command as a separate Python module.
 """

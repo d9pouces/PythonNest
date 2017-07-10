@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Pythonnest core package.
 """
 __author__ = 'Matthieu Gallet'

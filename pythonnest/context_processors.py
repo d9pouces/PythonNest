@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.conf import settings
 from pythonnest import __version__ as version, __author__ as author
 __author__ = 'Matthieu Gallet'

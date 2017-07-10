@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Define your models in this module.
 
 Models are standard Python classes which inherits from

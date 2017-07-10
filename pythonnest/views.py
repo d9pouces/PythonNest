@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Here are defined Python functions of views.
 Views are binded to URLs in :mod:`.urls`.
 """

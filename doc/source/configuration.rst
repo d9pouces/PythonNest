@@ -55,7 +55,7 @@ Here is the complete list of settings:
   admin_email = admin@pythonnest.example.org 
   	# e-mail address for receiving logged errors
   data = $VIRTUALENV/var/pythonnest 
-  	# where all data will be stored (static/uploaded/temporary files, …)If you change it, you must run the collectstatic and migrate commands again.
+  	# where all data will be stored (static/uploaded/temporary files, …) If you change it, you must run the collectstatic and migrate commands again.
   language_code = fr-FR 
   	# default to fr_FR
   listen_address = localhost:9000 

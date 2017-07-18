@@ -5,6 +5,7 @@ import codecs
 import os.path
 import re
 import sys
+
 from setuptools import setup, find_packages
 
 __author__ = 'Matthieu Gallet'
@@ -19,7 +20,7 @@ for line in codecs.open(os.path.join('pythonnest', '__init__.py'), 'r', encoding
     version = version or matcher and matcher.group(1)
 
 # get README content from README.md file
-with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
     long_description = fd.read()
 
 entry_points = {
@@ -42,13 +43,11 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    test_suite='pythonnest.tests',
-    ext_modules=[],
-    cmdclass={},
     install_requires=['setuptools>=18', 'djangofloor>=1.0.0', 'gunicorn'],
     setup_requires=['setuptools>=18', ],
     classifiers=['Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',
                  'Operating System :: Unix',
                  'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
-                 'Programming Language :: Python :: 3.5', 'Programming Language :: Python :: 3 :: Only'],
+                 'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5',
+                 'Programming Language :: Python :: 3 :: Only'],
 )

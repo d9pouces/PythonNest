@@ -10,7 +10,6 @@ DF_INDEX_VIEW = 'pythonnest.views.index'
 DF_INSTALLED_APPS = ['pythonnest', ]
 DF_URL_CONF = 'pythonnest.root_urls.urls'
 READ_ONLY_MIRROR = True
-# DF_TEMPLATE_CONTEXT_PROCESSORS = ['pythonnest.context_processors.context_user', ]
 USE_CELERY = False
 
 FLOOR_INDEX = 'pythonnest.views.index'

@@ -1,7 +1,6 @@
 .. Pythonnest documentation master file, created by
 
-Welcome to Pythonnest's documentation!
-======================================
+
 
 Read-only Pypi mirror for disconnected networks, with advanced export / import functionnalities compared to other Pypi mirrors.
 You should run two PythonNest instances:
@@ -26,22 +25,19 @@ If you are looking for a mirror hosting your own private packages, you should lo
 
 
 
-Full table of contents
-======================
+table of contents
+=================
 
 .. toctree::
    :maxdepth: 1
 
    quick-installation
+   requirements
    installation
    configuration
+   changes
    operating
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

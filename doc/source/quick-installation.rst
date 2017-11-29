@@ -1,28 +1,44 @@
 Quick installation
 ==================
 
-You can quickly test Pythonnest, storing all data in $HOME/pythonnest:
+Pythonnest mainly requires Python (3.5, 3.6, 3.7).
+
+You should create a dedicated virtualenvironment on your system to isolate Pythonnest.
+You can use `pipenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ or `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io>`_.
+
+For example, on Debian-based systems like Ubuntu:
 
 .. code-block:: bash
 
-    sudo apt-get install python3.5 python3.5-dev build-essential
-    pip install pythonnest
-    pythonnest-manage migrate  # create the database (SQLite by default)
-    pythonnest-manage collectstatic --noinput  # prepare static files (CSS, JS, …)
-    pythonnest-manage createsuperuser  # create an admin user
+    sudo apt-get install python3.6 python3.6-dev build-essential
+
+
+
+
+
+
+If these requirements are fullfilled, then you can gon on and install Pythonnest:
+
+.. code-block:: bash
+
+    pip install pythonnest --user
+    pythonnest-ctl collectstatic --noinput  # prepare static files (CSS, JS, …)
+    pythonnest-ctl migrate  # create the database (SQLite by default)
+    pythonnest-ctl createsuperuser  # create an admin user
+    pythonnest-ctl check  # everything should be ok
+
 
 
 
 You can easily change the root location for all data (SQLite database, uploaded or temp files, static files, …) by
-editing the configuration file:
+editing the configuration file.
 
 .. code-block:: bash
 
-    CONFIG_FILENAME=`pythonnest-manage  config ini -v 2 | head -n 1 | grep ".ini" | cut -d '"' -f 2`
-    # create required folders
-    mkdir -p `dirname $FILENAME` $HOME/pythonnest
+    CONFIG_FILENAME=`pythonnest-ctl config ini -v 2 | grep -m 1 ' - .ini file' | cut -d '"' -f 2`
     # prepare a limited configuration file
-    cat << EOF > $FILENAME
+    mkdir -p `dirname $CONFIG_FILENAME`
+    cat << EOF > $CONFIG_FILENAME
     [global]
     data = $HOME/pythonnest
     EOF
@@ -30,13 +46,18 @@ editing the configuration file:
 Of course, you must run again the `migrate` and `collectstatic` commands (or moving data to this new folder).
 
 
+
+
 You can launch the server process:
 
 .. code-block:: bash
 
-    pythonnest-gunicorn
+    pythonnest-ctl server
 
 
-Then open http://localhost:9000 in your favorite browser.
+Then open http://localhost:8130 with your favorite browser.
 
-You should use virtualenv or install Pythonnest using the `--user` option.
+
+
+You can install Pythonnest in your home (with the `--user` option), globally (without this option), or (preferably)
+inside a virtualenv.

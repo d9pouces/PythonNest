@@ -23,13 +23,6 @@ for line in codecs.open(os.path.join('pythonnest', '__init__.py'), 'r', encoding
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
     long_description = fd.read()
 
-entry_points = {
-    'console_scripts': [
-        'pythonnest-manage = djangofloor.scripts:django',
-        'pythonnest-gunicorn = djangofloor.scripts:gunicorn',
-    ]
-}
-
 setup(
     name='pythonnest',
     version=version,
@@ -39,15 +32,25 @@ setup(
     author_email='github@19pouces.net',
     license='CeCILL-B',
     url="http://www.19pouces.net/projects.html",
-    entry_points=entry_points,
+    entry_points={'console_scripts': ['pythonnest-ctl = djangofloor.scripts:control']},
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=['setuptools>=18', 'djangofloor>=1.0.0', 'gunicorn'],
+    install_requires=['djangofloor>=1.1.0'],
     setup_requires=['setuptools>=18', ],
-    classifiers=['Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',
+    classifiers=['Development Status :: 5 - Production/Stable',
+                 'Framework :: Django :: 1.11',
+                 'Framework :: Django :: 2.0',
+                 'Natural Language :: English',
+                 'Natural Language :: French',
+                 'Operating System :: MacOS :: MacOS X',
+                 'Operating System :: POSIX :: BSD',
+                 'Operating System :: POSIX :: Linux',
                  'Operating System :: Unix',
                  'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
-                 'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5',
-                 'Programming Language :: Python :: 3 :: Only'],
+                 'Programming Language :: Python :: 3.5',
+                 'Programming Language :: Python :: 3.6',
+                 'Programming Language :: Python :: 3.7',
+                 'Programming Language :: Python :: 3 :: Only'
+                 ],
 )

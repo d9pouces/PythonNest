@@ -2,6 +2,7 @@
 Complete configuration
 ======================
 
+.. _configuration:
 
 Configuration options
 ---------------------
@@ -25,14 +26,16 @@ Here is the complete list of settings:
 
   [cache]
   db = 2 
-  	# Database number of the Redis Cache DB. 
-  	# Python package "django-redis" is required.
+  	# Database number (redis only).  
+  	# Python package "django-redis" is also required to use Redis.
+  engine = redis 
+  	# cache storage engine ("locmem", "redis" or "memcache") Valid choices: "redis", "memcache", "locmem", "file"
   host = localhost 
-  	# Redis Cache DB host
+  	# cache server host (redis or memcache)
   password =  
-  	# Redis Cache DB password (if required)
+  	# cache server password (if required by redis)
   port = 6379 
-  	# Redis Cache DB port
+  	# cache server port (redis or memcache)
   
   [database]
   db = pythonnest 
@@ -92,15 +95,21 @@ Here is the complete list of settings:
   	# default to Europe/Paris
   
   [server]
+  graceful_timeout = 25 
+  	# After receiving a restart signal, workers have this much time to finish serving requests. Workers still alive after the timeout (starting from the receipt of the restart signal) are force killed.
+  keepalive = 5 
+  	# After receiving a restart signal, workers have this much time to finish serving requests. Workers still alive after the timeout (starting from the receipt of the restart signal) are force killed.
+  max_requests = 10000 
+  	# The maximum number of requests a worker will process before restarting.
   processes = 2 
   	# The number of web server processes for handling requests.
   threads = 2 
   	# The number of web server threads for handling requests.
-  timeout = 30 
+  timeout = 35 
   	# Web workers silent for more than this many seconds are killed and restarted.
   
   [sessions]
-  db = 3 
+  db = 1 
   	# Database number of the Redis sessions DB 
   	# Python package "django-redis-sessions" is required.
   host = localhost 

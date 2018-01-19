@@ -218,14 +218,15 @@ Now, Supervisor should start pythonnest after a reboot.
 systemd
 -------
 
-You can also use systemd (present in many modern Linux distributions) to launch pythonnest:
+You can also use systemd in most modern Linux distributions to launch pythonnest:
 
 .. code-block:: bash
 
-    cat << EOF | sudo tee /etc/systemd/system/pythonnest-ctl.service
+    cat << EOF | sudo tee /etc/systemd/system/pythonnest-web.service
     [Unit]
-    Description=Pythonnest HTTP process
+    Description=Pythonnest web process
     After=network.target
+
     [Service]
     User=pythonnest
     Group=pythonnest
@@ -233,11 +234,13 @@ You can also use systemd (present in many modern Linux distributions) to launch 
     ExecStart=$VIRTUAL_ENV/bin/pythonnest-ctl server
     ExecReload=/bin/kill -s HUP \$MAINPID
     ExecStop=/bin/kill -s TERM \$MAINPID
+    Restart=on-failure
+
     [Install]
     WantedBy=multi-user.target
     EOF
-    systemctl enable pythonnest-ctl.service
-    sudo service pythonnest-ctl start
+    systemctl enable pythonnest-web.service
+    sudo service pythonnest-web
 
 
 

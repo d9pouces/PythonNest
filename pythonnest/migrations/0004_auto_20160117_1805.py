@@ -5,7 +5,6 @@ import pythonnest.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('pythonnest', '0003_auto_20160105_2338'),
     ]
@@ -39,7 +38,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='package',
             name='license',
-            field=models.CharField(blank=True, db_index=True, default='UNKNOWN', max_length=455, verbose_name='license'),
+            field=models.CharField(blank=True, db_index=True, default='UNKNOWN', max_length=455,
+                                   verbose_name='license'),
         ),
         migrations.AlterField(
             model_name='package',
@@ -49,7 +49,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='package',
             name='maintainer_email',
-            field=models.CharField(blank=True, db_index=True, max_length=455, null=True, verbose_name='maintainer email'),
+            field=models.CharField(blank=True, db_index=True, max_length=455, null=True,
+                                   verbose_name='maintainer email'),
         ),
         migrations.AlterField(
             model_name='package',
@@ -59,7 +60,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='package',
             name='normalized_name',
-            field=models.CharField(blank=True, db_index=True, default='', max_length=455, verbose_name='normalized name'),
+            field=models.CharField(blank=True, db_index=True, default='', max_length=455,
+                                   verbose_name='normalized name'),
         ),
         migrations.AlterField(
             model_name='packagetype',
@@ -69,22 +71,26 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='release',
             name='keywords',
-            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True, verbose_name='keywords'),
+            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True,
+                                   verbose_name='keywords'),
         ),
         migrations.AlterField(
             model_name='release',
             name='stable_version',
-            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True, verbose_name='stable version name'),
+            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True,
+                                   verbose_name='stable version name'),
         ),
         migrations.AlterField(
             model_name='release',
             name='version',
-            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True, verbose_name='version name'),
+            field=models.CharField(blank=True, db_index=True, default='', max_length=455, null=True,
+                                   verbose_name='version name'),
         ),
         migrations.AlterField(
             model_name='releasedownload',
             name='file',
-            field=models.FileField(db_index=True, max_length=455, upload_to=pythonnest.models.release_download_path, verbose_name='File'),
+            field=models.FileField(db_index=True, max_length=455, upload_to=pythonnest.models.release_download_path,
+                                   verbose_name='File'),
         ),
         migrations.AlterField(
             model_name='releasedownload',
@@ -94,7 +100,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='releasedownload',
             name='python_version',
-            field=models.CharField(blank=True, db_index=True, default='any', max_length=355, verbose_name='Python version'),
+            field=models.CharField(blank=True, db_index=True, default='any', max_length=355,
+                                   verbose_name='Python version'),
         ),
         migrations.AlterField(
             model_name='releasedownload',

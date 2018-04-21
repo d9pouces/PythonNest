@@ -108,7 +108,8 @@ class Package(models.Model):
     project_url = models.URLField(_('project url'), db_index=True, blank=True, default='')
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
     modification = models.DateTimeField(_('modification'), db_index=True, auto_now=True)
-    group = models.ForeignKey(Group, verbose_name=_('restrict to this group'), db_index=True, null=True, blank=True)
+    group = models.ForeignKey(Group, verbose_name=_('restrict to this group'), db_index=True, null=True, blank=True,
+                              on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
@@ -144,15 +145,15 @@ class PackageRole(models.Model):
     MAINTAINER = 2
     ROLES = ((OWNER, _('owner')), (MAINTAINER, _('maintainer')))
     role = models.IntegerField(_('role'), db_index=True, choices=ROLES, default=OWNER)
-    user = models.ForeignKey(User, verbose_name=_('user'), db_index=True)
-    package = models.ForeignKey(Package, verbose_name=_('package'), db_index=True)
+    user = models.ForeignKey(User, verbose_name=_('user'), db_index=True, on_delete=models.CASCADE)
+    package = models.ForeignKey(Package, verbose_name=_('package'), db_index=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return '%s - %s' % (self.user.username, self.package.name)
 
 
 class Release(models.Model):
-    package = models.ForeignKey(Package, db_index=True)
+    package = models.ForeignKey(Package, db_index=True, on_delete=models.CASCADE)
     version = models.CharField(_('version name'), db_index=True, blank=True, null=True, default='', max_length=455)
     stable_version = models.CharField(_('stable version name'), db_index=True, null=True, blank=True, default='',
                                       max_length=455)
@@ -166,7 +167,8 @@ class Release(models.Model):
     provides_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_provides_dist')
     obsoletes = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_obsoletes')
     obsoletes_dist = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_obsoletes_dist')
-    requires_external = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_external')
+    requires_external = models.ManyToManyField(Dependence, db_index=True, blank=True,
+                                               related_name='dep_requires_external')
     requires_python = models.ManyToManyField(Dependence, db_index=True, blank=True, related_name='dep_requires_python')
     docs_url = models.URLField(_('docs url'), db_index=True, blank=True, default='', null=True)
     creation = models.DateTimeField(_('creation'), db_index=True, auto_now_add=True)
@@ -200,24 +202,26 @@ def release_download_path(obj, filename):
         obj.uid = str(uuid.uuid1())
     return 'downloads/' + '/'.join(obj.uid[0:4]) + '/' + filename
 
+
 MEDIA_ROOT_LEN = len(settings.MEDIA_ROOT)
 if settings.MEDIA_ROOT[-1:] != '/':
     MEDIA_ROOT_LEN += 1
 
 
 class ReleaseMiss(models.Model):
-    release = models.ForeignKey(Release, db_index=True)
+    release = models.ForeignKey(Release, db_index=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.release)
 
 
 class ReleaseDownload(models.Model):
-    package = models.ForeignKey(Package, db_index=True, null=True, blank=True)
-    release = models.ForeignKey(Release, db_index=True)
+    package = models.ForeignKey(Package, db_index=True, null=True, blank=True, on_delete=models.CASCADE)
+    release = models.ForeignKey(Release, db_index=True, on_delete=models.CASCADE)
     uid = models.CharField(_('UID'), db_index=True, max_length=40, blank=True, default='')
     url = models.CharField(_('URL'), db_index=True, max_length=455, blank=True, default='')
-    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True, default=None)
+    package_type = models.ForeignKey(PackageType, db_index=True, null=True, blank=True, default=None,
+                                     on_delete=models.CASCADE)
     filename = models.CharField(_('Filename'), db_index=True, max_length=455)
     file = models.FileField(_('File'), db_index=True, max_length=455, upload_to=release_download_path)
     size = models.IntegerField(_('Size'), db_index=True, blank=True, default=0)
@@ -280,9 +284,9 @@ class ReleaseDownload(models.Model):
 
 
 class Log(models.Model):
-    package = models.ForeignKey(Package, db_index=True)
-    release = models.ForeignKey(Release, db_index=True, blank=True, null=True)
-    download = models.ForeignKey(ReleaseDownload, db_index=True, blank=True, null=True)
+    package = models.ForeignKey(Package, db_index=True, on_delete=models.CASCADE)
+    release = models.ForeignKey(Release, db_index=True, blank=True, null=True, on_delete=models.CASCADE)
+    download = models.ForeignKey(ReleaseDownload, db_index=True, blank=True, null=True, on_delete=models.CASCADE)
     timestamp = models.IntegerField(_('timestamp'))
     action = models.CharField(_('action'), max_length=455, blank=True, default='')
 

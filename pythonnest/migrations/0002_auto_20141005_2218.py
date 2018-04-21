@@ -1,4 +1,3 @@
-
 from django.db import models, migrations
 from django.conf import settings
 import pythonnest.models
@@ -76,7 +75,8 @@ class Migration(migrations.Migration):
                 ('creation', models.DateTimeField(verbose_name='creation', auto_now_add=True, db_index=True)),
                 ('modification', models.DateTimeField(verbose_name='modification', auto_now=True, db_index=True)),
                 ('group',
-                 models.ForeignKey(blank=True, verbose_name='restrict to this group', null=True, to='auth.Group')),
+                 models.ForeignKey(blank=True, verbose_name='restrict to this group', null=True, to='auth.Group',
+                                   on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -88,8 +88,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('role', models.IntegerField(verbose_name='role', default=1, choices=[(1, 'owner'), (2, 'maintainer')],
                                              db_index=True)),
-                ('package', models.ForeignKey(to='pythonnest.Package', verbose_name='package')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                ('package', models.ForeignKey(to='pythonnest.Package', verbose_name='package',
+                                              on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -139,7 +140,7 @@ class Migration(migrations.Migration):
                 ('obsoletes_dist',
                  models.ManyToManyField(blank=True, to='pythonnest.Dependence', related_name='dep_obsoletes_dist',
                                         db_index=True, null=True)),
-                ('package', models.ForeignKey(to='pythonnest.Package')),
+                ('package', models.ForeignKey(to='pythonnest.Package', on_delete=models.CASCADE)),
                 ('provides', models.ManyToManyField(blank=True, to='pythonnest.Dependence', related_name='dep_provides',
                                                     db_index=True, null=True)),
                 ('provides_dist',
@@ -183,9 +184,11 @@ class Migration(migrations.Migration):
                  models.DateTimeField(blank=True, verbose_name='Upload time', default=None, db_index=True, null=True)),
                 ('creation', models.DateTimeField(verbose_name='creation', auto_now_add=True, db_index=True)),
                 ('modification', models.DateTimeField(verbose_name='modification', auto_now=True, db_index=True)),
-                ('package', models.ForeignKey(blank=True, null=True, to='pythonnest.Package')),
-                ('package_type', models.ForeignKey(blank=True, null=True, to='pythonnest.PackageType', default=None)),
-                ('release', models.ForeignKey(to='pythonnest.Release')),
+                (
+                'package', models.ForeignKey(blank=True, null=True, to='pythonnest.Package', on_delete=models.CASCADE)),
+                ('package_type', models.ForeignKey(blank=True, null=True, to='pythonnest.PackageType', default=None,
+                                                   on_delete=models.CASCADE)),
+                ('release', models.ForeignKey(to='pythonnest.Release', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -195,7 +198,7 @@ class Migration(migrations.Migration):
             name='ReleaseMiss',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('release', models.ForeignKey(to='pythonnest.Release')),
+                ('release', models.ForeignKey(to='pythonnest.Release', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -223,19 +226,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='log',
             name='download',
-            field=models.ForeignKey(blank=True, null=True, to='pythonnest.ReleaseDownload'),
+            field=models.ForeignKey(blank=True, null=True, to='pythonnest.ReleaseDownload', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='log',
             name='package',
-            field=models.ForeignKey(to='pythonnest.Package'),
+            field=models.ForeignKey(to='pythonnest.Package', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='log',
             name='release',
-            field=models.ForeignKey(blank=True, null=True, to='pythonnest.Release'),
+            field=models.ForeignKey(blank=True, null=True, to='pythonnest.Release', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
